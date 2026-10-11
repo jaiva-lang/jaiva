@@ -4,7 +4,6 @@ import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Interpreter;
 import com.jaiva.interpreter.Interpreter.ThrowIfGlobalContext;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -15,6 +14,7 @@ import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.runtime.Resources;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
@@ -81,21 +81,20 @@ public class IOFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params,
-                           IConfig<Object> config, Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
             String output;
-            Object o = !params.isEmpty() ? params.getFirst() : null;
+            Object o = !callProperties.params().isEmpty() ? callProperties.params().getFirst() : null;
             Object newO = o;
             if (o == null || o instanceof TVoidValue) {
-                if (config.isStreamer())
-                    return Token.voidValue(tFuncCall.lineNumber);
+                if (callProperties.config().isStreamer())
+                    return Token.voidValue(callProperties.tFuncCall().lineNumber);
                 System.out.println();
-                return Token.voidValue(tFuncCall.lineNumber);
+                return Token.voidValue(callProperties.tFuncCall().lineNumber);
             }
-            Object v = params.size() > 1
-                    ? Primitives.toPrimitive(params.get(1), false, config, scope)
+            Object v = callProperties.params().size() > 1
+                    ? Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(), callProperties.scope())
                     : null;
             if (o instanceof Token<?> || (o instanceof TokenDefault && Interpreter.isVariableToken(o))) {
                 assert o instanceof Token<?>;
@@ -105,7 +104,7 @@ public class IOFunctions extends BaseLibrary {
                 Object input = token instanceof TExpression || token instanceof TVarRef || token instanceof TFuncCall
                         ? o
                         : token;
-                Object value = Interpreter.handleVariables(input, config, scope);
+                Object value = Interpreter.handleVariables(input, callProperties.config(), callProperties.scope());
                 // System.out.println(value);
                 assert value != null;
                 output = value.toString();
@@ -114,28 +113,28 @@ public class IOFunctions extends BaseLibrary {
                 // we dont have context, so just alert the user.
                 // that either, they tried using the "voetsek" or "nevermind" outside of a for
                 // loop context or cima was called with a custom error.
-                throw new InterpreterException.WtfAreYouDoingException(scope,
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
                         "Cannot use 'voetsek' or 'nevermind' outside of a loop context, or 'cima' was called with a custom error.",
-                        tFuncCall.lineNumber);
+                        callProperties.tFuncCall().lineNumber);
             } else {
                 output = o.toString();
             }
 
-            String isJustStr = newO instanceof String && config.isPrintStacks() ? "\"" : "";
+            String isJustStr = newO instanceof String && callProperties.config().isPrintStacks() ? "\"" : "";
 
-            if (config.isStreamer())
-                return Token.voidValue(tFuncCall.lineNumber);
+            if (callProperties.config().isStreamer())
+                return Token.voidValue(callProperties.tFuncCall().lineNumber);
             if (v instanceof Boolean && (Boolean) v) {
                 System.out.print(
-                        isJustStr + EscapeSequence.fromEscape(output, tFuncCall.lineNumber) + isJustStr);
+                        isJustStr + EscapeSequence.fromEscape(output, callProperties.tFuncCall().lineNumber) + isJustStr);
             } else if (newO instanceof ArrayList<?> arr)
             {
                 System.out.println(arrToString(arr));
             }else{
                 System.out.println(
-                        isJustStr + EscapeSequence.fromEscape(output, tFuncCall.lineNumber) + isJustStr);
+                        isJustStr + EscapeSequence.fromEscape(output, callProperties.tFuncCall().lineNumber) + isJustStr);
             }
-            return Token.voidValue(tFuncCall.lineNumber);
+            return Token.voidValue(callProperties.tFuncCall().lineNumber);
         }
 
         private String arrToString(ArrayList<?> arr) {
@@ -177,13 +176,12 @@ public class IOFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params,
-                           IConfig<Object> config, Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            if (config.isStreamer())
-                return Token.voidValue(tFuncCall.lineNumber);
+            if (callProperties.config().isStreamer())
+                return Token.voidValue(callProperties.tFuncCall().lineNumber);
 
-            return config.getGlobalResources()
+            return callProperties.config().getGlobalResources()
                     .ofCurrentThread()
                     .getResource(Resources.Common.CONSOLE_IN.getUuid(), Scanner.class)
                     .nextLine();
@@ -228,15 +226,14 @@ public class IOFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params,  IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws InterpreterException {
             // Clear the console using ANSI escape codes.
-            if (config.isStreamer())
-                return Token.voidValue(tFuncCall.lineNumber);
+            if (callProperties.config().isStreamer())
+                return Token.voidValue(callProperties.tFuncCall().lineNumber);
             System.out.print("\033[H\033[2J");
             System.out.flush();
-            return Token.voidValue(tFuncCall.lineNumber);
+            return Token.voidValue(callProperties.tFuncCall().lineNumber);
         }
     }
 

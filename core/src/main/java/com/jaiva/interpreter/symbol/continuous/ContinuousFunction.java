@@ -2,7 +2,6 @@ package com.jaiva.interpreter.symbol.continuous;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -11,15 +10,14 @@ import com.jaiva.interpreter.libs.cont.ContinuousConst;
 import com.jaiva.interpreter.libs.file.bytes.FileBytes;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
 import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 
 import java.io.Closeable;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 /**
  * A ContinuousFunction is a specialisation of your ordinary {@link BaseFunction} with the sole purpose
@@ -166,21 +164,21 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
     }
 
     @Override
-    public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
+    public Object call(CallProperties callProperties) throws Exception {
         // do all the handling logic dispatch and new function creation shenangians
-        checkParams(tFuncCall, scope);
-        if (!params.isEmpty()) {
-            Object prot = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+        checkParams(callProperties.tFuncCall(), callProperties.scope());
+        if (!callProperties.params().isEmpty()) {
+            Object prot = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             if (!(prot instanceof String protocol))
                 throw new InterpreterException.FunctionParametersException(
-                        scope, this, "1", prot, String.class, tFuncCall.lineNumber
+                        callProperties.scope(), this, "1", prot, String.class, callProperties.tFuncCall().lineNumber
                 );
 
             protocol = protocol.toLowerCase();
             if (!CFuncInput.isValid(protocol))
                 throw new InterpreterException.WtfAreYouDoingException(
-                        scope, "A continuous function can only take string inputs of: " +
-                        " \"read\", \"write\", \"flush\" or \"close\"!", tFuncCall.lineNumber
+                        callProperties.scope(), "A continuous function can only take string inputs of: " +
+                        " \"read\", \"write\", \"flush\" or \"close\"!", callProperties.tFuncCall().lineNumber
                 );
 
             // isValid allows this to pass.
@@ -195,7 +193,7 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
                 case EOF -> eofClosure;
             };
         }
-        return Token.voidValue(tFuncCall.lineNumber);
+        return Token.voidValue(callProperties.tFuncCall().lineNumber);
     }
 
 }

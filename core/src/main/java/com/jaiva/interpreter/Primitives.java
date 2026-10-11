@@ -1,8 +1,6 @@
 package com.jaiva.interpreter;
 
-import com.jaiva.errors.InterpreterException;
 import com.jaiva.errors.InterpreterException.*;
-import com.jaiva.errors.JaivaException;
 import com.jaiva.errors.Warnings;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.*;
@@ -335,10 +333,18 @@ public class Primitives {
                 checkSymbolAnnotation(function, tFuncCall.lineNumber, scope, config);
 
                 ArrayList<Object> args = BaseFunction.resolveParameters(function, tFuncCall, config, scope);
+                ArrayList<Object> newArgs = new ArrayList<>();
+
+                if (function.isEvaluateParamsEarly()) {
+                    for (Object arg : args) {
+                        newArgs.add(toPrimitive(arg, false, config, scope));
+                    }
+                } else {
+                    newArgs = args;
+                }
+
                 Object returnValue = function.call(
-                        tFuncCall,
-                        args,
-                        config, scope);
+                        new CallProperties(tFuncCall, newArgs, config, scope));
                 return returnValue instanceof String && tFuncCall.getLength()
                         ? EscapeSequence.fromEscape((String) returnValue, tFuncCall.lineNumber).length()
                         : returnValue instanceof ArrayList && tFuncCall.getLength() ? ((ArrayList<?>) returnValue).size()

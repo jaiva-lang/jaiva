@@ -1,15 +1,13 @@
 package com.jaiva.interpreter.symbol.continuous;
 
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libs.types.TypeConverter;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
 import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 import com.yetnt.utils.functional.consumer.ThrowableConsumer;
 import com.yetnt.utils.functional.generic.ThrowableSupplier;
 
@@ -34,7 +32,7 @@ public class CFClosures {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
+        public Object call(CallProperties callProperties) throws Exception {
             return eof;
         }
     }
@@ -48,18 +46,18 @@ public class CFClosures {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
+        public Object call(CallProperties callProperties) throws Exception {
             // parse every object in params
-            if (readStreamSupplier == null) return Token.voidValue(tFuncCall.lineNumber);
+            if (readStreamSupplier == null) return Token.voidValue(callProperties.tFuncCall().lineNumber);
             ArrayList<Object> parsedParams = new ArrayList<>();
-            if (!params.isEmpty() && (params.size() != 1 || params.getFirst() != null)) {
-                for (Object p : params) {
-                    parsedParams.add(Primitives.toPrimitive(p, false, config, scope));
+            if (!callProperties.params().isEmpty() && (callProperties.params().size() != 1 || callProperties.params().getFirst() != null)) {
+                for (Object p : callProperties.params()) {
+                    parsedParams.add(Primitives.toPrimitive(p, false, callProperties.config(), callProperties.scope()));
                 }
             }
 
             ThrowableSupplier<?, IOException> method
-                    = readStreamSupplier.apply(tFuncCall, parsedParams, config, scope);
+                    = readStreamSupplier.apply(callProperties);
 
             // TODO: Handle types, for now if its String, Int, Long, Double, or Boolean, its fine.
             // TODO: If it's a byte, then convert to int.
@@ -92,16 +90,16 @@ public class CFClosures {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
+        public Object call(CallProperties callProperties) throws Exception {
             // parse every object in params
-            if (writeStreamConsumer == null) return Token.voidValue(tFuncCall.lineNumber);
+            if (writeStreamConsumer == null) return Token.voidValue(callProperties.tFuncCall().lineNumber);
             ArrayList<Object> parsedParams = new ArrayList<>();
-            for (Object p : params) {
-                parsedParams.add(Primitives.toPrimitive(p, false, config, scope));
+            for (Object p : callProperties.params()) {
+                parsedParams.add(Primitives.toPrimitive(p, false, callProperties.config(), callProperties.scope()));
             }
 
             ThrowableConsumer<Object, IOException> method
-                    = writeStreamConsumer.apply(tFuncCall, parsedParams, config, scope);
+                    = writeStreamConsumer.apply(callProperties);
 
             // TODO: Handle types, for now if its String, Int, Long, Double, or Boolean, its fine.
             // TODO: If it's a byte, then convert to int.
@@ -109,7 +107,7 @@ public class CFClosures {
             // TODO: In this case, we just consume the first argument within paras. Caller is responbisle for mutating params
 
             method.apply(parsedParams.getFirst());
-            return Token.voidValue(tFuncCall.lineNumber);
+            return Token.voidValue(callProperties.tFuncCall().lineNumber);
         }
     }
 
@@ -121,11 +119,11 @@ public class CFClosures {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
+        public Object call(CallProperties callProperties) throws Exception {
             // we dont care about args.
-            if (!(cls instanceof OutputStream os)) return Token.voidValue(tFuncCall.lineNumber);
+            if (!(cls instanceof OutputStream os)) return Token.voidValue(callProperties.tFuncCall().lineNumber);
             os.flush();
-            return Token.voidValue(tFuncCall.lineNumber);
+            return Token.voidValue(callProperties.tFuncCall().lineNumber);
         }
     }
 
@@ -137,10 +135,10 @@ public class CFClosures {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
+        public Object call(CallProperties callProperties) throws Exception {
             // dont care about args again
-            config.getGlobalResources().ofCurrentThread().releaseResource(resourceId);
-            return Token.voidValue(tFuncCall.lineNumber);
+            callProperties.config().getGlobalResources().ofCurrentThread().releaseResource(resourceId);
+            return Token.voidValue(callProperties.tFuncCall().lineNumber);
         }
     }
 }

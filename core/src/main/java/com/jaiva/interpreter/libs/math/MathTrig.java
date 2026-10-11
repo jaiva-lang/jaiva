@@ -2,19 +2,15 @@ package com.jaiva.interpreter.libs.math;
 
 import com.jaiva.errors.InterpreterException.FunctionParametersException;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
-
-import java.util.ArrayList;
 
 import static com.jaiva.interpreter.libs.math.MathBase.ifNan;
 
@@ -56,14 +52,13 @@ public class MathTrig extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                           Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object v = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
-                throw new FunctionParametersException(scope, this, "1", v, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
             }
             // Calculate the arctangent of the number
             double value = ((Number) v).doubleValue();
@@ -100,14 +95,13 @@ public class MathTrig extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object v = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
-                throw new FunctionParametersException(scope, this, "1", v, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
             }
             // Calculate the arctangent of the number
             double value = ((Number) v).doubleValue();
@@ -144,14 +138,13 @@ public class MathTrig extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object v = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
-                throw new FunctionParametersException(scope, this, "1", v, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
             }
             // Calculate the arctangent of the number
             double value = ((Number) v).doubleValue();
@@ -188,20 +181,19 @@ public class MathTrig extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object v = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
-                throw new FunctionParametersException(scope, this, "1", v, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
             }
             // Calculate the arctangent of the number
             double value = ((Number) v).doubleValue();
             Number n = java.lang.Math.asin(value);
 
-            return ifNan(tFuncCall, n);
+            return ifNan(callProperties.tFuncCall(), n);
         }
     }
 
@@ -234,19 +226,18 @@ public class MathTrig extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object v = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
-                throw new FunctionParametersException(scope, this, "1", v, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
             }
             // Calculate the arctangent of the number
             double value = ((Number) v).doubleValue();
             Number n = java.lang.Math.acos(value);
-            return ifNan(tFuncCall, n);
+            return ifNan(callProperties.tFuncCall(), n);
         }
     }
 
@@ -279,14 +270,13 @@ public class MathTrig extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object v = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
-                throw new FunctionParametersException(scope, this, "1", v, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
             }
             // Calculate the arctangent of the number
             double value = ((Number) v).doubleValue();
@@ -327,15 +317,14 @@ public class MathTrig extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object value = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
             // Ensure the first parameter is a number
             if (!(value instanceof Number)) {
-                throw new FunctionParametersException(scope, this, "1", value, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
             }
             // Convert degrees to radians
             double degrees = ((Number) value).doubleValue();
@@ -376,15 +365,14 @@ public class MathTrig extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object value = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
             // Ensure the first parameter is a number
             if (!(value instanceof Number)) {
-                throw new FunctionParametersException(scope, this, "1", value, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
             }
             // Convert radians to degrees
             double radians = ((Number) value).doubleValue();
@@ -415,18 +403,17 @@ public class MathTrig extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                           Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object v = Primitives.toPrimitive(params.getFirst(), false, config, scope);
-            Object v2 = Primitives.toPrimitive(params.get(1), false, config, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object v2 = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(), callProperties.scope());
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
-                throw new FunctionParametersException(scope, this, "1", v, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
             }
             if (!(v2 instanceof Number)) {
-                throw new FunctionParametersException(scope, this, "2", v, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "2", v, Number.class, callProperties.tFuncCall().lineNumber);
             }
             // Calculate the arctangent of the number
             double value = ((Number) v).doubleValue();

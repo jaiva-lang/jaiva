@@ -3,21 +3,18 @@ package com.jaiva.interpreter.libs.math;
 import com.jaiva.errors.InterpreterException.FunctionParametersException;
 import com.jaiva.errors.InterpreterException.WtfAreYouDoingException;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TFuncCall;
-import com.jaiva.tokenizer.tokens.specific.TFunction;
 
-import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -70,19 +67,18 @@ public class MathBase extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                           Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object value = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
 
             return switch (value) {
                 case Integer i -> Math.abs(i);
                 case Double d -> Math.abs(d);
                 case Long l -> Math.abs(l);
                 case null, default ->
-                        throw new FunctionParametersException(scope, this, "1", value, Number.class, tFuncCall.lineNumber);
+                        throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
             };
 
         }
@@ -127,41 +123,40 @@ public class MathBase extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
 
-            if (params.isEmpty())
+            if (callProperties.params().isEmpty())
                 return ThreadLocalRandom.current().nextDouble();
 
-            checkParams(tFuncCall, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object lowerObject = Primitives.toPrimitive(params.get(0), false,
-                    config, scope);
-            Object upperObject = params.size() > 1 ? Primitives.toPrimitive(params.get(1), false,
-                    config, scope) : null;
+            Object lowerObject = Primitives.toPrimitive(callProperties.params().get(0), false,
+                    callProperties.config(), callProperties.scope());
+            Object upperObject = callProperties.params().size() > 1 ? Primitives.toPrimitive(callProperties.params().get(1), false,
+                    callProperties.config(), callProperties.scope()) : null;
 
             if (!(lowerObject instanceof Integer lower))
-                throw new FunctionParametersException(scope, this, "1", lowerObject, Integer.class,
-                        tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", lowerObject, Integer.class,
+                        callProperties.tFuncCall().lineNumber);
 
             if (upperObject == null) {
                 // only one param was given, so treat lower as upper and 0 as lower.
                 // check if a is negative
                 if (lower < 0)
-                    throw new WtfAreYouDoingException(scope,
+                    throw new WtfAreYouDoingException(callProperties.scope(),
                             "When only one argument is given, it is treated as the upper bound, and the lower bound is 0. Therefore, the upper bound cannot be negative.",
-                            tFuncCall.lineNumber);
+                            callProperties.tFuncCall().lineNumber);
                 return ThreadLocalRandom.current().nextInt(0, lower + 1);
             }
 
             if (!(upperObject instanceof Integer upper))
-                throw new FunctionParametersException(scope, this, "2", upperObject, Integer.class,
-                        tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "2", upperObject, Integer.class,
+                        callProperties.tFuncCall().lineNumber);
 
             if (lower > upper)
-                throw new WtfAreYouDoingException(scope, "The lower bound cannot be bigger than the upper bound.",
-                        tFuncCall.lineNumber);
+                throw new WtfAreYouDoingException(callProperties.scope(), "The lower bound cannot be bigger than the upper bound.",
+                        callProperties.tFuncCall().lineNumber);
 
             // When Jaiva was truly the best
 //            if (lower == 6 && upper == 9)
@@ -197,20 +192,19 @@ public class MathBase extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
             
-            Object value = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
 
             if (value instanceof Integer || value instanceof Long)
                 return value;
             else if (value instanceof Double d)
                 return (int) java.lang.Math.round(d);
             else
-                throw new FunctionParametersException(scope, this, "1", value, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
 
         }
     }
@@ -241,22 +235,21 @@ public class MathBase extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object value = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
 
             Number n = switch (value) {
                 case Integer i -> Math.sqrt(i);
                 case Double d -> Math.sqrt(d);
                 case Long l -> Math.sqrt(l.doubleValue());
                 case null, default ->
-                        throw new FunctionParametersException(scope, this, "1", value, Number.class, tFuncCall.lineNumber);
+                        throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
             };
 
-            return ifNan(tFuncCall, n);
+            return ifNan(callProperties.tFuncCall(), n);
 
         }
     }
@@ -284,19 +277,18 @@ public class MathBase extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object value = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
 
             if (value instanceof Integer i)
                 return i;
             else if (value instanceof Double d)
                 return (int) java.lang.Math.floor(d);
             else
-                throw new FunctionParametersException(scope, this, "1", value, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
         }
     }
 
@@ -331,19 +323,18 @@ public class MathBase extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object value = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
 
             if (value instanceof Integer i)
                 return i;
             else if (value instanceof Double d)
                 return (int) java.lang.Math.ceil(d);
             else
-                throw new FunctionParametersException(scope, this, "1", value, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
         }
     }
 
@@ -374,21 +365,20 @@ public class MathBase extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object value = Primitives.toPrimitive(params.get(0), false, config,
-                    scope);
-            Object base = params.size() > 1
-                    ? Primitives.toPrimitive(params.get(1), false, config, scope)
+            Object value = Primitives.toPrimitive(callProperties.params().get(0), false, callProperties.config(),
+                    callProperties.scope());
+            Object base = callProperties.params().size() > 1
+                    ? Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(), callProperties.scope())
                     : 10;
 
             if (!(value instanceof Number v))
-                throw new FunctionParametersException(scope, this, "1", value, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
             if (!(base instanceof Number b))
-                throw new FunctionParametersException(scope, this, "2", base, Number.class, tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "2", base, Number.class, callProperties.tFuncCall().lineNumber);
 
             double val = v.doubleValue();
             double bas = b.doubleValue();
@@ -400,7 +390,7 @@ public class MathBase extends BaseLibrary {
                 default -> java.lang.Math.log(val) / java.lang.Math.log(bas);
             };
 
-            return ifNan(tFuncCall, n);
+            return ifNan(callProperties.tFuncCall(), n);
         }
     }
 

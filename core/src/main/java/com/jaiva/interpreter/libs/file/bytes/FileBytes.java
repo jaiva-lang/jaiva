@@ -2,7 +2,6 @@ package com.jaiva.interpreter.libs.file.bytes;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -10,14 +9,13 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.Exports;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.interpreter.symbol.continuous.CFClosures;
 import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
 import com.jaiva.interpreter.libs.types.TypeConverter;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 import com.yetnt.utils.builders.MarkDownLiteral;
 import com.yetnt.utils.functional.consumer.ThrowableConsumer;
 import com.yetnt.utils.functional.generic.ThrowableSupplier;
@@ -83,18 +81,18 @@ public class FileBytes extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object p = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+            Object p = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             if (!(p instanceof String path))
                 throw new InterpreterException.FunctionParametersException(
-                        scope, this, "1", p, String.class, tFuncCall.lineNumber
+                        callProperties.scope(), this, "1", p, String.class, callProperties.tFuncCall().lineNumber
                 );
 
             boolean append = true;
-            if (params.size() > 1
-                    && Primitives.toPrimitive(params.get(1), false, config, scope) instanceof Boolean b)
+            if (callProperties.params().size() > 1
+                    && Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(), callProperties.scope()) instanceof Boolean b)
                 append = b;
 
             File f = new File(path);
@@ -107,8 +105,9 @@ public class FileBytes extends BaseLibrary {
             DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(f,  append)));
 
             return ContinuousFunction.from(
-                    config, dos,
-                    (tf, pars, cf, sc) -> {
+                    callProperties.config(), dos,
+                    (callProps) -> {
+                        ArrayList<Object> pars = callProps.params();
                         // the writer from continous function takes the first argument as what to write.
                         ThrowableConsumer<Object, IOException> doNothing
                                 = (o) -> {
@@ -215,20 +214,20 @@ public class FileBytes extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object p = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+            Object p = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             if (!(p instanceof String path))
                 throw new InterpreterException.FunctionParametersException(
-                        scope, this, "1", p, String.class, tFuncCall.lineNumber
+                        callProperties.scope(), this, "1", p, String.class, callProperties.tFuncCall().lineNumber
                 );
 
             File f = new File(path);
 
             if (!f.exists())
                 throw new InterpreterException.WtfAreYouDoingException(
-                       scope,  "File no existy", tFuncCall.lineNumber
+                        callProperties.scope(),  "File no existy", callProperties.tFuncCall().lineNumber
                 );
 
             DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(f)));
@@ -236,7 +235,7 @@ public class FileBytes extends BaseLibrary {
             CFClosures.EOF eof = new CFClosures.EOF();
 
             ThrowableSupplier<Object, IOException> unknown
-                    = () -> Token.voidValue(tFuncCall.lineNumber);
+                    = () -> Token.voidValue(callProperties.tFuncCall().lineNumber);
 
             // The code is only as such due to the fact that we need to handle the EOFException
             // in this call site and nowhere else. Other implementers might genuinely be better
@@ -244,14 +243,15 @@ public class FileBytes extends BaseLibrary {
             // references directly.
 
             return ContinuousFunction.from(
-                    config,
+                    callProperties.config(),
                     dis,
-                    (tf, pr, cf, sc) -> {
+                    (callProps) -> {
+                        ArrayList<Object> pr = callProps.params();
                         try {
 
                             if (pr.isEmpty()) return unknown;
                             if (pr.size() == 1 && pr.getFirst() == null) return unknown;
-                            if (!(Primitives.toPrimitive(pr.getFirst(), false, config, scope)
+                            if (!(Primitives.toPrimitive(pr.getFirst(), false, callProperties.config(), callProperties.scope())
                             instanceof String type)) return unknown;
 
                             if (type.startsWith("r_"))

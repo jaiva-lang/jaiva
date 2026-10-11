@@ -2,7 +2,6 @@ package com.jaiva.interpreter.libs.file;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -10,11 +9,9 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.libs.file.api.FileType;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
-import com.jaiva.tokenizer.tokens.specific.TFunction;
 
 import java.util.ArrayList;
 
@@ -62,13 +59,13 @@ public class FileQuery extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope); // Ensure correct number of parameters
-            Object fileObj = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
+            Object fileObj = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             if (!(fileObj instanceof ArrayList<?> arr))
-                throw new InterpreterException.WtfAreYouDoingException(scope,
-                        "The parameter 'file' needs to be an array like come on!", tFuncCall.lineNumber);
-            FileType file = FileType.of((ArrayList<Object>) arr, scope, tFuncCall.lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
+                        "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);
+            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.tFuncCall().lineNumber);
             return file.getFileName();
         }
     }
@@ -98,13 +95,13 @@ public class FileQuery extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope); // Ensure correct number of parameters
-            Object fileObj = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
+            Object fileObj = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             if (!(fileObj instanceof ArrayList<?> arr))
-                throw new InterpreterException.WtfAreYouDoingException(scope,
-                        "The parameter 'file' needs to be an array like come on!", tFuncCall.lineNumber);
-            FileType file = FileType.of((ArrayList<Object>) arr, scope, tFuncCall.lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
+                        "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);
+            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.tFuncCall().lineNumber);
             return file.getFilePath();
         }
     }
@@ -134,13 +131,13 @@ public class FileQuery extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope); // Ensure correct number of parameters
-            Object fileObj = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
+            Object fileObj = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             if (!(fileObj instanceof ArrayList<?> arr))
-                throw new InterpreterException.WtfAreYouDoingException(scope,
-                        "The parameter 'file' needs to be an array like come on!", tFuncCall.lineNumber);
-            FileType file = FileType.of((ArrayList<Object>) arr, scope, tFuncCall.lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
+                        "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);
+            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.tFuncCall().lineNumber);
             return file.getFileContent();
         }
     }
@@ -216,13 +213,13 @@ public class FileQuery extends BaseLibrary {
             }
 
             @Override
-            public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-                checkParams(tFuncCall, scope);
-                if (params.isEmpty()) {
+            public Object call(CallProperties callProperties) throws Exception {
+                checkParams(callProperties.tFuncCall(), callProperties.scope());
+                if (callProperties.params().isEmpty()) {
                     // Return all permissions as an array
                     return file.get(3);
                 } else {
-                    Object permObj = params.getFirst();
+                    Object permObj = callProperties.params().getFirst();
                     if (permObj instanceof String permStr) {
                         if (permStr.length() == 3) {
                             boolean read = (permStr.charAt(0) == 'r') == file.canRead();
@@ -241,8 +238,8 @@ public class FileQuery extends BaseLibrary {
                             case "execute", "x" -> {
                                 return file.canExecute();
                             }
-                            default -> throw new InterpreterException.WtfAreYouDoingException(scope,
-                                    "Invalid permission string. Use 'read'/'r', 'write'/'w', or 'execute'/'x'.", tFuncCall.lineNumber);
+                            default -> throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
+                                    "Invalid permission string. Use 'read'/'r', 'write'/'w', or 'execute'/'x'.", callProperties.tFuncCall().lineNumber);
                         }
                     } else if (permObj instanceof Number permNum) {
                         int index = permNum.intValue();
@@ -256,25 +253,25 @@ public class FileQuery extends BaseLibrary {
                             case 2 -> {
                                 return file.canExecute();
                             }
-                            default -> throw new InterpreterException.WtfAreYouDoingException(scope,
-                                    "Invalid permission index. Use 0 for read, 1 for write, or 2 for execute.", tFuncCall.lineNumber);
+                            default -> throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
+                                    "Invalid permission index. Use 0 for read, 1 for write, or 2 for execute.", callProperties.tFuncCall().lineNumber);
                         }
                     } else {
-                        throw new InterpreterException.WtfAreYouDoingException(scope,
-                                "Permission parameter must be a string or number.", tFuncCall.lineNumber);
+                        throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
+                                "Permission parameter must be a string or number.", callProperties.tFuncCall().lineNumber);
                     }
                 }
             }
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope); // Ensure correct number of parameters
-            Object fileObj = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
+            Object fileObj = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             if (!(fileObj instanceof ArrayList<?> arr))
-                throw new InterpreterException.WtfAreYouDoingException(scope,
-                        "The parameter 'file' needs to be an array like come on!", tFuncCall.lineNumber);
-            FileType file = FileType.of((ArrayList<Object>) arr, scope, tFuncCall.lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
+                        "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);
+            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.tFuncCall().lineNumber);
             return new FPermissions(file);
         }
     }

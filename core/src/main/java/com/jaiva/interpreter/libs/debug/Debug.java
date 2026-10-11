@@ -4,7 +4,6 @@ import com.jaiva.errors.InterpreterException;
 import com.jaiva.errors.JaivaException.DebugException;
 import com.jaiva.interpreter.MapValue;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -12,14 +11,13 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libBuilders.func.arg.AVarArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.TokenDefault;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 import com.jaiva.tokenizer.tokens.specific.TVarRef;
 
 import java.util.ArrayList;
@@ -73,73 +71,38 @@ public class Debug extends BaseLibrary {
                                             """)
                             )
             );
+            freeze();
+            setEvaluateParamsEarly(false);
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
             TokenDefault<?> refA = null;
             TokenDefault<?> refB = null;
 
-            if (tFuncCall.args.getFirst() instanceof Token<?>(Object value))
+            if (callProperties.tFuncCall().args.getFirst() instanceof Token<?>(Object value))
                 refA = (TokenDefault<?>) value;
-            else if (tFuncCall.args.getFirst() instanceof TokenDefault<?> t)
+            else if (callProperties.tFuncCall().args.getFirst() instanceof TokenDefault<?> t)
                 refA = t;
-            if (tFuncCall.args.get(1) instanceof Token<?>(Object value))
+            if (callProperties.tFuncCall().args.get(1) instanceof Token<?>(Object value))
                 refB = (TokenDefault<?>) value;
-            else  if (tFuncCall.args.get(1) instanceof TokenDefault<?> t)
+            else  if (callProperties.tFuncCall().args.get(1) instanceof TokenDefault<?> t)
                 refB = t;
 
             assert refA != null;
             assert refB != null;
             if (!(refA instanceof TVarRef))
-                throw new InterpreterException.WtfAreYouDoingException(scope, "The first parameter has to be a reference or variable.", tFuncCall.lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "The first parameter has to be a reference or variable.", callProperties.tFuncCall().lineNumber);
             if  (!(refB instanceof TVarRef))
-                throw new InterpreterException.WtfAreYouDoingException(scope, "The second parameter has to be a reference or variable.", tFuncCall.lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "The second parameter has to be a reference or variable.", callProperties.tFuncCall().lineNumber);
 
-            MapValue mv = scope.getVfs().get(((TVarRef) refA).varName.toString());
+            MapValue mv = callProperties.scope().getVfs().get(((TVarRef) refA).varName.toString());
             if (mv == null || MapValue.isEmpty(mv))
-                throw new InterpreterException.UnknownVariableException(scope, refA.name, tFuncCall.lineNumber);
+                throw new InterpreterException.UnknownVariableException(callProperties.scope(), refA.name, callProperties.tFuncCall().lineNumber);
 
-            scope.getVfs().put(((TVarRef) refB).varName.toString(), mv); // This does mean, if the second reference doesnt exist this function woll create it.
-            return Token.voidValue(tFuncCall.lineNumber);
-        }
-    }
-
-    static class FVfs extends BaseFunction {
-        FVfs() {
-            super(FunctionBuilder.start()
-                    .name("d_vfs")
-                    .docs(JDoc.builder()
-                            .addDesc("Returns the current context's vfs.")
-                            .sinceVersion("4.1.0")
-                            .addReturns("A 2d array, first array containing the keys, second array the values.")
-                            .addNote("This function does not allow you to edit the current vfs, only to get" +
-                                    " everything that is currently within the vfs as an array." +
-                                    " Everytime this function is called a new array containing all the stuff is made.")
-                    )
-            );
-            freeze();
-        }
-
-        @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            ArrayList<String> names = new ArrayList<>();
-            ArrayList<Object> symbols = new ArrayList<>();
-            scope.getVfs().forEach((v, f)-> {
-                names.add(v);
-                Symbol sym = f.getValue();
-                if (sym instanceof BaseVariable var) {
-                    if (var.variableType == BaseVariable.VariableType.ARRAY)
-                        symbols.add(var.a_getAll());
-                    else
-                        symbols.add(var.s_get());
-                } else if (sym instanceof BaseFunction function) {
-                    symbols.add(function);
-                }
-
-            });
-            return new ArrayList<>(List.of(names, symbols));
+            callProperties.scope().getVfs().put(((TVarRef) refB).varName.toString(), mv); // This does mean, if the second reference doesnt exist this function woll create it.
+            return Token.voidValue(callProperties.tFuncCall().lineNumber);
         }
     }
 
@@ -165,32 +128,69 @@ public class Debug extends BaseLibrary {
                     )
             );
             freeze();
+            setEvaluateParamsEarly(false);
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                           Scope scope)
+        public Object call(CallProperties callProperties)
                 throws DebugException {
             // Any implementation of normal interpreter functions which could throw such an
             // exception should be in the catch.
             ArrayList<Object> components = new ArrayList<>();
             try {
-                checkParams(tFuncCall, scope); // throws if params aren't correct. So naturally we loose having
+                checkParams(callProperties.tFuncCall(), callProperties.scope()); // throws if params aren't correct. So naturally we loose having
                                                 // varargs, so its
                 // fine.
-                if (!params.isEmpty()) {
-                    for (Object param : params) {
+                if (!callProperties.params().isEmpty()) {
+                    for (Object param : callProperties.params()) {
                         components.add(Primitives.toPrimitive(
                                 param,
                                 false,
-                                config, scope
+                                callProperties.config(), callProperties.scope()
                         ));
                     }
                 }
             } catch (Exception e) {
                 throw new DebugException(e);
             }
-            throw new DebugException(components, scope, config, tFuncCall.lineNumber);
+            throw new DebugException(components, callProperties.scope(), callProperties.config(), callProperties.tFuncCall().lineNumber);
+        }
+    }
+
+    static class FVfs extends BaseFunction {
+        FVfs() {
+            super(FunctionBuilder.start()
+                    .name("d_vfs")
+                    .docs(JDoc.builder()
+                            .addDesc("Returns the current context's vfs.")
+                            .sinceVersion("4.1.0")
+                            .addReturns("A 2d array, first array containing the keys, second array the values.")
+                            .addNote("This function does not allow you to edit the current vfs, only to get" +
+                                    " everything that is currently within the vfs as an array." +
+                                    " Everytime this function is called a new array containing all the stuff is made.")
+                    )
+            );
+            freeze();
+        }
+
+        @Override
+        public Object call(CallProperties callProperties) throws Exception {
+            ArrayList<String> names = new ArrayList<>();
+            ArrayList<Object> symbols = new ArrayList<>();
+            callProperties.scope().getVfs().forEach((v, f)-> {
+                names.add(v);
+                Symbol sym = f.getValue();
+                if (sym instanceof BaseVariable var) {
+                    if (var.variableType == BaseVariable.VariableType.ARRAY)
+                        symbols.add(var.a_getAll());
+                    else
+                        symbols.add(var.s_get());
+                } else if (sym instanceof BaseFunction function) {
+                    symbols.add(function);
+                }
+
+            });
+            return new ArrayList<>(List.of(names, symbols));
         }
     }
 
@@ -208,8 +208,8 @@ public class Debug extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            return scope.toString();
+        public Object call(CallProperties callProperties) throws Exception {
+            return callProperties.scope().toString();
         }
     }
 }

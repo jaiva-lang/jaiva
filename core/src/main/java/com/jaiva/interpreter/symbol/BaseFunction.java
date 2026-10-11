@@ -22,15 +22,15 @@ import java.util.Collections;
  */
 public class BaseFunction extends Symbol {
 
-//    /**
-//     * Constructs a new BaseFunction instance with the specified name and token.
-//     *
-//     * @param token the token associated with the function
-//     */
-//    public BaseFunction(TFunction token) {
-//        super(token.name, SymbolType.FUNCTION, token);
-//    }
+    private boolean evaluateParamsEarly = true;
 
+    public boolean isEvaluateParamsEarly() {
+        return evaluateParamsEarly;
+    }
+
+    protected void setEvaluateParamsEarly(boolean evaluateParamsEarly) {
+        this.evaluateParamsEarly = evaluateParamsEarly;
+    }
 
     /**
      * Constructs a new BaseFunction instance with the specified name and token.
@@ -61,21 +61,30 @@ public class BaseFunction extends Symbol {
     }
 
     /**
-     * Calls the function with the given parameters and variable functions store.
-     * * This method is called by the interpreter when the function is called.
-     * Other functions should override this method to implement their own logic.
-     * 
-     * @param tFuncCall The function call token.
-     * @param params    The parameters passed to the function. (taken from the
-     *                  parameters in tFuncCall)
-     * @param config    The Interpreter configuration.
+     * Calls the function with the given call properties.
+     * It's generally required that libraries override this method to enable function functionality.
+     *
+     * @param callProperties The call properties
      * @return The return value of the function, if not overridden it will return
-     *         {@code void.class}
+     *      {@link TVoidValue} (idk)
      * @throws Exception If an error occurs during the function call.
      */
-    public Object call(TFuncCall tFuncCall, ArrayList<Object> params,
-                       IConfig<Object> config, Scope scope) throws Exception {
-        return Token.voidValue(tFuncCall.lineNumber);
+    public Object call(CallProperties callProperties) throws Exception {
+        return Token.voidValue(callProperties.tFuncCall().lineNumber);
+    }
+
+    /**
+     * Original method
+     * @deprecated Use {{@link #call(CallProperties)} instead}
+     * @param tFuncCall func call
+     * @param params params
+     * @param config config
+     * @param scope scope
+     * @return something
+     * @throws Exception if anthing wrong lol
+     */
+    public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
+        return call(new CallProperties(tFuncCall, params, config, scope));
     }
 
     public Object call(ArrayList<Object> params,
@@ -95,14 +104,11 @@ public class BaseFunction extends Symbol {
         });
 
         return call(
-                new TFuncCall(
+                new CallProperties(new TFuncCall(
                         this.name,
                         tokens,
                         originalCall.lineNumber, false, false
-                ),
-                params,
-                config, scope
-        );
+                ), params, config, scope));
     }
 
     /**

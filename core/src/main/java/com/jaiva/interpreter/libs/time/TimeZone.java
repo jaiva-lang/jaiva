@@ -1,17 +1,13 @@
 package com.jaiva.interpreter.libs.time;
 
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.var.VariableBuilder;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.specific.TArrayVar;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
-import com.jaiva.tokenizer.tokens.specific.TStringVar;
 import com.yetnt.utils.tuple.SamePair;
 
 import java.time.ZoneId;
@@ -52,7 +48,7 @@ public class TimeZone extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
+        public Object call(CallProperties callProperties) throws Exception {
             return new ArrayList<>(zoneIds.stream().map(SamePair::getSecond).toList());
         }
     }

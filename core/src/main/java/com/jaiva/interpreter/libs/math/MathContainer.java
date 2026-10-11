@@ -9,9 +9,8 @@ import com.jaiva.interpreter.libBuilders.func.arg.AVarArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
-import com.jaiva.tokenizer.tokens.specific.TFunction;
 
 import java.util.ArrayList;
 
@@ -82,12 +81,12 @@ public class MathContainer extends BaseLibrary {
 
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope);
-            if (params.size() < 2)
-                throw new InterpreterException.FunctionParametersException(scope, this, params.size(), 2, tFuncCall.lineNumber);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            if (callProperties.params().size() < 2)
+                throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, callProperties.params().size(), 2, callProperties.tFuncCall().lineNumber);
 
-            ArrayList<Integer> nums = toIntegerList(params, "gcd", this, config, scope, tFuncCall.lineNumber);
+            ArrayList<Integer> nums = toIntegerList(callProperties.params(), "gcd", this, callProperties.config(), callProperties.scope(), callProperties.tFuncCall().lineNumber);
 
             int gcd = nums.getFirst();
             for (int i = 1; i < nums.size(); i++) {
@@ -124,12 +123,12 @@ public class MathContainer extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope);
-            if (params.size() < 2)
-                throw new InterpreterException.FunctionParametersException(scope, this, params.size(), 2, tFuncCall.lineNumber);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            if (callProperties.params().size() < 2)
+                throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, callProperties.params().size(), 2, callProperties.tFuncCall().lineNumber);
 
-            ArrayList<Integer> nums = toIntegerList(params, "lcm", this, config, scope, tFuncCall.lineNumber);
+            ArrayList<Integer> nums = toIntegerList(callProperties.params(), "lcm", this, callProperties.config(), callProperties.scope(), callProperties.tFuncCall().lineNumber);
 
             int lcm = nums.getFirst();
             for (int i = 1; i < nums.size(); i++) {

@@ -18,10 +18,10 @@ import com.jaiva.interpreter.libs.file.api.FileType;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TArrayVar;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -259,17 +259,16 @@ public class FileApi extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                           Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object path = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object path = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
             if (!(path instanceof String))
-                throw new WtfAreYouDoingException(scope, "Da path must be a string.",
-                        tFuncCall.lineNumber);
+                throw new WtfAreYouDoingException(callProperties.scope(), "Da path must be a string.",
+                        callProperties.tFuncCall().lineNumber);
 
-            Path baseDir = (config.getFilePath() != null) ? config.getFilePath().getParent() : null;
+            Path baseDir = (callProperties.config().getFilePath() != null) ? callProperties.config().getFilePath().getParent() : null;
             Path filePath;
             if (baseDir != null) {
                 filePath = Paths.get((String) path);
@@ -282,8 +281,8 @@ public class FileApi extends BaseLibrary {
 
             java.io.File file = filePath.toFile();
             if (!file.exists())
-                throw new WtfAreYouDoingException(new Scope(config), "FileApi does not exist: " + filePath,
-                        tFuncCall.lineNumber);
+                throw new WtfAreYouDoingException(new Scope(callProperties.config()), "FileApi does not exist: " + filePath,
+                        callProperties.tFuncCall().lineNumber);
 
             ArrayList<String> contents = new ArrayList<>();
             try (Scanner scanner = new Scanner(file)) {
@@ -291,14 +290,14 @@ public class FileApi extends BaseLibrary {
                     contents.add(scanner.nextLine());
                 }
             } catch (FileNotFoundException e) {
-                throw new CatchAllException(new Scope(config),
-                        "Cannot read file but we found it... " + filePath, tFuncCall.lineNumber);
+                throw new CatchAllException(new Scope(callProperties.config()),
+                        "Cannot read file but we found it... " + filePath, callProperties.tFuncCall().lineNumber);
             }
 
             ArrayList<Object> result = new ArrayList<>();
             result.add(file.getName());
             result.add(file.getParentFile() != null ? file.getParentFile().getAbsolutePath()
-                    : Token.voidValue(tFuncCall.lineNumber));
+                    : Token.voidValue(callProperties.tFuncCall().lineNumber));
             result.add(contents);
             result.add(new ArrayList<>(Arrays.asList(file.canRead(), file.canWrite(), file.canExecute())));
             return result;
@@ -377,23 +376,22 @@ public class FileApi extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object path = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object path = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
             if (!(path instanceof String))
-                throw new FunctionParametersException(scope, this, "1", params.get(0), String.class,
-                        tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", callProperties.params().get(0), String.class,
+                        callProperties.tFuncCall().lineNumber);
 
-            Object content = Primitives.toPrimitive(params.get(1), false, config,
-                    scope);
+            Object content = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(),
+                    callProperties.scope());
             StringBuilder outBuilder = new StringBuilder();
             String output = content instanceof String ? (String) content : "";
             if (!(content instanceof String) && !(content instanceof ArrayList))
-                throw new FunctionParametersException(scope, this, "2", params.get(1), String.class,
-                        tFuncCall.lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "2", callProperties.params().get(1), String.class,
+                        callProperties.tFuncCall().lineNumber);
             if (content instanceof ArrayList<?> list) {
                 if (list.isEmpty())
                     output = "";
@@ -410,31 +408,31 @@ public class FileApi extends BaseLibrary {
             }
 
             boolean canRead = true, canWrite = true, canExecute = true;
-            if (params.size() > 2) {
-                Object cr = Primitives.toPrimitive(params.get(2), false, config,
-                        scope);
+            if (callProperties.params().size() > 2) {
+                Object cr = Primitives.toPrimitive(callProperties.params().get(2), false, callProperties.config(),
+                        callProperties.scope());
                 if (!(cr instanceof Boolean))
-                    throw new FunctionParametersException(scope, this, "3", params.get(2), boolean.class,
-                            tFuncCall.lineNumber);
+                    throw new FunctionParametersException(callProperties.scope(), this, "3", callProperties.params().get(2), boolean.class,
+                            callProperties.tFuncCall().lineNumber);
                 canRead = cr.equals(Boolean.TRUE);
             }
-            if (params.size() > 3) {
-                Object cw = Primitives.toPrimitive(params.get(3), false, config,
-                        scope);
+            if (callProperties.params().size() > 3) {
+                Object cw = Primitives.toPrimitive(callProperties.params().get(3), false, callProperties.config(),
+                        callProperties.scope());
                 if (!(cw instanceof Boolean))
-                    throw new FunctionParametersException(scope, this, "4", params.get(3), boolean.class,
-                            tFuncCall.lineNumber);
+                    throw new FunctionParametersException(callProperties.scope(), this, "4", callProperties.params().get(3), boolean.class,
+                            callProperties.tFuncCall().lineNumber);
                 canWrite = cw.equals(Boolean.TRUE);
             }
-            if (params.size() > 4) {
-                Object ce = Primitives.toPrimitive(params.get(4), false, config,
-                        scope);
+            if (callProperties.params().size() > 4) {
+                Object ce = Primitives.toPrimitive(callProperties.params().get(4), false, callProperties.config(),
+                        callProperties.scope());
                 if (!(ce instanceof Boolean))
-                    throw new FunctionParametersException(scope, this, "5", params.get(4), boolean.class,
-                            tFuncCall.lineNumber);
+                    throw new FunctionParametersException(callProperties.scope(), this, "5", callProperties.params().get(4), boolean.class,
+                            callProperties.tFuncCall().lineNumber);
                 canExecute = ce.equals(Boolean.TRUE);
             }
-            Path baseDir = (config.getFilePath() != null) ? config.getFilePath().getParent() : null;
+            Path baseDir = (callProperties.config().getFilePath() != null) ? callProperties.config().getFilePath().getParent() : null;
             Path newFilePath = Paths.get((String) path);
 
             if (newFilePath.toFile().exists())

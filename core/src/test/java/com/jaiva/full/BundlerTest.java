@@ -2,15 +2,14 @@ package com.jaiva.full;
 
 import com.jaiva.JBundler;
 import com.jaiva.errors.JaivaException;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.PublicLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 import com.jaiva.tokenizer.tokens.specific.TFunction;
 import com.jaiva.tokenizer.tokens.specific.TStringVar;
 import org.junit.jupiter.api.Assertions;
@@ -35,9 +34,9 @@ class CustomLib extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            this.checkParams(tFuncCall, scope);
-            return params.getFirst();
+        public Object call(CallProperties callProperties) throws Exception {
+            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
+            return callProperties.params().getFirst();
         }
     }
 

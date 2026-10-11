@@ -2,7 +2,6 @@ package com.jaiva.interpreter.libs.types;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -10,16 +9,12 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libBuilders.func.arg.AVarArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.SymbolConfig;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.jdoc.JDocBuilder;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 @JaivaLibrary(path="types/numbers", description = "More complicated converters")
 public class Numbers extends BaseLibrary {
@@ -58,15 +53,15 @@ public class Numbers extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object val = Primitives.toPrimitive(params.getFirst(), false,
-                    config, scope);
+            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false,
+                    callProperties.config(), callProperties.scope());
 
             if (!(val instanceof Double d))
-                throw new InterpreterException.FunctionParametersException(scope, this, "1", val, Double.class,
-                        tFuncCall.lineNumber);
+                throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "1", val, Double.class,
+                        callProperties.tFuncCall().lineNumber);
 
             return Double.doubleToLongBits(d);
         }
@@ -99,15 +94,15 @@ public class Numbers extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object val = Primitives.toPrimitive(params.getFirst(), false,
-                    config, scope);
+            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false,
+                    callProperties.config(), callProperties.scope());
 
             if (!(val instanceof Long l))
-                throw new InterpreterException.FunctionParametersException(scope, this, "1", val, Long.class,
-                        tFuncCall.lineNumber);
+                throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "1", val, Long.class,
+                        callProperties.tFuncCall().lineNumber);
 
             return Double.longBitsToDouble(l);
         }
@@ -143,11 +138,11 @@ public class Numbers extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            if (params.isEmpty() || (params.size() == 1 && params.getFirst() == null)) return Token.voidValue(tFuncCall.lineNumber);
-            byte[] collectedBytss = new byte[params.size()];
-            for (int i = 0; i < params.size(); i++) {
-                Object val = Primitives.toPrimitive(params.get(i), false, config, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            if (callProperties.params().isEmpty() || (callProperties.params().size() == 1 && callProperties.params().getFirst() == null)) return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            byte[] collectedBytss = new byte[callProperties.params().size()];
+            for (int i = 0; i < callProperties.params().size(); i++) {
+                Object val = Primitives.toPrimitive(callProperties.params().get(i), false, callProperties.config(), callProperties.scope());
 
                 try {
                     if (val instanceof Integer l)
@@ -155,11 +150,11 @@ public class Numbers extends BaseLibrary {
                     else if (val instanceof Long l)
                         collectedBytss[i] = TypeConverter.toByte(l);
                     else throw new InterpreterException.WtfAreYouDoingException(
-                            scope, "Okay so like " + val + " just isnt something that can be represented as a byte bro.", tFuncCall.lineNumber
+                                callProperties.scope(), "Okay so like " + val + " just isnt something that can be represented as a byte bro.", callProperties.tFuncCall().lineNumber
                         );
                 } catch (IllegalArgumentException e) {
                     throw new InterpreterException.WtfAreYouDoingException(
-                            scope, "One of the integer/long values in the array was either lwoert ahn 0 or higher than 255!", tFuncCall.lineNumber
+                            callProperties.scope(), "One of the integer/long values in the array was either lwoert ahn 0 or higher than 255!", callProperties.tFuncCall().lineNumber
                     );
                 }
             }

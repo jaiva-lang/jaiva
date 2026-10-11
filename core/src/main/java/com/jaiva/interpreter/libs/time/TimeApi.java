@@ -2,7 +2,6 @@ package com.jaiva.interpreter.libs.time;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -13,10 +12,8 @@ import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
-import com.jaiva.tokenizer.tokens.specific.TFunction;
-import com.jaiva.tokenizer.tokens.specific.TNumberVar;
 import com.jaiva.tokenizer.tokens.specific.TVoidValue;
 
 import java.time.DateTimeException;
@@ -24,7 +21,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 
 @JaivaLibrary(path = "time/api", description = "The time api where the relevant things such as parsing dates are.")
 public class TimeApi extends BaseLibrary {
@@ -48,8 +44,8 @@ public class TimeApi extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
             return System.currentTimeMillis();
         }
     }
@@ -73,11 +69,11 @@ public class TimeApi extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope);
-            Object val = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             if (!(val instanceof Number num))
-                throw new InterpreterException.WtfAreYouDoingException(scope, "t_msToSec() only accepts a number.", tFuncCall.lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_msToSec() only accepts a number.", callProperties.tFuncCall().lineNumber);
 
             return num.doubleValue() / 1000.0;
         }
@@ -128,17 +124,17 @@ public class TimeApi extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope);
-            Object dateStringObj = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object dateStringObj = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             if (!(dateStringObj instanceof String dateString))
-                throw new InterpreterException.WtfAreYouDoingException(scope, "t_parseDate() expects a date string as the first argument.", tFuncCall.lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_parseDate() expects a date string as the first argument.", callProperties.tFuncCall().lineNumber);
 
             String format = null;
-            if (params.size() > 1) {
-                Object formatObj = Primitives.toPrimitive(params.get(1), false, config, scope);
+            if (callProperties.params().size() > 1) {
+                Object formatObj = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(), callProperties.scope());
                 if (!(formatObj instanceof String) && !(formatObj instanceof TVoidValue))
-                    throw new InterpreterException.WtfAreYouDoingException(scope, "t_parseDate() expects a format string as the second argument.", tFuncCall.lineNumber);
+                    throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_parseDate() expects a format string as the second argument.", callProperties.tFuncCall().lineNumber);
                 format = formatObj instanceof TVoidValue ? null : (String) formatObj;
             }
 
@@ -147,8 +143,8 @@ public class TimeApi extends BaseLibrary {
                 try {
                     formatter = DateTimeFormatter.ofPattern(format);
                 } catch (IllegalArgumentException e) {
-                    throw new InterpreterException.WtfAreYouDoingException(scope, "Pls put valid format for date gng. "+
-                            "(One day i'll make a format package, and that same day ill make the inverse to this function)",  tFuncCall.lineNumber);
+                    throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "Pls put valid format for date gng. "+
+                            "(One day i'll make a format package, and that same day ill make the inverse to this function)", callProperties.tFuncCall().lineNumber);
                 }
             } else
                 formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -156,10 +152,10 @@ public class TimeApi extends BaseLibrary {
             LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
 
             String timezone = "UTC";
-            if (params.size() > 2) {
-                Object formatObj = Primitives.toPrimitive(params.get(2), false, config, scope);
+            if (callProperties.params().size() > 2) {
+                Object formatObj = Primitives.toPrimitive(callProperties.params().get(2), false, callProperties.config(), callProperties.scope());
                 if (!(formatObj instanceof String))
-                    throw new InterpreterException.FunctionParametersException(scope, this, "3", formatObj, String.class, tFuncCall.lineNumber);
+                    throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "3", formatObj, String.class, callProperties.tFuncCall().lineNumber);
 //                    throw new InterpreterException.WtfAreYouDoingException(scope, "t_parseDate() needs the 3rd param to be a string zawg.", tFuncCall.lineNumber);
                 timezone = (String) formatObj;
             }
@@ -168,7 +164,7 @@ public class TimeApi extends BaseLibrary {
             try {
                 timeZoneId = ZoneId.of(timezone);
             } catch (DateTimeException f) {
-                throw new InterpreterException.WtfAreYouDoingException(scope, "If you parse a zoneID it has to be valid zawlf", tFuncCall.lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "If you parse a zoneID it has to be valid zawlf", callProperties.tFuncCall().lineNumber);
             }
 
             ZonedDateTime zonedDateTime = dateTime.atZone(timeZoneId);

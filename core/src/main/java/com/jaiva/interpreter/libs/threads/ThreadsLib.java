@@ -2,16 +2,14 @@ package com.jaiva.interpreter.libs.threads;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AFuncArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 import com.jaiva.tokenizer.tokens.specific.TVoidValue;
 import com.yetnt.utils.builders.AnsiColour;
 import com.yetnt.utils.functional.consumer.ThrowableBiConsumer;
@@ -100,24 +98,24 @@ public class ThreadsLib extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
-            checkParams(tFuncCall, scope);
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
             Object funcToCall = Primitives.toPrimitive(
-                    params.getFirst(), false, config, scope
+                    callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope()
             );
             if (!(funcToCall instanceof BaseFunction function))
                 throw new InterpreterException.FunctionParametersException(
-                        scope, this, "1", funcToCall, BaseFunction.class, tFuncCall.lineNumber
+                        callProperties.scope(), this, "1", funcToCall, BaseFunction.class, callProperties.tFuncCall().lineNumber
                 );
 
             BaseFunction cleanup;
-            if (params.size() > 1) {
+            if (callProperties.params().size() > 1) {
                 Object funcForCleanup = Primitives.toPrimitive(
-                        params.get(1), false, config, scope
+                        callProperties.params().get(1), false, callProperties.config(), callProperties.scope()
                 );
                 if (!(funcForCleanup instanceof BaseFunction) && !(funcForCleanup instanceof TVoidValue))
                     throw new InterpreterException.FunctionParametersException(
-                            scope, this, "1", funcForCleanup, BaseFunction.class, tFuncCall.lineNumber
+                            callProperties.scope(), this, "1", funcForCleanup, BaseFunction.class, callProperties.tFuncCall().lineNumber
                     );
 
                 // if they put idk the value, then its the same as not putting a value.
@@ -128,7 +126,7 @@ public class ThreadsLib extends BaseLibrary {
 
             ThrowableRunnable<Exception> runnable = () -> {
                 function.call(
-                        new ArrayList<>(), config, scope, tFuncCall
+                        new ArrayList<>(), callProperties.config(), callProperties.scope(), callProperties.tFuncCall()
                 );
             };
 
@@ -143,11 +141,11 @@ public class ThreadsLib extends BaseLibrary {
 
                 cleanup.call(
                         new ArrayList<>(List.of(code.toString(), exceptionMessage)),
-                        config, scope, tFuncCall
+                        callProperties.config(), callProperties.scope(), callProperties.tFuncCall()
                 );
             };
 
-            ThreadedInterp thread = new ThreadedInterp(config, runnable, cleanupHandler);
+            ThreadedInterp thread = new ThreadedInterp(callProperties.config(), runnable, cleanupHandler);
 
             thread.start();
 

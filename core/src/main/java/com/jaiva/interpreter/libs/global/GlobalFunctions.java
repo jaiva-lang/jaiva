@@ -4,7 +4,6 @@ import com.jaiva.Main;
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.MapValue;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -14,6 +13,7 @@ import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.jdoc.JDoc;
@@ -83,25 +83,25 @@ public class GlobalFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
+        public Object call(CallProperties callProperties) throws Exception {
             ArrayList<String> s = new ArrayList<>();
 
-            checkParams(tFuncCall, scope);
-            params.forEach(o -> {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            callProperties.params().forEach(o -> {
                 try {
-                    Object c = Primitives.toPrimitive(o, false, config, scope);
+                    Object c = Primitives.toPrimitive(o, false, callProperties.config(), callProperties.scope());
                     if (c instanceof String s2) {
                         s.add(s2);
                     } else {
-                        throw new InterpreterException.WtfAreYouDoingException(scope, "scope() only accepts input of string.", tFuncCall.lineNumber);
+                        throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "scope() only accepts input of string.", callProperties.tFuncCall().lineNumber);
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             });
 
-            scope.getConfig().set(tFuncCall.lineNumber, scope, s.toArray(String[]::new));
-            return Token.voidValue(tFuncCall.lineNumber);
+            callProperties.scope().getConfig().set(callProperties.tFuncCall().lineNumber, callProperties.scope(), s.toArray(String[]::new));
+            return Token.voidValue(callProperties.tFuncCall().lineNumber);
         }
     }
 
@@ -136,27 +136,26 @@ public class GlobalFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params,
-                           IConfig<Object> config, Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
             String name;
-            if (params.getFirst() instanceof String) {
-                name = (String) params.getFirst();
-            } else if (params.getFirst() instanceof Token && ((Token<?>) params.getFirst()).value() instanceof TVarRef) {
-                name = ((TVarRef) ((Token<?>) params.getFirst()).value()).varName.toString();
+            if (callProperties.params().getFirst() instanceof String) {
+                name = (String) callProperties.params().getFirst();
+            } else if (callProperties.params().getFirst() instanceof Token && ((Token<?>) callProperties.params().getFirst()).value() instanceof TVarRef) {
+                name = ((TVarRef) ((Token<?>) callProperties.params().getFirst()).value()).varName.toString();
             } else {
-                throw new InterpreterException.WtfAreYouDoingException(scope,
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
                         "getVarClass() only accepts a variable reference or a string, whatever you sent is disgusting.",
-                        tFuncCall.lineNumber);
+                        callProperties.tFuncCall().lineNumber);
             }
-            MapValue var = scope.getVfs().get(name);
+            MapValue var = callProperties.scope().getVfs().get(name);
             if (var == null) {
-                throw new InterpreterException.UnknownVariableException(scope, name, tFuncCall.lineNumber);
+                throw new InterpreterException.UnknownVariableException(callProperties.scope(), name, callProperties.tFuncCall().lineNumber);
             }
             if (!(var.getValue() instanceof Symbol symbol)) {
-                throw new InterpreterException.WtfAreYouDoingException(scope,
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
                         name + " is not a variable nor a function, wtf. this error shouldnt happen.",
-                        tFuncCall.lineNumber);
+                        callProperties.tFuncCall().lineNumber);
             }
             // We need to convert the named token to a raw token so we can call .toString()
             // on it.
@@ -205,11 +204,10 @@ public class GlobalFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params,
-                           IConfig<Object> config, Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            Object value = config.getCallerValue();
-            return value == null ? Token.voidValue(tFuncCall.lineNumber) : Primitives.toPrimitive(value, false, config, scope);
+            Object value = callProperties.config().getCallerValue();
+            return value == null ? Token.voidValue(callProperties.tFuncCall().lineNumber) : Primitives.toPrimitive(value, false, callProperties.config(), callProperties.scope());
         }
     }
 
@@ -261,16 +259,15 @@ public class GlobalFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params,
-                           IConfig<Object> config, Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
 
-            checkParams(tFuncCall, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
             ArrayList<Object> returned = new ArrayList<>();
-            params.forEach(arg -> {
+            callProperties.params().forEach(arg -> {
                 if (arg instanceof TVarRef && ((TVarRef) arg).index == null) {
                     String name = ((TVarRef) arg).name;
-                    MapValue v = scope.getVfs().get(name);
+                    MapValue v = callProperties.scope().getVfs().get(name);
                     if (v == null)
                         return;
                     if (!(v.getValue() instanceof BaseVariable))
@@ -283,7 +280,7 @@ public class GlobalFunctions extends BaseLibrary {
                     // stuff that need be parsed, parse and pray arraylist is returned.
                     Object parsed = null;
                     try {
-                        parsed = Primitives.toPrimitive(arg,  false, config, scope);
+                        parsed = Primitives.toPrimitive(arg,  false, callProperties.config(), callProperties.scope());
                     } catch (Exception e) {
                         // do nothing.
                     }
@@ -337,19 +334,18 @@ public class GlobalFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params,  IConfig<Object> config,
-                           Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(tFuncCall, scope);
-            Object val = Primitives.toPrimitive(params.getFirst(),  false, config,
-                    scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object val = Primitives.toPrimitive(callProperties.params().getFirst(),  false, callProperties.config(),
+                    callProperties.scope());
             if (!(val instanceof Integer integer))
-                throw new InterpreterException.WtfAreYouDoingException(scope, "Bruv, you can't just like, pls put number",
-                        tFuncCall.lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "Bruv, you can't just like, pls put number",
+                        callProperties.tFuncCall().lineNumber);
 
             Thread.sleep(integer);
 
-            return Token.voidValue(tFuncCall.lineNumber);
+            return Token.voidValue(callProperties.tFuncCall().lineNumber);
         }
     }
 
@@ -386,15 +382,14 @@ public class GlobalFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                           Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
 
-            this.checkParams(tFuncCall, scope);
-            if (params.isEmpty())
-                return Token.voidValue(tFuncCall.lineNumber);
-            Object val = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
+            if (callProperties.params().isEmpty())
+                return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
 
             return switch (val) {
                 case Integer ignored2 -> "integer";
@@ -402,7 +397,7 @@ public class GlobalFunctions extends BaseLibrary {
                 case Long ignored -> "long";
                 case null, default ->
 // there is no other type to possibly check for.
-                        Token.voidValue(tFuncCall.lineNumber);
+                        Token.voidValue(callProperties.tFuncCall().lineNumber);
             };
         }
     }
@@ -441,15 +436,14 @@ public class GlobalFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                           Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
 
-            this.checkParams(tFuncCall, scope);
-            if (params.isEmpty())
-                return Token.voidValue(tFuncCall.lineNumber);
-            Object val = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
+            if (callProperties.params().isEmpty())
+                return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
 
             return switch (val) {
                 case ArrayList arrayList -> "array";
@@ -459,7 +453,7 @@ public class GlobalFunctions extends BaseLibrary {
                 case String s -> "string";
                 case null, default ->
 // there is no other type to possibly check for.
-                        Token.voidValue(tFuncCall.lineNumber);
+                        Token.voidValue(callProperties.tFuncCall().lineNumber);
             };
         }
     }
@@ -493,14 +487,13 @@ public class GlobalFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params,
-                           IConfig<Object> config, Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
 
-            checkParams(tFuncCall, scope);
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
             ArrayList<Object> returned = new ArrayList<>();
-            for (Object arg : params) {
-                returned.add(Primitives.toPrimitive(arg, false, config, scope));
+            for (Object arg : callProperties.params()) {
+                returned.add(Primitives.toPrimitive(arg, false, callProperties.config(), callProperties.scope()));
             }
             return returned;
         }

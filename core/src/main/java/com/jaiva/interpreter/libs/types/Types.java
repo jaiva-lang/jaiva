@@ -3,7 +3,6 @@ package com.jaiva.interpreter.libs.types;
 import com.jaiva.errors.InterpreterException.FunctionParametersException;
 import com.jaiva.errors.InterpreterException.WtfAreYouDoingException;
 import com.jaiva.interpreter.Primitives;
-import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -11,12 +10,10 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.Exports;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.specific.TFuncCall;
-import com.jaiva.tokenizer.tokens.specific.TFunction;
 import com.jaiva.tokenizer.tokens.specific.TVoidValue;
 import com.yetnt.utils.functional.function.ThrowableTriFunction;
 
@@ -78,16 +75,15 @@ public class Types extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                           Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            this.checkParams(tFuncCall, scope);
-            Object val = Primitives.toPrimitive(params.getFirst(), false, config,
-                    scope);
+            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
+                    callProperties.scope());
 
             if (!(val instanceof String value))
-                throw new WtfAreYouDoingException(scope, params.getFirst() + " cannot become a number kau",
-                        tFuncCall.lineNumber);
+                throw new WtfAreYouDoingException(callProperties.scope(), callProperties.params().getFirst() + " cannot become a number kau",
+                        callProperties.tFuncCall().lineNumber);
 
             int type = value.startsWith("0b") ? 2 : value.startsWith("0x") ? 16 : value.startsWith("0c") ? 8 : -1;
             value = type != -1 ? value.substring(2) : value;
@@ -101,10 +97,10 @@ public class Types extends BaseLibrary {
                 if (p.size() == 1)
                     return Long.parseLong(v, t != -1 ? t : 10);
 
-                Object r = Primitives.toPrimitive(p.get(1), false, config,
-                        scope);
+                Object r = Primitives.toPrimitive(p.get(1), false, callProperties.config(),
+                        callProperties.scope());
                 if (!(r instanceof TVoidValue) && !(r instanceof Integer))
-                    throw new FunctionParametersException(scope, this, "2", r, Integer.class, tFuncCall.lineNumber);
+                    throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
                 int radix = r instanceof TVoidValue ? -1 : (int) r;
 
                 return Long.parseLong(v, t != -1 ? t : radix != -1 ? radix : 10);
@@ -117,16 +113,16 @@ public class Types extends BaseLibrary {
                 else if (value.endsWith("l") ||  value.endsWith("L")) {
                     attemptedLong = true;
                     value =  value.substring(0, value.length() - 1);
-                    return attemptLong.apply(type, params, value);
+                    return attemptLong.apply(type, callProperties.params(), value);
                 }
                 else {
-                    if (params.size() == 1)
+                    if (callProperties.params().size() == 1)
                         return Integer.parseInt(value, type != -1 ? type : 10);
 
-                    Object r = Primitives.toPrimitive(params.get(1), false, config,
-                            scope);
+                    Object r = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(),
+                            callProperties.scope());
                     if (!(r instanceof TVoidValue) && !(r instanceof Integer))
-                        throw new FunctionParametersException(scope, this, "2", r, Integer.class, tFuncCall.lineNumber);
+                        throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
                     int radix = r instanceof TVoidValue ? -1 : (int) r;
 
                     return Integer.parseInt(value, type != -1 ? type : radix != -1 ? radix : 10);
@@ -135,14 +131,14 @@ public class Types extends BaseLibrary {
                 // i lowkey dont care if this can be simplified. double try catch
                 try {
                     if (!attemptedLong) {
-                        return attemptLong.apply(type, params, value);
+                        return attemptLong.apply(type, callProperties.params(), value);
                     } else {
-                        throw new WtfAreYouDoingException(scope, params.getFirst() + " cannot become a number kau",
-                            tFuncCall.lineNumber);
+                        throw new WtfAreYouDoingException(callProperties.scope(), callProperties.params().getFirst() + " cannot become a number kau",
+                                callProperties.tFuncCall().lineNumber);
                     }
                 } catch (NumberFormatException e2){
-                    throw new WtfAreYouDoingException(scope, params.getFirst() + " cannot become a number kau",
-                            tFuncCall.lineNumber);
+                    throw new WtfAreYouDoingException(callProperties.scope(), callProperties.params().getFirst() + " cannot become a number kau",
+                            callProperties.tFuncCall().lineNumber);
                 }
             }
         }
@@ -191,12 +187,11 @@ public class Types extends BaseLibrary {
         }
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config,
-                Scope scope)
+        public Object call(CallProperties callProperties)
                 throws Exception {
-            this.checkParams(tFuncCall, scope);
-            Object val = Primitives.toPrimitive(params.get(0), false, config,
-                    scope);
+            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
+            Object val = Primitives.toPrimitive(callProperties.params().get(0), false, callProperties.config(),
+                    callProperties.scope());
 
             return switch (val) {
                 case Double aDouble -> val.toString();
@@ -207,12 +202,12 @@ public class Types extends BaseLibrary {
                     // return Jaiva's true and false all the time.
                     b ? Keywords.TRUE : Keywords.FALSE;
                 case Long l -> {
-                    if (params.size() == 1)
+                    if (callProperties.params().size() == 1)
                         yield val.toString();
-                    Object r = Primitives.toPrimitive(params.get(1), false, config,
-                            scope);
+                    Object r = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(),
+                            callProperties.scope());
                     if (!(r instanceof TVoidValue) && !(r instanceof Integer))
-                        throw new FunctionParametersException(scope, this, "2", r, Integer.class, tFuncCall.lineNumber);
+                        throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
                     int radix = r instanceof TVoidValue ? -1 : (int) r;
                     yield switch (radix) {
                         case 2 -> "0b" + Long.toBinaryString(l);
@@ -222,12 +217,12 @@ public class Types extends BaseLibrary {
                     };
                 }
                 case Integer integer -> {
-                    if (params.size() == 1)
+                    if (callProperties.params().size() == 1)
                         yield val.toString();
-                    Object r = Primitives.toPrimitive(params.get(1), false, config,
-                            scope);
+                    Object r = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(),
+                            callProperties.scope());
                     if (!(r instanceof TVoidValue) && !(r instanceof Integer))
-                        throw new FunctionParametersException(scope, this, "2", r, Integer.class, tFuncCall.lineNumber);
+                        throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
                     int radix = r instanceof TVoidValue ? -1 : (int) r;
                     yield switch (radix) {
                         case 2 -> "0b" + Integer.toBinaryString(integer);
@@ -238,8 +233,8 @@ public class Types extends BaseLibrary {
                 }
                 case TVoidValue v -> v.toString();
                 case String s -> s;
-                case null, default -> throw new WtfAreYouDoingException(scope, val + " cannot become a string kau",
-                        tFuncCall.lineNumber);
+                case null, default -> throw new WtfAreYouDoingException(callProperties.scope(), val + " cannot become a string kau",
+                        callProperties.tFuncCall().lineNumber);
             };
         }
     }
