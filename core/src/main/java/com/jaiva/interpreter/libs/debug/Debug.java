@@ -72,7 +72,7 @@ public class Debug extends BaseLibrary {
                             )
             );
             freeze();
-            setEvaluateParamsEarly(false);
+            evaluateParamsLater();
         }
 
         @Override
@@ -128,7 +128,7 @@ public class Debug extends BaseLibrary {
                     )
             );
             freeze();
-            setEvaluateParamsEarly(false);
+            evaluateParamsLater();
         }
 
         @Override

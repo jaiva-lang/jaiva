@@ -78,8 +78,7 @@ public class Types extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             this.checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
+            Object val = callProperties.params().getFirst();
 
             if (!(val instanceof String value))
                 throw new WtfAreYouDoingException(callProperties.scope(), callProperties.params().getFirst() + " cannot become a number kau",
@@ -97,8 +96,7 @@ public class Types extends BaseLibrary {
                 if (p.size() == 1)
                     return Long.parseLong(v, t != -1 ? t : 10);
 
-                Object r = Primitives.toPrimitive(p.get(1), false, callProperties.config(),
-                        callProperties.scope());
+                Object r = p.get(1);
                 if (!(r instanceof TVoidValue) && !(r instanceof Integer))
                     throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
                 int radix = r instanceof TVoidValue ? -1 : (int) r;
@@ -119,8 +117,7 @@ public class Types extends BaseLibrary {
                     if (callProperties.params().size() == 1)
                         return Integer.parseInt(value, type != -1 ? type : 10);
 
-                    Object r = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(),
-                            callProperties.scope());
+                    Object r = callProperties.params().get(1);
                     if (!(r instanceof TVoidValue) && !(r instanceof Integer))
                         throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
                     int radix = r instanceof TVoidValue ? -1 : (int) r;
@@ -190,8 +187,7 @@ public class Types extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             this.checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object val = Primitives.toPrimitive(callProperties.params().get(0), false, callProperties.config(),
-                    callProperties.scope());
+            Object val = callProperties.params().getFirst();
 
             return switch (val) {
                 case Double aDouble -> val.toString();
@@ -204,8 +200,7 @@ public class Types extends BaseLibrary {
                 case Long l -> {
                     if (callProperties.params().size() == 1)
                         yield val.toString();
-                    Object r = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(),
-                            callProperties.scope());
+                    Object r = callProperties.params().get(1);
                     if (!(r instanceof TVoidValue) && !(r instanceof Integer))
                         throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
                     int radix = r instanceof TVoidValue ? -1 : (int) r;
@@ -219,8 +214,7 @@ public class Types extends BaseLibrary {
                 case Integer integer -> {
                     if (callProperties.params().size() == 1)
                         yield val.toString();
-                    Object r = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(),
-                            callProperties.scope());
+                    Object r = callProperties.params().get(1);
                     if (!(r instanceof TVoidValue) && !(r instanceof Integer))
                         throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
                     int radix = r instanceof TVoidValue ? -1 : (int) r;

@@ -100,9 +100,8 @@ public class ThreadsLib extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object funcToCall = Primitives.toPrimitive(
-                    callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope()
-            );
+            Object funcToCall =
+                    callProperties.params().getFirst();
             if (!(funcToCall instanceof BaseFunction function))
                 throw new InterpreterException.FunctionParametersException(
                         callProperties.scope(), this, "1", funcToCall, BaseFunction.class, callProperties.tFuncCall().lineNumber
@@ -110,9 +109,8 @@ public class ThreadsLib extends BaseLibrary {
 
             BaseFunction cleanup;
             if (callProperties.params().size() > 1) {
-                Object funcForCleanup = Primitives.toPrimitive(
-                        callProperties.params().get(1), false, callProperties.config(), callProperties.scope()
-                );
+                Object funcForCleanup =
+                        callProperties.params().get(1);
                 if (!(funcForCleanup instanceof BaseFunction) && !(funcForCleanup instanceof TVoidValue))
                     throw new InterpreterException.FunctionParametersException(
                             callProperties.scope(), this, "1", funcForCleanup, BaseFunction.class, callProperties.tFuncCall().lineNumber

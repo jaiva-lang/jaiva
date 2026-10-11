@@ -84,7 +84,7 @@ public class FileBytes extends BaseLibrary {
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object p = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object p = callProperties.params().getFirst();
             if (!(p instanceof String path))
                 throw new InterpreterException.FunctionParametersException(
                         callProperties.scope(), this, "1", p, String.class, callProperties.tFuncCall().lineNumber
@@ -92,7 +92,7 @@ public class FileBytes extends BaseLibrary {
 
             boolean append = true;
             if (callProperties.params().size() > 1
-                    && Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(), callProperties.scope()) instanceof Boolean b)
+                    && callProperties.params().get(1) instanceof Boolean b)
                 append = b;
 
             File f = new File(path);
@@ -217,7 +217,7 @@ public class FileBytes extends BaseLibrary {
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object p = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object p = callProperties.params().getFirst();
             if (!(p instanceof String path))
                 throw new InterpreterException.FunctionParametersException(
                         callProperties.scope(), this, "1", p, String.class, callProperties.tFuncCall().lineNumber
@@ -251,8 +251,7 @@ public class FileBytes extends BaseLibrary {
 
                             if (pr.isEmpty()) return unknown;
                             if (pr.size() == 1 && pr.getFirst() == null) return unknown;
-                            if (!(Primitives.toPrimitive(pr.getFirst(), false, callProperties.config(), callProperties.scope())
-                            instanceof String type)) return unknown;
+                            if (!(pr.getFirst() instanceof String type)) return unknown;
 
                             if (type.startsWith("r_"))
                                 type = type.substring(2);

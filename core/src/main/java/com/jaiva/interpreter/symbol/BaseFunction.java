@@ -24,14 +24,6 @@ public class BaseFunction extends Symbol {
 
     private boolean evaluateParamsEarly = true;
 
-    public boolean isEvaluateParamsEarly() {
-        return evaluateParamsEarly;
-    }
-
-    protected void setEvaluateParamsEarly(boolean evaluateParamsEarly) {
-        this.evaluateParamsEarly = evaluateParamsEarly;
-    }
-
     /**
      * Constructs a new BaseFunction instance with the specified name and token.
      * 
@@ -109,6 +101,14 @@ public class BaseFunction extends Symbol {
                         tokens,
                         originalCall.lineNumber, false, false
                 ), params, config, scope));
+    }
+
+    public boolean isEvaluateParamsEarly() {
+        return evaluateParamsEarly;
+    }
+
+    protected void evaluateParamsLater() {
+        this.evaluateParamsEarly = false;
     }
 
     /**

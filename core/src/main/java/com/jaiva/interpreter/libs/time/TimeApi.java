@@ -1,7 +1,6 @@
 package com.jaiva.interpreter.libs.time;
 
 import com.jaiva.errors.InterpreterException;
-import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -25,7 +24,7 @@ import java.time.format.DateTimeFormatter;
 @JaivaLibrary(path = "time/api", description = "The time api where the relevant things such as parsing dates are.")
 public class TimeApi extends BaseLibrary {
     public TimeApi(IConfig<Object> config) {
-        add(new FNow(), new FMsToSec(), new FParseDate(), new FMaxTime());
+        add(new FNow(), new FMsToSec(), new FParseDate(), new VMaxTime());
     }
 
     public static class FNow extends BaseFunction {
@@ -71,7 +70,7 @@ public class TimeApi extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object val = callProperties.params().getFirst();
             if (!(val instanceof Number num))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_msToSec() only accepts a number.", callProperties.tFuncCall().lineNumber);
 
@@ -126,13 +125,13 @@ public class TimeApi extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object dateStringObj = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object dateStringObj = callProperties.params().getFirst();
             if (!(dateStringObj instanceof String dateString))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_parseDate() expects a date string as the first argument.", callProperties.tFuncCall().lineNumber);
 
             String format = null;
             if (callProperties.params().size() > 1) {
-                Object formatObj = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(), callProperties.scope());
+                Object formatObj = callProperties.params().get(1);
                 if (!(formatObj instanceof String) && !(formatObj instanceof TVoidValue))
                     throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_parseDate() expects a format string as the second argument.", callProperties.tFuncCall().lineNumber);
                 format = formatObj instanceof TVoidValue ? null : (String) formatObj;
@@ -153,7 +152,7 @@ public class TimeApi extends BaseLibrary {
 
             String timezone = "UTC";
             if (callProperties.params().size() > 2) {
-                Object formatObj = Primitives.toPrimitive(callProperties.params().get(2), false, callProperties.config(), callProperties.scope());
+                Object formatObj = callProperties.params().get(2);
                 if (!(formatObj instanceof String))
                     throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "3", formatObj, String.class, callProperties.tFuncCall().lineNumber);
 //                    throw new InterpreterException.WtfAreYouDoingException(scope, "t_parseDate() needs the 3rd param to be a string zawg.", tFuncCall.lineNumber);
@@ -172,8 +171,8 @@ public class TimeApi extends BaseLibrary {
         }
     }
 
-    public static class FMaxTime extends BaseVariable {
-        public FMaxTime() {
+    public static class VMaxTime extends BaseVariable {
+        public VMaxTime() {
             super(
                     VariableBuilder.start()
                             .name("t_maxTime")

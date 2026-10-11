@@ -70,8 +70,7 @@ public class MathBase extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
+            Object value = callProperties.params().getFirst();
 
             return switch (value) {
                 case Integer i -> Math.abs(i);
@@ -131,10 +130,8 @@ public class MathBase extends BaseLibrary {
 
             checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object lowerObject = Primitives.toPrimitive(callProperties.params().get(0), false,
-                    callProperties.config(), callProperties.scope());
-            Object upperObject = callProperties.params().size() > 1 ? Primitives.toPrimitive(callProperties.params().get(1), false,
-                    callProperties.config(), callProperties.scope()) : null;
+            Object lowerObject = callProperties.params().getFirst();
+            Object upperObject = callProperties.params().size() > 1 ?callProperties.params().get(1) : null;
 
             if (!(lowerObject instanceof Integer lower))
                 throw new FunctionParametersException(callProperties.scope(), this, "1", lowerObject, Integer.class,
@@ -196,8 +193,7 @@ public class MathBase extends BaseLibrary {
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
             
-            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
+            Object value = callProperties.params().getFirst();
 
             if (value instanceof Integer || value instanceof Long)
                 return value;
@@ -238,8 +234,8 @@ public class MathBase extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
+
+            Object value = callProperties.params().getFirst();
 
             Number n = switch (value) {
                 case Integer i -> Math.sqrt(i);
@@ -280,8 +276,7 @@ public class MathBase extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
+            Object value = callProperties.params().getFirst();
 
             if (value instanceof Integer i)
                 return i;
@@ -326,8 +321,7 @@ public class MathBase extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
+            Object value = callProperties.params().getFirst();
 
             if (value instanceof Integer i)
                 return i;
@@ -369,11 +363,9 @@ public class MathBase extends BaseLibrary {
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object value = Primitives.toPrimitive(callProperties.params().get(0), false, callProperties.config(),
-                    callProperties.scope());
-            Object base = callProperties.params().size() > 1
-                    ? Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(), callProperties.scope())
-                    : 10;
+            Object value = callProperties.params().getFirst();
+            Object base =
+                    callProperties.params().size() > 1 ? callProperties.params().get(1) : 10;
 
             if (!(value instanceof Number v))
                 throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);

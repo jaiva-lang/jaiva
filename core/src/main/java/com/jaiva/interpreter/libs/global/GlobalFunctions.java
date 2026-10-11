@@ -89,8 +89,7 @@ public class GlobalFunctions extends BaseLibrary {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
             callProperties.params().forEach(o -> {
                 try {
-                    Object c = Primitives.toPrimitive(o, false, callProperties.config(), callProperties.scope());
-                    if (c instanceof String s2) {
+                    if (o instanceof String s2) {
                         s.add(s2);
                     } else {
                         throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "scope() only accepts input of string.", callProperties.tFuncCall().lineNumber);
@@ -133,16 +132,19 @@ public class GlobalFunctions extends BaseLibrary {
                             )
             );
             freeze();
+            evaluateParamsLater();
         }
 
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
+            checkParams(callProperties.tFuncCall(), callProperties.scope());
             String name;
-            if (callProperties.params().getFirst() instanceof String) {
-                name = (String) callProperties.params().getFirst();
-            } else if (callProperties.params().getFirst() instanceof Token && ((Token<?>) callProperties.params().getFirst()).value() instanceof TVarRef) {
-                name = ((TVarRef) ((Token<?>) callProperties.params().getFirst()).value()).varName.toString();
+            ArrayList<Object> args = callProperties.tFuncCall().args;
+            if (args.getFirst() instanceof String str) {
+                name = str;
+            } else if (args.getFirst() instanceof Token && ((Token<?>) args.getFirst()).value() instanceof TVarRef) {
+                name = ((TVarRef) ((Token<?>) args.getFirst()).value()).varName.toString();
             } else {
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
                         "getVarClass() only accepts a variable reference or a string, whatever you sent is disgusting.",
@@ -154,7 +156,7 @@ public class GlobalFunctions extends BaseLibrary {
             }
             if (!(var.getValue() instanceof Symbol symbol)) {
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                        name + " is not a variable nor a function, wtf. this error shouldnt happen.",
+                        name + " is not a variable nor a function, wtf. this error shouldn't happen.",
                         callProperties.tFuncCall().lineNumber);
             }
             // We need to convert the named token to a raw token so we can call .toString()
@@ -207,7 +209,7 @@ public class GlobalFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             Object value = callProperties.config().getCallerValue();
-            return value == null ? Token.voidValue(callProperties.tFuncCall().lineNumber) : Primitives.toPrimitive(value, false, callProperties.config(), callProperties.scope());
+            return value == null ? Token.voidValue(callProperties.tFuncCall().lineNumber) : value;
         }
     }
 
@@ -280,7 +282,7 @@ public class GlobalFunctions extends BaseLibrary {
                     // stuff that need be parsed, parse and pray arraylist is returned.
                     Object parsed = null;
                     try {
-                        parsed = Primitives.toPrimitive(arg,  false, callProperties.config(), callProperties.scope());
+                        parsed = arg;
                     } catch (Exception e) {
                         // do nothing.
                     }
@@ -337,8 +339,7 @@ public class GlobalFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object val = Primitives.toPrimitive(callProperties.params().getFirst(),  false, callProperties.config(),
-                    callProperties.scope());
+            Object val = callProperties.params().getFirst();
             if (!(val instanceof Integer integer))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "Bruv, you can't just like, pls put number",
                         callProperties.tFuncCall().lineNumber);
@@ -385,13 +386,12 @@ public class GlobalFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
 
-            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
+//            checkParams(callProperties.tFuncCall(), callProperties.scope());
+
             if (callProperties.params().isEmpty())
                 return Token.voidValue(callProperties.tFuncCall().lineNumber);
-            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
 
-            return switch (val) {
+            return switch (callProperties.params().getFirst()) {
                 case Integer ignored2 -> "integer";
                 case Double ignored1 -> "double";
                 case Long ignored -> "long";
@@ -439,13 +439,11 @@ public class GlobalFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
 
-            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
+//            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
             if (callProperties.params().isEmpty())
                 return Token.voidValue(callProperties.tFuncCall().lineNumber);
-            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
 
-            return switch (val) {
+            return switch (callProperties.params().getFirst()) {
                 case ArrayList arrayList -> "array";
                 case Boolean b -> "boolean";
                 case Number number -> "number";
@@ -489,13 +487,7 @@ public class GlobalFunctions extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
-            ArrayList<Object> returned = new ArrayList<>();
-            for (Object arg : callProperties.params()) {
-                returned.add(Primitives.toPrimitive(arg, false, callProperties.config(), callProperties.scope()));
-            }
-            return returned;
+            return new ArrayList<>(callProperties.params());
         }
     }
 }

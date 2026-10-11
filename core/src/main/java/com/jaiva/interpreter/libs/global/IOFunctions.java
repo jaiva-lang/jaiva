@@ -94,31 +94,31 @@ public class IOFunctions extends BaseLibrary {
                 return Token.voidValue(callProperties.tFuncCall().lineNumber);
             }
             Object v = callProperties.params().size() > 1
-                    ? Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(), callProperties.scope())
+                    ? callProperties.params().get(1)
                     : null;
-            if (o instanceof Token<?> || (o instanceof TokenDefault && Interpreter.isVariableToken(o))) {
-                assert o instanceof Token<?>;
-                TokenDefault token = ((Token<?>) o).value();
-                // Only TokenDefault classes have the .toToken() method, but TokenDefualt itself
-                // doesnt, so we kinda need to check for every possible case unfortunately.
-                Object input = token instanceof TExpression || token instanceof TVarRef || token instanceof TFuncCall
-                        ? o
-                        : token;
-                Object value = Interpreter.handleVariables(input, callProperties.config(), callProperties.scope());
-                // System.out.println(value);
-                assert value != null;
-                output = value.toString();
-                newO = value;
-            } else if (o instanceof ThrowIfGlobalContext) {
-                // we dont have context, so just alert the user.
-                // that either, they tried using the "voetsek" or "nevermind" outside of a for
-                // loop context or cima was called with a custom error.
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                        "Cannot use 'voetsek' or 'nevermind' outside of a loop context, or 'cima' was called with a custom error.",
-                        callProperties.tFuncCall().lineNumber);
-            } else {
+//            if (o instanceof Token<?> || (o instanceof TokenDefault && Interpreter.isVariableToken(o))) {
+//                assert o instanceof Token<?>;
+//                TokenDefault token = ((Token<?>) o).value();
+//                // Only TokenDefault classes have the .toToken() method, but TokenDefualt itself
+//                // doesnt, so we kinda need to check for every possible case unfortunately.
+//                Object input = token instanceof TExpression || token instanceof TVarRef || token instanceof TFuncCall
+//                        ? o
+//                        : token;
+//                Object value = Interpreter.handleVariables(input, callProperties.config(), callProperties.scope());
+//                // System.out.println(value);
+//                assert value != null;
+//                output = value.toString();
+//                newO = value;
+//            } else if (o instanceof ThrowIfGlobalContext) {
+//                // we dont have context, so just alert the user.
+//                // that either, they tried using the "voetsek" or "nevermind" outside of a for
+//                // loop context or cima was called with a custom error.
+//                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
+//                        "Cannot use 'voetsek' or 'nevermind' outside of a loop context, or 'cima' was called with a custom error.",
+//                        callProperties.tFuncCall().lineNumber);
+//            } else {
                 output = o.toString();
-            }
+//            }
 
             String isJustStr = newO instanceof String && callProperties.config().isPrintStacks() ? "\"" : "";
 

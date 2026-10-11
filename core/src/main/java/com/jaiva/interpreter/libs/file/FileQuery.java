@@ -61,7 +61,7 @@ public class FileQuery extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
-            Object fileObj = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object fileObj = callProperties.params().getFirst();
             if (!(fileObj instanceof ArrayList<?> arr))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
                         "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);
@@ -97,7 +97,7 @@ public class FileQuery extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
-            Object fileObj = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object fileObj = callProperties.params().getFirst();
             if (!(fileObj instanceof ArrayList<?> arr))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
                         "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);
@@ -133,7 +133,7 @@ public class FileQuery extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
-            Object fileObj = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object fileObj = callProperties.params().getFirst();
             if (!(fileObj instanceof ArrayList<?> arr))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
                         "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);
@@ -267,7 +267,7 @@ public class FileQuery extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
-            Object fileObj = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object fileObj = callProperties.params().getFirst();
             if (!(fileObj instanceof ArrayList<?> arr))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
                         "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);

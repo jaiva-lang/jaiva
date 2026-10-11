@@ -262,8 +262,7 @@ public class FileApi extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object path = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
+            Object path = callProperties.params().getFirst();
             if (!(path instanceof String))
                 throw new WtfAreYouDoingException(callProperties.scope(), "Da path must be a string.",
                         callProperties.tFuncCall().lineNumber);
@@ -379,14 +378,12 @@ public class FileApi extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object path = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
+            Object path = callProperties.params().getFirst();
             if (!(path instanceof String))
                 throw new FunctionParametersException(callProperties.scope(), this, "1", callProperties.params().get(0), String.class,
                         callProperties.tFuncCall().lineNumber);
 
-            Object content = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(),
-                    callProperties.scope());
+            Object content = callProperties.params().get(1);
             StringBuilder outBuilder = new StringBuilder();
             String output = content instanceof String ? (String) content : "";
             if (!(content instanceof String) && !(content instanceof ArrayList))
@@ -409,24 +406,21 @@ public class FileApi extends BaseLibrary {
 
             boolean canRead = true, canWrite = true, canExecute = true;
             if (callProperties.params().size() > 2) {
-                Object cr = Primitives.toPrimitive(callProperties.params().get(2), false, callProperties.config(),
-                        callProperties.scope());
+                Object cr = callProperties.params().get(2);
                 if (!(cr instanceof Boolean))
                     throw new FunctionParametersException(callProperties.scope(), this, "3", callProperties.params().get(2), boolean.class,
                             callProperties.tFuncCall().lineNumber);
                 canRead = cr.equals(Boolean.TRUE);
             }
             if (callProperties.params().size() > 3) {
-                Object cw = Primitives.toPrimitive(callProperties.params().get(3), false, callProperties.config(),
-                        callProperties.scope());
+                Object cw = callProperties.params().get(3);
                 if (!(cw instanceof Boolean))
                     throw new FunctionParametersException(callProperties.scope(), this, "4", callProperties.params().get(3), boolean.class,
                             callProperties.tFuncCall().lineNumber);
                 canWrite = cw.equals(Boolean.TRUE);
             }
             if (callProperties.params().size() > 4) {
-                Object ce = Primitives.toPrimitive(callProperties.params().get(4), false, callProperties.config(),
-                        callProperties.scope());
+                Object ce = callProperties.params().get(4);
                 if (!(ce instanceof Boolean))
                     throw new FunctionParametersException(callProperties.scope(), this, "5", callProperties.params().get(4), boolean.class,
                             callProperties.tFuncCall().lineNumber);

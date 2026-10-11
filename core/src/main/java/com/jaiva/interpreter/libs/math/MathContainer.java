@@ -1,13 +1,11 @@
 package com.jaiva.interpreter.libs.math;
 
 import com.jaiva.errors.InterpreterException;
-import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AVarArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
@@ -21,22 +19,20 @@ public class MathContainer extends BaseLibrary {
         );
     }
 
-    private ArrayList<Integer> toIntegerList(ArrayList<Object> params, String funcName, BaseFunction func, IConfig<Object> config, Scope scope, int lineNumber) throws Exception {
-        ArrayList<Integer> nums = new ArrayList<>();
+    private ArrayList<Number> toIntegerList(ArrayList<Object> params, String funcName, BaseFunction func, Scope scope, int lineNumber) throws Exception {
+        ArrayList<Number> nums = new ArrayList<>();
         for (int i = 0; i < params.size(); i++) {
             Object p = params.get(i);
-            if (p instanceof Integer) {
-                nums.add((Integer) p);
+            if (p instanceof Integer inte) {
+                if (inte < 0)
+                    throw new InterpreterException.WtfAreYouDoingException(scope, funcName + " is only defined for non-negative integers", lineNumber);
+                nums.add(inte);
+            } else if (p instanceof Long l) {
+                if (l < 0)
+                    throw new InterpreterException.WtfAreYouDoingException(scope, funcName + " is only defined for non-negative longs", lineNumber);
+                nums.add(l);
             } else {
-                Object possible = Primitives.toPrimitive(p, false, config, scope);
-                if (possible instanceof Integer possibleInt) {
-                    if (possibleInt < 0) {
-                        throw new InterpreterException.WtfAreYouDoingException(scope, funcName + " is only defined for non-negative integers", lineNumber);
-                    }
-                    nums.add(possibleInt);
-                } else {
-                    throw new InterpreterException.FunctionParametersException(scope, func, i + "", possible, Integer.class, lineNumber);
-                }
+                throw new InterpreterException.FunctionParametersException(scope, func, i + "", p, Integer.class, lineNumber);
             }
         }
         return nums;
@@ -50,11 +46,13 @@ public class MathContainer extends BaseLibrary {
      * @param b Second integer
      * @return GCD of a and b
      */
-    private static int computeGCD(int a, int b) {
-        if (b == 0) {
-            return a;
+    private static long computeGCD(Number a, Number b) {
+        long a2 = a.longValue();
+        long b2 = b.longValue();
+        if (b2 == 0) {
+            return a2;
         }
-        return computeGCD(b, a % b);
+        return computeGCD(b2, a2 % b2);
     }
 
     public class FGcd extends BaseFunction {
@@ -86,12 +84,12 @@ public class MathContainer extends BaseLibrary {
             if (callProperties.params().size() < 2)
                 throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, callProperties.params().size(), 2, callProperties.tFuncCall().lineNumber);
 
-            ArrayList<Integer> nums = toIntegerList(callProperties.params(), "gcd", this, callProperties.config(), callProperties.scope(), callProperties.tFuncCall().lineNumber);
+            ArrayList<Number> nums = toIntegerList(callProperties.params(), "gcd", this, callProperties.scope(), callProperties.tFuncCall().lineNumber);
 
-            int gcd = nums.getFirst();
+            Number gcd = nums.getFirst();
             for (int i = 1; i < nums.size(); i++) {
                 gcd = computeGCD(gcd, nums.get(i));
-                if (gcd == 1) {
+                if (gcd.longValue() == 1L) {
                     break; // GCD is 1, no need to continue
                 }
             }
@@ -128,12 +126,12 @@ public class MathContainer extends BaseLibrary {
             if (callProperties.params().size() < 2)
                 throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, callProperties.params().size(), 2, callProperties.tFuncCall().lineNumber);
 
-            ArrayList<Integer> nums = toIntegerList(callProperties.params(), "lcm", this, callProperties.config(), callProperties.scope(), callProperties.tFuncCall().lineNumber);
+            ArrayList<Number> nums = toIntegerList(callProperties.params(), "lcm", this, callProperties.scope(), callProperties.tFuncCall().lineNumber);
 
-            int lcm = nums.getFirst();
+            Number lcm = nums.getFirst();
             for (int i = 1; i < nums.size(); i++) {
-                int num = nums.get(i);
-                lcm = (lcm * num) / computeGCD(lcm, num);
+                Number num = nums.get(i);
+                lcm = (lcm.longValue() * num.longValue()) / computeGCD(lcm, num);
             }
             return lcm;
         }

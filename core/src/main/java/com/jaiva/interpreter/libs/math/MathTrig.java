@@ -55,7 +55,7 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object v = callProperties.params().getFirst();
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
                 throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
@@ -98,7 +98,7 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object v = callProperties.params().getFirst();
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
                 throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
@@ -141,7 +141,7 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object v = callProperties.params().getFirst();
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
                 throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
@@ -184,7 +184,7 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object v = callProperties.params().getFirst();
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
                 throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
@@ -229,7 +229,7 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object v = callProperties.params().getFirst();
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
                 throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
@@ -273,7 +273,7 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
+            Object v = callProperties.params().getFirst();
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
                 throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);
@@ -320,8 +320,7 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
+            Object value = callProperties.params().getFirst();
             // Ensure the first parameter is a number
             if (!(value instanceof Number)) {
                 throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
@@ -368,8 +367,7 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object value = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(),
-                    callProperties.scope());
+            Object value = callProperties.params().getFirst();
             // Ensure the first parameter is a number
             if (!(value instanceof Number)) {
                 throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
@@ -406,8 +404,8 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
-            Object v = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
-            Object v2 = Primitives.toPrimitive(callProperties.params().get(1), false, callProperties.config(), callProperties.scope());
+            Object v = callProperties.params().getFirst();
+            Object v2 = callProperties.params().get(1);
             // Ensure the first parameter is a number
             if (!(v instanceof Number)) {
                 throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.tFuncCall().lineNumber);

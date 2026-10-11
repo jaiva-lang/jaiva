@@ -56,8 +56,7 @@ public class Numbers extends BaseLibrary {
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false,
-                    callProperties.config(), callProperties.scope());
+            Object val = callProperties.params().getFirst();
 
             if (!(val instanceof Double d))
                 throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "1", val, Double.class,
@@ -97,8 +96,7 @@ public class Numbers extends BaseLibrary {
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.tFuncCall(), callProperties.scope());
 
-            Object val = Primitives.toPrimitive(callProperties.params().getFirst(), false,
-                    callProperties.config(), callProperties.scope());
+            Object val = callProperties.params().getFirst();
 
             if (!(val instanceof Long l))
                 throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "1", val, Long.class,
@@ -142,7 +140,7 @@ public class Numbers extends BaseLibrary {
             if (callProperties.params().isEmpty() || (callProperties.params().size() == 1 && callProperties.params().getFirst() == null)) return Token.voidValue(callProperties.tFuncCall().lineNumber);
             byte[] collectedBytss = new byte[callProperties.params().size()];
             for (int i = 0; i < callProperties.params().size(); i++) {
-                Object val = Primitives.toPrimitive(callProperties.params().get(i), false, callProperties.config(), callProperties.scope());
+                Object val = callProperties.params().get(i);
 
                 try {
                     if (val instanceof Integer l)
