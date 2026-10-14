@@ -40,8 +40,9 @@ public final class LibrarySymbol {
     ) {
         this.symbol = symbol;
         this.aliases = new ArrayList<>(Arrays.asList(aliases));
-        if (!this.aliases.contains(symbol.name)) // symbol name is itself an alias
-            this.aliases.addFirst(symbol.name);
+        // effectively add it first.
+        this.aliases.remove(symbol.name);
+        this.aliases.addFirst(symbol.name);
     }
 
     /**
