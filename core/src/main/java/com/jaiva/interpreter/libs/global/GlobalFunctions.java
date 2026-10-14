@@ -444,11 +444,11 @@ public class GlobalFunctions extends BaseLibrary {
                 return Token.voidValue(callProperties.tFuncCall().lineNumber);
 
             return switch (callProperties.params().getFirst()) {
-                case ArrayList arrayList -> "array";
-                case Boolean b -> "boolean";
-                case Number number -> "number";
-                case BaseFunction baseFunction -> "function";
-                case String s -> "string";
+                case ArrayList ignored -> "array";
+                case Boolean ignored -> "boolean";
+                case Number ignored -> "number";
+                case BaseFunction ignored -> "function";
+                case String ignored -> "string";
                 case null, default ->
 // there is no other type to possibly check for.
                         Token.voidValue(callProperties.tFuncCall().lineNumber);
