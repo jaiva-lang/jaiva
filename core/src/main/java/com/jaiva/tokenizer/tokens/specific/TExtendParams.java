@@ -31,12 +31,6 @@ public class TExtendParams extends TokenDefault<TExtendParams> implements TState
         this.args = args;
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        // Not needed.
-        return super.toJson();
-    }
-
     /**
      * Converts this token to the default {@link Token}
      *

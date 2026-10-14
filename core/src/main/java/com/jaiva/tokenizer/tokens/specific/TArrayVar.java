@@ -35,6 +35,7 @@ public class TArrayVar extends TokenDefault<TArrayVar> implements TVariable {
                         : name),
                 ln);
         this.contents = contents;
+        json();
     }
 
     /**
@@ -47,12 +48,11 @@ public class TArrayVar extends TokenDefault<TArrayVar> implements TVariable {
     public TArrayVar(String name, ArrayList<Object> contents, int ln, JDoc customTooltip) {
         super(name, ln, customTooltip);
         this.contents = contents;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("value", contents, true);
-        return super.toJson();
+    public void json() {
+        json.set("value", contents);
     }
 
     /**

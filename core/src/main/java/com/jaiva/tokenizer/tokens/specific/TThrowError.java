@@ -21,15 +21,14 @@ public class TThrowError extends TokenDefault<TThrowError> implements TStatement
      * @param errorMessage The error message to be thrown.
      * @param ln           The line number.
      */
-    public TThrowError(Object errorMessage, int ln) {
+    public TThrowError(Object errorMessage, int ln) throws JaivaException {
         super("TThrowError", ln);
         this.errorMessage = errorMessage;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("errorMessage", errorMessage, false);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("errorMessage", errorMessage);
     }
 
     /**

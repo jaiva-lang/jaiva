@@ -9,6 +9,7 @@ import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libBuilders.func.arg.AVarArgument;
+import com.jaiva.interpreter.libBuilders.var.VariableBuilder;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
@@ -219,13 +220,17 @@ public class GlobalFunctions extends BaseLibrary {
      */
     static class VJaivaVersion extends BaseVariable {
         VJaivaVersion() {
-            super("version", new TStringVar("version", Main.version, -1,
-                    JDoc.builder()
-                            .addDesc("What do you think this returns.")
-                            .addExample("""
+            super(
+                    VariableBuilder.start()
+                            .value(Main.version)
+                            .name("version")
+                            .docs(JDoc.builder()
+                                    .addDesc("What do you think this returns.")
+                                    .addExample("""
                                     khuluma(version)! @ Prints 5.0.0 (at the time of writing)
                                     """)
-                            .sinceVersion("1.0.0-beta.0").build()), Main.version);
+                                    .sinceVersion("1.0.0-beta.0"))
+            );
             freeze();
         }
     }

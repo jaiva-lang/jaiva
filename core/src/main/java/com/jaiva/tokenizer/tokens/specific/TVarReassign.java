@@ -22,9 +22,10 @@ public class TVarReassign extends TokenDefault<TVarReassign> implements TStateme
      * @param value The new value of the variable.
      * @param ln    The line number.
      */
-    public TVarReassign(String name, Object value, int ln) {
+    public TVarReassign(String name, Object value, int ln) throws JaivaException {
         super(name, ln);
         this.newValue = value;
+        json();
     }
 
     /**
@@ -34,15 +35,14 @@ public class TVarReassign extends TokenDefault<TVarReassign> implements TStateme
      * @param value The new value of the variable.
      * @param ln    The line number.
      */
-    public TVarReassign(Object name, Object value, int ln) {
+    public TVarReassign(Object name, Object value, int ln) throws JaivaException {
         super((String)name, ln);
         this.newValue = value;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("value", newValue, true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("value", newValue);
     }
 
     /**

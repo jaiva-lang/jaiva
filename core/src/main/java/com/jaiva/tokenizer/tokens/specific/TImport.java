@@ -42,11 +42,12 @@ public class TImport extends TokenDefault<TImport> implements TStatement {
      * @param isLib    Whther this is part of a library or not
      * @param ln       The line number.
      */
-    public TImport(String file, String fileName, boolean isLib, int ln) {
+    public TImport(String file, String fileName, boolean isLib, int ln) throws JaivaException {
         super("TImport", ln);
         filePath = file;
         this.isLib = isLib;
         this.fileName = fileName;
+        json();
     }
 
     /**
@@ -58,21 +59,20 @@ public class TImport extends TokenDefault<TImport> implements TStatement {
      * @param names    The imported symbols.
      * @param ln       The line number.
      */
-    public TImport(String file, String fileName, boolean isLib, ArrayList<String> names, int ln) {
+    public TImport(String file, String fileName, boolean isLib, ArrayList<String> names, int ln) throws JaivaException {
         super("TImport", ln);
         filePath = file;
         this.isLib = isLib;
         this.fileName = fileName;
         symbols.addAll(names);
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("filePath", filePath.replace("\\", "\\\\"), false);
-        json.append("fileName", fileName, false);
-        json.append("isLib", isLib, false);
-        json.append("symbols", symbols, true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("filePath", filePath);
+        json.set("fileName", fileName);
+        json.set("isLib", isLib);
+        json.set("symbols", symbols);
     }
 
     /**

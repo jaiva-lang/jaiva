@@ -28,9 +28,10 @@ public class TTryCatch extends TokenDefault<TTryCatch> implements TConstruct {
      * @param tryBlock The try block of the try-catch statement.
      * @param ln       The line number.
      */
-    public TTryCatch(TCodeblock tryBlock, int ln) {
+    public TTryCatch(TCodeblock tryBlock, int ln) throws JaivaException {
         super("TTryCatchStatement", ln);
         this.tryBlock = tryBlock;
+        json();
     }
 
     /**
@@ -38,15 +39,14 @@ public class TTryCatch extends TokenDefault<TTryCatch> implements TConstruct {
      *
      * @param catchBlock the TCodeblock representing the catch block to be appended
      */
-    public void appendCatchBlock(TCodeblock catchBlock) {
+    public void appendCatchBlock(TCodeblock catchBlock) throws JaivaException {
         this.catchBlock = catchBlock;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("try", tryBlock.toJsonInNest(), false);
-        json.append("catch", catchBlock.toJsonInNest(), true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("try", tryBlock);
+        json.set("catch", catchBlock);
     }
 
     /**

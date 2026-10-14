@@ -1,5 +1,6 @@
 package com.jaiva.tokenizer.tokens;
 
+import com.jaiva.errors.JaivaException;
 import com.jaiva.errors.TokenizerException;
 import com.jaiva.errors.TokenizerException.CatchAllException;
 import com.jaiva.errors.TokenizerException.MalformedSyntaxException;
@@ -136,7 +137,7 @@ public record Token<T extends TokenDefault>(T value) {
      * @param line given line.
      * @return an atomic token
      */
-    public static Object processContext(String line, int lineNumber) throws TokenizerException {
+    public static Object processContext(String line, int lineNumber) throws JaivaException {
         line = line.trim(); // gotta trim da line fr
 
         ContextDispatcher d = new ContextDispatcher(line);
@@ -302,7 +303,7 @@ public record Token<T extends TokenDefault>(T value) {
      *                                  error.
      */
     public static Object dispatchContext(String line, int lineNumber)
-            throws TokenizerException {
+            throws JaivaException {
         line = line.trim();
         ContextDispatcher d = new ContextDispatcher(line);
         return switch (d.getDeligation()) {

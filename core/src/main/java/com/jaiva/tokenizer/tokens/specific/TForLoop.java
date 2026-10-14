@@ -45,12 +45,13 @@ public class TForLoop extends TokenDefault<TForLoop> implements TConstruct, TCon
      * @param body      The body of the for loop.
      * @param ln        The line number.
      */
-    public TForLoop(TokenDefault variable, Object condition, Object increment, TCodeblock body, int ln) {
+    public TForLoop(TokenDefault variable, Object condition, Object increment, TCodeblock body, int ln) throws JaivaException {
         super("TForLoop", ln);
         this.variable = variable;
         this.condition = condition;
         this.increment = increment;
         this.body = body;
+        json();
     }
 
     /**
@@ -61,21 +62,20 @@ public class TForLoop extends TokenDefault<TForLoop> implements TConstruct, TCon
      * @param body     The body of the for loop.
      * @param ln       The line number.
      */
-    public TForLoop(TokenDefault variable, TVarRef array, TCodeblock body, int ln) {
+    public TForLoop(TokenDefault variable, TVarRef array, TCodeblock body, int ln) throws JaivaException {
         super("TForLoop", ln);
         this.variable = variable;
         this.array = array;
         this.body = body;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("variable", variable.toJson(), false);
-        json.append("arrayVariable", array != null ? array.toJson() : null, false);
-        json.append("condition", condition, false);
-        json.append("increment", increment, false);
-        json.append("body", body.toJsonInNest(), true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("variable", variable);
+        json.set("arrayVariable", array);
+        json.set("condition", condition);
+        json.set("increment", increment);
+        json.set("body", body);
     }
 
     /**

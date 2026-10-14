@@ -1,5 +1,6 @@
 package com.jaiva.interpreter.libBuilders.var;
 
+import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.jdoc.JDocBuilder;
@@ -53,13 +54,17 @@ public class VariableBuilder {
     }
 
     public TokenDefault<?> toToken() {
-        return switch (value) {
-            case ArrayList<?> arr -> new TArrayVar(varName, new ArrayList<>(arr), -1, builder.build());
-            case Number n -> new TNumberVar(varName, n, -1, builder.build());
-            case String str -> new TStringVar(varName, str, -1, builder.build());
-            case Boolean b -> new TBooleanVar(varName, b, -1, builder.build());
-            default -> throw new IllegalStateException("Unexpected value: " + value);
-        };
+        try {
+            return switch (value) {
+                case ArrayList<?> arr -> new TArrayVar(varName, new ArrayList<>(arr), -1, builder.build());
+                case Number n -> new TNumberVar(varName, n, -1, builder.build());
+                case String str -> new TStringVar(varName, str, -1, builder.build());
+                case Boolean b -> new TBooleanVar(varName, b, -1, builder.build());
+                default -> throw new IllegalStateException("Unexpected value: " + value);
+            };
+        } catch (JaivaException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public BaseVariable.VariableType getType() {

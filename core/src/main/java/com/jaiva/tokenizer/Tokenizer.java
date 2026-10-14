@@ -1,6 +1,7 @@
 package com.jaiva.tokenizer;
 
 import com.jaiva.Main;
+import com.jaiva.errors.JaivaException;
 import com.jaiva.errors.TokenizerException;
 import com.jaiva.errors.TokenizerException.CatchAllException;
 import com.jaiva.errors.TokenizerException.FileOrDirectoryNotFoundException;
@@ -422,7 +423,7 @@ public final class Tokenizer {
      * @return The token for the given line.
      */
     private static Token<?> processVariable(String line, int lineNumber)
-            throws TokenizerException {
+            throws JaivaException {
         boolean isString = false;
         if (line.contains(Chars.ARRAY_ASSIGNMENT)) {
             line = line.trim();
@@ -443,7 +444,7 @@ public final class Tokenizer {
             Token.splitByTopLevelComma(parts[1]).forEach(value -> {
                 try {
                     parsedValues.add(Token.processContext(value.trim(), lineNumber));
-                } catch (TokenizerException e) {
+                } catch (JaivaException e) {
                     throw new RuntimeException(e);
                 }
             });
@@ -485,8 +486,6 @@ public final class Tokenizer {
         IsValidSymbolName IVSN = Validate.isValidSymbolName(parts[0]);
         if (!IVSN.isValid)
             throw new MalformedSyntaxException(IVSN.op + " cannot be used in a variable name zawg.", lineNumber);
-//        if (parts.length == 1) {
-//        }
         parts[1] = parts[1].trim();
 
         if (isString) {
@@ -536,7 +535,7 @@ public final class Tokenizer {
      * @return The token for the given line.
      */
     private static Token<?> handleImport(String line, int lineNumber, TConfig config)
-            throws TokenizerException {
+            throws JaivaException {
         // tsea "path"
         // tsea "path" <- funcz, funca
         line = line.replace(Keywords.IMPORT.get(0), "").replace(Keywords.IMPORT.get(1), "").trim();
@@ -800,7 +799,7 @@ public final class Tokenizer {
                                 JDoc doc = new JDoc(lineNumber, comment.trim());
                                 g.tooltip = doc;
                                 g.json.removeKey("toolTip");
-                                g.json.append("toolTip", doc, true);
+                                g.json.set("toolTip", doc);
                             }
 
                         }
@@ -835,7 +834,7 @@ public final class Tokenizer {
                             JDoc doc = new JDoc(t.lineNumber, comment.trim());
                             t.tooltip = doc;
                             t.json.removeKey("toolTip");
-                            t.json.append("toolTip", doc, true);
+                            t.json.set("toolTip", doc);
                         }
                         tokens.add(token);
                         m = null;

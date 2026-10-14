@@ -1,6 +1,7 @@
 package com.jaiva.interpreter.symbol;
 
 import com.jaiva.errors.InterpreterException;
+import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.*;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.tokens.Token;
@@ -121,7 +122,7 @@ public class DefinedFunction extends BaseFunction {
      * otherwise, it's parsed as a singleton list, with it's boolean marked as false.
      * therefore allowing BaseVariable to extract the single value and label the variable as scalar.
      */
-    private BaseVariable createScalarOrArr(String name, Object value, TFuncCall tFuncCall) {
+    private BaseVariable createScalarOrArr(String name, Object value, TFuncCall tFuncCall) throws JaivaException {
         return BaseVariable.create(name,
                 value instanceof ArrayList ? new TArrayVar(name, (ArrayList) value, tFuncCall.lineNumber)
                         : new TUnknownScalar(name, value, tFuncCall.lineNumber),

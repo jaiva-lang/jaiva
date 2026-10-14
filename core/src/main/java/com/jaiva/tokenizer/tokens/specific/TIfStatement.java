@@ -42,10 +42,11 @@ public class TIfStatement extends TokenDefault<TIfStatement> implements TConstru
      * @param body      The body of the if statement.
      * @param ln        The line number.
      */
-    public TIfStatement(Object condition, TCodeblock body, int ln) {
+    public TIfStatement(Object condition, TCodeblock body, int ln) throws JaivaException {
         super("TIfStatement", ln);
         this.condition = condition;
         this.body = body;
+        json();
     }
 
     /**
@@ -69,13 +70,11 @@ public class TIfStatement extends TokenDefault<TIfStatement> implements TConstru
         this.elseBody = elseBody;
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("condition", condition, false);
-        json.append("body", body.toJsonInNest(), false);
-        json.append("elseIfs", elseIfs != null && !elseIfs.isEmpty() ? elseIfs : null, false);
-        json.append("elseBody", elseBody != null ? elseBody.toJsonInNest() : null, false);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("condition", condition);
+        json.set("body", body);
+        json.set("elseIfs", elseIfs != null && !elseIfs.isEmpty() ? elseIfs : null);
+        json.set("elseBody", elseBody !=  null ? elseBody.toJson() : null);
     }
 
     /**

@@ -22,15 +22,14 @@ public class TFuncReturn extends TokenDefault<TFuncReturn> implements TStatement
      * @param value The value which the function should return.
      * @param ln    The line number.
      */
-    public TFuncReturn(Object value, int ln) {
+    public TFuncReturn(Object value, int ln) throws JaivaException {
         super("TFuncReturn", ln);
         this.value = value;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("value", value, true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("value", value);
     }
 
     /**

@@ -42,7 +42,7 @@ public class TVarRef extends TokenDefault<TVarRef> implements TReference {
      * @param name The name of the variable being referenced.
      * @param ln   The line number.
      */
-    public TVarRef(Object name, int ln, boolean getLength, boolean spreadArr) {
+    public TVarRef(Object name, int ln, boolean getLength, boolean spreadArr) throws JaivaException {
         super("TVarRef", ln);
         if (name instanceof String n) {
             n = n.endsWith(Chars.LENGTH_CHAR + "") ? n.substring(0, n.length() - 1) : n;
@@ -53,6 +53,7 @@ public class TVarRef extends TokenDefault<TVarRef> implements TReference {
             this.varName = name;
         this.getLength = getLength;
         this.spreadArr = spreadArr;
+        json();
     }
 
     /**
@@ -63,7 +64,7 @@ public class TVarRef extends TokenDefault<TVarRef> implements TReference {
      * @param ln        The line number.
      * @param getLength Indicates whether the variable reference is a length call.
      */
-    public TVarRef(Object name, Object index, int ln, boolean getLength) {
+    public TVarRef(Object name, Object index, int ln, boolean getLength) throws JaivaException {
         super("TVarRef", ln);
         this.index = index;
         if (name instanceof String n)
@@ -71,9 +72,10 @@ public class TVarRef extends TokenDefault<TVarRef> implements TReference {
         else
             this.varName = name;
         this.getLength = getLength;
+        json();
     }
 
-    public TVarRef(Object name, Object index, int ln, boolean getLength, boolean spreadArr) {
+    public TVarRef(Object name, Object index, int ln, boolean getLength, boolean spreadArr) throws JaivaException {
         super("TVarRef", ln);
         this.index = index;
         if (name instanceof String n) {
@@ -85,15 +87,14 @@ public class TVarRef extends TokenDefault<TVarRef> implements TReference {
             this.varName = name;
         this.getLength = getLength;
         this.spreadArr = spreadArr;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("varName", varName, false);
-        json.append("getLength", getLength, false);
-        json.append("spreadArr", spreadArr, false);
-        json.append("index", index != null ? index : null, true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("varName", varName);
+        json.set("getLength", getLength);
+        json.set("spreadArr", spreadArr);
+        json.set("index", index);
     }
 
     /**

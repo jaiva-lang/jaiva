@@ -15,9 +15,10 @@ public class TNumberVar extends TUnknownScalar<Object, TNumberVar> {
      * @param value The value of the variable.
      * @param ln    The line number.
      */
-    public TNumberVar(String name, Object value, int ln) {
+    public TNumberVar(String name, Object value, int ln) throws JaivaException {
         super(name, value, ln);
         this.value = value;
+        json();
     }
 
     /**
@@ -27,15 +28,14 @@ public class TNumberVar extends TUnknownScalar<Object, TNumberVar> {
      * @param value The value of the variable.
      * @param ln    The line number.
      */
-    public TNumberVar(String name, Object value, int ln, JDoc customTooltip) {
+    public TNumberVar(String name, Object value, int ln, JDoc customTooltip) throws JaivaException {
         super(name, value, ln, customTooltip);
         this.value = value;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("value", value, true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("value", value);
     }
 
     /**

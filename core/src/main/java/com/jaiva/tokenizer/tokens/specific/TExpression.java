@@ -89,21 +89,17 @@ public class TExpression extends TokenDefault<TExpression> implements TAtomicVal
                 statement.rHandSide = true;
                 statement.op = "=";
             }
-
             return statement;
         }
         return s;
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("lhs", lHandSide, false);
-        json.append("op", op, false);
-        json.append("rhs", rHandSide, false);
-        json.append("statementType", statementType, false);
-        json.append("statement", statement.replace("\"", "\\\""), true);
-
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("lhs", lHandSide);
+        json.set("op", op);
+        json.set("rhs", rHandSide);
+        json.set("statement", statement);
+        json.set("statementType", statementType);
     }
 
     /**
@@ -115,7 +111,7 @@ public class TExpression extends TokenDefault<TExpression> implements TAtomicVal
      *
      * @param statement The statement to parse.
      */
-    public Object parse(String statement) throws TokenizerException {
+    public Object parse(String statement) throws JaivaException {
         statement = statement.trim();
 
         if (statement.isEmpty()) {
@@ -155,7 +151,9 @@ public class TExpression extends TokenDefault<TExpression> implements TAtomicVal
         rHandSide = syntaxSugar(
                 new TExpression(lineNumber).parse(statement.substring(info.index + info.op.length()).trim()));
         statementType = info.tStatementType;
-        return ((TExpression) syntaxSugar(this)).toToken();
+        TExpression expression = ((TExpression) syntaxSugar(this));
+        expression.json();
+        return expression.toToken();
     }
 
     /**

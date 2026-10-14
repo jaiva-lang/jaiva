@@ -16,14 +16,16 @@ public class TBooleanVar extends TUnknownScalar<Object, TBooleanVar> {
      * @param value The value of the variable.
      * @param ln    The line number.
      */
-    public TBooleanVar(String name, boolean value, int ln) {
+    public TBooleanVar(String name, boolean value, int ln) throws JaivaException {
         super(name, value, ln);
         this.value = value;
+        json();
     }
 
-    public TBooleanVar(String name, boolean value, int ln,  JDoc customToolTip) {
+    public TBooleanVar(String name, boolean value, int ln,  JDoc customToolTip) throws JaivaException {
         super(name, value, ln, customToolTip);
         this.value = value;
+        json();
     }
 
     /**
@@ -33,15 +35,14 @@ public class TBooleanVar extends TUnknownScalar<Object, TBooleanVar> {
      * @param value The value of the variable.
      * @param ln    The line number.
      */
-    public TBooleanVar(String name, Object value, int ln) {
+    public TBooleanVar(String name, Object value, int ln) throws JaivaException {
         super(name, value, ln);
         this.value = value;
+        json();
     }
 
-//    @Override
-    public String toJson() throws JaivaException {
-        json.append("value", value, true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("value", value);
     }
 
     /**

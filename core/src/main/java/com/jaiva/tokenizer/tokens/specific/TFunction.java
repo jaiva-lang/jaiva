@@ -9,7 +9,6 @@ import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.TokenDefault;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,7 +46,7 @@ public class TFunction extends TokenDefault<TFunction> implements TSymbol, TCons
      * @param body The body of the function.
      * @param ln   The line number.
      */
-    public TFunction(String name, String[] args, TCodeblock body, int ln) {
+    public TFunction(String name, String[] args, TCodeblock body, int ln) throws JaivaException {
         super(name.startsWith(Character.toString(Chars.EXPORT_SYMBOL)),
                 "F~" + (name.startsWith(Character.toString(Chars.EXPORT_SYMBOL)) ? name
                         .replaceFirst(Pattern.quote(Character.toString(Chars.EXPORT_SYMBOL)),
@@ -73,6 +72,7 @@ public class TFunction extends TokenDefault<TFunction> implements TSymbol, TCons
         }
         this.args = newArgs;
         this.body = body;
+        json();
     }
 
     /**
@@ -84,7 +84,7 @@ public class TFunction extends TokenDefault<TFunction> implements TSymbol, TCons
      * @param ln            The line number.
      * @param customToolTip The custom tooltip for the function.
      */
-    public TFunction(String name, String[] args, TCodeblock body, int ln, JDoc customToolTip) {
+    public TFunction(String name, String[] args, TCodeblock body, int ln, JDoc customToolTip) throws JaivaException {
         super("F~" + name, ln, customToolTip);
 
         String[] newArgs = new String[args.length];
@@ -106,15 +106,14 @@ public class TFunction extends TokenDefault<TFunction> implements TSymbol, TCons
         }
         this.args = newArgs;
         this.body = body;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("args", new ArrayList<>(Arrays.asList(args)), false);
-        json.append("isArgOptional", isArgOptional, false);
-        json.append("varArgs", varArgs, false);
-        json.append("body", body != null ? body.toJsonInNest() : null, true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("args", args);
+        json.set("isArgOptional", isArgOptional);
+        json.set("varArgs", varArgs);
+        json.set("body", body != null ? body.toJson() : null);
     }
 
     /**

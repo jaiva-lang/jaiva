@@ -474,7 +474,7 @@ public class Main {
                             JDoc doc = new JDoc(lineNum, comment.trim());
                             l.tooltip = doc;
                             l.json.removeKey("toolTip");
-                            l.json.append("toolTip", doc, true);
+                            l.json.set("toolTip", doc);
                         }
                     }
                     comment = null;
@@ -507,7 +507,7 @@ public class Main {
                         JDoc doc = new JDoc(t.lineNumber, comment.trim());
                         t.tooltip = doc;
                         t.json.removeKey("toolTip");
-                        t.json.append("toolTip", doc, true);
+                        t.json.set("toolTip", doc);
                         tokens.add(token);
                     } else {
                         tokens.add(token);

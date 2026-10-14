@@ -1,6 +1,7 @@
 package com.jaiva.interpreter.symbol;
 
 import com.jaiva.errors.InterpreterException;
+import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;

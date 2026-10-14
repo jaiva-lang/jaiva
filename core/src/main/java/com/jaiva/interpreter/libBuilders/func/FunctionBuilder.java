@@ -1,5 +1,6 @@
 package com.jaiva.interpreter.libBuilders.func;
 
+import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.jdoc.JDocBuilder;
 import com.jaiva.tokenizer.tokens.specific.TFunction;
@@ -54,12 +55,16 @@ public class FunctionBuilder {
     }
 
     public TFunction toToken() {
-        return new TFunction(
-                getName(),
-                arguments.build(),
-                null, -1,
-                builder.addParams(arguments)
-                        .build()
-        );
+        try {
+            return new TFunction(
+                    getName(),
+                    arguments.build(),
+                    null, -1,
+                    builder.addParams(arguments)
+                            .build()
+            );
+        } catch (JaivaException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

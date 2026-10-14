@@ -32,12 +32,11 @@ public class TLoopControl extends TokenDefault<TLoopControl> implements TStateme
         } else {
             throw new TokenizerException.CatchAllException("So we're in LoopControl but not correctly?", ln);
         }
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("loopType", type.toString(), true);
-        return super.toJson();
+    public void json() {
+        json.set("loopType", type.toString());
     }
 
     /**

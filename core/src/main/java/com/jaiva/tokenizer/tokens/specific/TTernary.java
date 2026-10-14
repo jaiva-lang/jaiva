@@ -32,19 +32,18 @@ public class TTernary extends TokenDefault<TTernary> implements TAtomicValue, TC
      * @param falseExpr The expression if the condition is false.
      * @param ln        The line number.
      */
-    public TTernary(Object condition, Object trueExpr, Object falseExpr, int ln) {
+    public TTernary(Object condition, Object trueExpr, Object falseExpr, int ln) throws JaivaException {
         super("TTernary", ln);
         this.condition = condition;
         this.trueExpr = trueExpr;
         this.falseExpr = falseExpr;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("condition", condition, false);
-        json.append("trueExpr", trueExpr, false);
-        json.append("falseExpr", falseExpr, true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("condition", condition);
+        json.set("trueExpr", trueExpr);
+        json.set("falseExpr", falseExpr);
     }
 
     /**

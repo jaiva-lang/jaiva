@@ -46,11 +46,12 @@ public class TFuncCall extends TokenDefault<TFuncCall> implements TReference, TP
      * @param ln   The line number.
      * @param getL Indicates whether the function call is a length call.
      */
-    public TFuncCall(Object name, ArrayList<Object> args, int ln, boolean getL) {
+    public TFuncCall(Object name, ArrayList<Object> args, int ln, boolean getL) throws JaivaException {
         super("TFuncCall", ln);
         this.functionName = name;
         this.args = args;
         this.getLength = getL;
+        json();
     }
 
     /**
@@ -61,21 +62,20 @@ public class TFuncCall extends TokenDefault<TFuncCall> implements TReference, TP
      * @param getL Indicates whether the function call is a length call.
      * @param spreadArr Indicates whether the function call spreads an array as arguments.
      */
-    public TFuncCall(Object name, ArrayList<Object> args, int ln, boolean getL, boolean spreadArr) {
+    public TFuncCall(Object name, ArrayList<Object> args, int ln, boolean getL, boolean spreadArr) throws JaivaException {
         super("TFuncCall", ln);
         this.functionName = name;
         this.args = args;
         this.getLength = getL;
         this.spreadArr = spreadArr;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("functionName", functionName, false);
-        json.append("getLength", getLength, false);
-        json.append("spreadArr", spreadArr, false);
-        json.append("args", args, true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("functionName", functionName);
+        json.set("getLength", getLength);
+        json.set("spreadArr", spreadArr);
+        json.set("args", args.toArray());
     }
 
     /**

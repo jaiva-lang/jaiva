@@ -5,6 +5,7 @@ import com.jaiva.errors.TokenizerException.MalformedJDocException;
 import com.jaiva.lang.Chars;
 import com.jaiva.tokenizer.jdoc.tags.Tag;
 import com.jaiva.tokenizer.jdoc.tags.TagType;
+import com.yetnt.utils.builders.SimpleJSON;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -155,6 +156,12 @@ public class JDoc {
         }
 
 //        return this;
+    }
+
+    public ArrayList<Object> toJson() {
+        ArrayList<Object> json = new ArrayList<>();
+        tags.forEach(t -> json.add(new SimpleJSON(t.attributes)));
+        return json;
     }
 
     @Override

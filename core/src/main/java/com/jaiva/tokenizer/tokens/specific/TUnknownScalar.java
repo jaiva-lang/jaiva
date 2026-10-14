@@ -43,7 +43,7 @@ public class TUnknownScalar<Type, K extends TokenDefault<K>> extends TokenDefaul
      * @param value The value of the variable.
      * @param ln    The line number.
      */
-    public TUnknownScalar(String name, Type value, int ln) {
+    public TUnknownScalar(String name, Type value, int ln) throws JaivaException {
         super(name.startsWith(Character.toString(Chars.EXPORT_SYMBOL)),
                 (name.startsWith(Character.toString(Chars.EXPORT_SYMBOL))
                         ? name.replaceFirst(Pattern.quote(Character.toString(Chars.EXPORT_SYMBOL)),
@@ -51,6 +51,7 @@ public class TUnknownScalar<Type, K extends TokenDefault<K>> extends TokenDefaul
                         : name),
                 ln);
         this.value = value;
+        json();
     }
 
     /**
@@ -60,16 +61,22 @@ public class TUnknownScalar<Type, K extends TokenDefault<K>> extends TokenDefaul
      * @param value The value of the variable.
      * @param ln    The line number.
      */
-    public TUnknownScalar(String name, Type value, int ln, JDoc customToolTip) {
+    public TUnknownScalar(String name, Type value, int ln, JDoc customToolTip) throws JaivaException {
         super(name, ln, customToolTip);
         this.value = value;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
+    public void json() throws JaivaException {
         if (!json.keyExists("value"))
-            json.append("value", value, true);
-        return super.toJson();
+            switch (value) {
+                case Number n -> json.set("value", n);
+                case String s -> json.set("value", s);
+                case Boolean b -> json.set("value", b);
+                case Token token -> json.set("value", token);
+                case TokenDefault tokenDefault -> json.set("value", tokenDefault);
+                default -> throw new IllegalArgumentException("Shit.");
+            }
     }
 
     /**

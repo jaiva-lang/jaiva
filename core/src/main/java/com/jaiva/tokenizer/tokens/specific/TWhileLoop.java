@@ -29,17 +29,16 @@ public class TWhileLoop extends TokenDefault<TWhileLoop> implements TConstruct, 
      * @param body      The body of the while loop.
      * @param ln        The line number.
      */
-    public TWhileLoop(Object condition, TCodeblock body, int ln) {
+    public TWhileLoop(Object condition, TCodeblock body, int ln) throws JaivaException {
         super("TWhileLoop", ln);
         this.condition = condition;
         this.body = body;
+        json();
     }
 
-    @Override
-    public String toJson() throws JaivaException {
-        json.append("condition", condition, false);
-        json.append("body", body.toJsonInNest(), true);
-        return super.toJson();
+    public void json() throws JaivaException {
+        json.set("condition", condition);
+        json.set("body", body);
     }
 
     /**

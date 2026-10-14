@@ -22,13 +22,13 @@ import static com.jaiva.full.Files.BUNDLER_JIV;
 @PublicLibrary(path = "customPath")
 class CustomLib extends BaseLibrary {
 
-    public CustomLib(IConfig<Object> config) {
+    public CustomLib(IConfig<Object> config) throws JaivaException {
         add(new FEcho());
         add(new VVar());
     }
 
     static class FEcho extends BaseFunction {
-        public FEcho() {
+        public FEcho() throws JaivaException {
             super("echo", new TFunction("echo", new String[] {"arg1"}, null, -1, JDoc.from("d")));
             freeze();
         }
@@ -41,7 +41,7 @@ class CustomLib extends BaseLibrary {
     }
 
     static class VVar extends BaseVariable {
-        public VVar() {
+        public VVar() throws JaivaException {
             super("poop", new TStringVar("poop", "factuality", -1, JDoc.from("The best string")), "facuality");
             freeze();
         }

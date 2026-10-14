@@ -2,7 +2,7 @@ package com.jaiva.tokenizer.tokens;
 
 import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.Convertible;
-import com.jaiva.tokenizer.ToJson;
+import com.jaiva.tokenizer.NewJson;
 import com.jaiva.tokenizer.jdoc.JDoc;
 
 /**
@@ -32,7 +32,7 @@ public class TokenDefault<T extends TokenDefault<T>> implements Convertible {
     /**
      * The JSON representation of the token.
      */
-    public ToJson json;
+    public NewJson json;
     /**
      * Boolean to check if the token is a symbol that can be exported.
      */
@@ -47,7 +47,7 @@ public class TokenDefault<T extends TokenDefault<T>> implements Convertible {
     public TokenDefault(String name, int line) {
         this.name = name;
         this.lineNumber = line;
-        this.json = new ToJson(false, name, getClass().getSimpleName(), line, tooltip);
+        this.json = new NewJson(false, name, getClass().getSimpleName(), line, tooltip);
     }
 
     /**
@@ -61,7 +61,7 @@ public class TokenDefault<T extends TokenDefault<T>> implements Convertible {
         this.name = name;
         this.lineNumber = line;
         this.exportSymbol = exportSymbol;
-        this.json = new ToJson(exportSymbol, name, getClass().getSimpleName(), line, tooltip);
+        this.json = new NewJson(exportSymbol, name, getClass().getSimpleName(), line, tooltip);
     }
 
     /**
@@ -75,7 +75,7 @@ public class TokenDefault<T extends TokenDefault<T>> implements Convertible {
         this.name = name;
         this.lineNumber = line;
         this.tooltip = tt;
-        this.json = new ToJson(false, name, getClass().getSimpleName(), line, tt);
+        this.json = new NewJson(false, name, getClass().getSimpleName(), line, tt);
     }
 
     /**
@@ -84,18 +84,7 @@ public class TokenDefault<T extends TokenDefault<T>> implements Convertible {
      * @return the final JSON representation.
      * @throws JaivaException For any errors
      */
-    public String toJson() throws JaivaException {
-        return json.complete();
-    }
-
-    /**
-     * Returns the JSON (ToJson object) representation of the object as a string
-     * such that it can be nested in other constructs.
-     * 
-     * @return the final JSON representation, but it returns the ToJson object for further editing
-     * @throws JaivaException For any errors
-     */
-    public ToJson toJsonInNest() throws JaivaException {
-        return json.completeInNest();
+    public NewJson toJson() throws JaivaException {
+        return json;
     }
 }

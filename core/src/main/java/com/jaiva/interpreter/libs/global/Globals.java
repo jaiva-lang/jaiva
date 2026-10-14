@@ -19,6 +19,8 @@ import com.jaiva.interpreter.libs.annotation.PublicLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.interpreter.symbol.SymbolType;
+import com.jaiva.tokenizer.NewJson;
+import com.yetnt.utils.builders.SimpleJSON;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
@@ -183,24 +185,24 @@ public class Globals extends BaseLibrary {
         string.append("{").append("\"version\":\"").append(Main.version).append("\",");
         string.append("\"tokens\":");
         string.append("[");
-        HashMap<Symbol, String> jsonMap = new HashMap<>();
+        HashMap<String, NewJson> jsonMap = new HashMap<>();
         for (Map.Entry<String, MapValue> entry : VFS.entrySet()) {
             String name = entry.getKey();
             MapValue vf = entry.getValue();
             Symbol symbol = vf.getValue();
-            if (jsonMap.containsKey(symbol)) {
-                String symJson = jsonMap.get(symbol);
+            if (jsonMap.containsKey(symbol.name)) {
+                SimpleJSON symJson = jsonMap.get(symbol.name).copy();
                 if (symbol.symbolType == SymbolType.FUNCTION) {
                     // TFunction token adds F~ syntax to name
-                    symJson = symJson.replace("\"name\": \"" + symbol.token.name + "\"", "\"name\": \"F~" + name + "\"");
+                    symJson.set("name", "F~" + name);
                 } else {
-                    symJson = symJson.replace("\"name\": \"" + symbol.token.name + "\"", "\"name\": \"" + name + "\"");
+                    symJson.set("name",  name);
                 }
                 string.append(symJson);
             } else {
-                String json = symbol.token.toJson();
+                NewJson json = symbol.token.toJson();
                 string.append(json);
-                jsonMap.put(symbol, json);
+                jsonMap.put(symbol.name, json);
             }
             string.append(",");
         }

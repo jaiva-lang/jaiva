@@ -6,6 +6,7 @@ import com.jaiva.lang.Chars;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * The `Tag` class represents a documentation tag with a specific type and associated attributes.
@@ -20,7 +21,7 @@ public class Tag {
     /**
      * A map of attributes associated with the tag, such as description, type, or version.
      */
-    public HashMap<String, Object> attributes = new HashMap<>();
+    public LinkedHashMap<String, Object> attributes = new LinkedHashMap<>();
 
     /**
      * Default constructor for Tag.
@@ -68,6 +69,7 @@ public class Tag {
         this.tagType = tagType;
         if (!Arrays.asList(TagType.DEPENDS, TagType.FROM, TagType.EXAMPLE).contains(tagType))
                 attributes.put("description", null);
+        attributes.put("tagType", tagType == TagType.GENERIC ? tagType.name() : tagType.name().toLowerCase());
     }
 
     @Override

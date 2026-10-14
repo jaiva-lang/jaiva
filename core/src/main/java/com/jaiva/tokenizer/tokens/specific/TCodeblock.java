@@ -1,7 +1,6 @@
 package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.errors.JaivaException;
-import com.jaiva.tokenizer.ToJson;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.TokenDefault;
 
@@ -29,17 +28,16 @@ public class TCodeblock extends TokenDefault<TCodeblock> {
      * @param ln    The line number where the code block starts.
      * @param endLn The line number where the code block ends.
      */
-    public TCodeblock(ArrayList<Token<?>> lines, int ln, int endLn) {
+    public TCodeblock(ArrayList<Token<?>> lines, int ln, int endLn) throws JaivaException {
         super("TCodeblock", ln);
         this.lines = lines;
         this.lineNumberEnd = endLn;
+        json();
     }
 
-    @Override
-    public ToJson toJsonInNest() throws JaivaException {
-        json.append("lineEnd", lineNumberEnd, false);
-        json.append("lines", lines, true);
-        return super.toJsonInNest();
+    public void json() throws JaivaException {
+        json.set("lineEnd", lineNumberEnd);
+        json.set("lines", lines);
     }
 
     /**
