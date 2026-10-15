@@ -6,34 +6,34 @@ This library exports the following libraries:
 ## Table of Contents
 | Alias | Link |
 | --- | --- |
-| R_INT | [R_INT](#R_INT) |
-| R_INTEGER | [R_INTEGER](#R_INT) |
-| W_INT | [W_INT](#W_INT) |
-| W_INTEGER | [W_INTEGER](#W_INT) |
-| R_MOD_UTF8 | [R_MOD_UTF8](#R_MOD_UTF8) |
-| R_JAVA_UTF8 | [R_JAVA_UTF8](#R_MOD_UTF8) |
-| W_MOD_UTF8 | [W_MOD_UTF8](#W_MOD_UTF8) |
-| W_JAVA_UTF8 | [W_JAVA_UTF8](#W_MOD_UTF8) |
-| W_STRING | [W_STRING](#W_STRING) |
-| W_UTF_8 | [W_UTF_8](#W_STRING) |
-| W_UTF8 | [W_UTF8](#W_STRING) |
+| R_INTEGER | [R_INTEGER](#R_INTEGER) |
+| R_INT | [R_INT](#R_INTEGER) |
+| W_INTEGER | [W_INTEGER](#W_INTEGER) |
+| W_INT | [W_INT](#W_INTEGER) |
+| R_JAVA_UTF8 | [R_JAVA_UTF8](#R_JAVA_UTF8) |
+| R_MOD_UTF8 | [R_MOD_UTF8](#R_JAVA_UTF8) |
+| W_JAVA_UTF8 | [W_JAVA_UTF8](#W_JAVA_UTF8) |
+| W_MOD_UTF8 | [W_MOD_UTF8](#W_JAVA_UTF8) |
+| W_UTF8 | [W_UTF8](#W_UTF8) |
+| W_STRING | [W_STRING](#W_UTF8) |
+| W_UTF_8 | [W_UTF_8](#W_UTF8) |
 | R_DOUBLE | [R_DOUBLE](#R_DOUBLE) |
 | W_DOUBLE | [W_DOUBLE](#W_DOUBLE) |
 | R_LONG | [R_LONG](#R_LONG) |
 | W_LONG | [W_LONG](#W_LONG) |
-| R_BOOL | [R_BOOL](#R_BOOL) |
-| R_BOOLEAN | [R_BOOLEAN](#R_BOOL) |
-| W_BOOL | [W_BOOL](#W_BOOL) |
-| W_BOOLEAN | [W_BOOLEAN](#W_BOOL) |
+| R_BOOLEAN | [R_BOOLEAN](#R_BOOLEAN) |
+| R_BOOL | [R_BOOL](#R_BOOLEAN) |
+| W_BOOLEAN | [W_BOOLEAN](#W_BOOLEAN) |
+| W_BOOL | [W_BOOL](#W_BOOLEAN) |
 | R_BYTE | [R_BYTE](#R_BYTE) |
 | W_BYTE | [W_BYTE](#W_BYTE) |
 | R_BYTES | [R_BYTES](#R_BYTES) |
 ## Functions
 ## Variables
 
-### R_INT
+### R_INTEGER
 
-This symbol can be reached by the following aliases: _`R_INT`_, _`R_INTEGER`_
+This symbol can be reached by the following aliases: _`R_INTEGER`_, _`R_INT`_
 
 _**Continuous Function Input constant over file streams.**_
 
@@ -53,9 +53,9 @@ Since Version: _6.1.0_
 ---
 
 
-### W_INT
+### W_INTEGER
 
-This symbol can be reached by the following aliases: _`W_INT`_, _`W_INTEGER`_
+This symbol can be reached by the following aliases: _`W_INTEGER`_, _`W_INT`_
 
 _**Continuous Function Input constant over file streams.**_
 
@@ -75,9 +75,9 @@ Since Version: _6.1.0_
 ---
 
 
-### R_MOD_UTF8
+### R_JAVA_UTF8
 
-This symbol can be reached by the following aliases: _`R_MOD_UTF8`_, _`R_JAVA_UTF8`_
+This symbol can be reached by the following aliases: _`R_JAVA_UTF8`_, _`R_MOD_UTF8`_
 
 _**Continuous Function Input constant over file streams.**_
 
@@ -97,9 +97,9 @@ Since Version: _6.1.0_
 ---
 
 
-### W_MOD_UTF8
+### W_JAVA_UTF8
 
-This symbol can be reached by the following aliases: _`W_MOD_UTF8`_, _`W_JAVA_UTF8`_
+This symbol can be reached by the following aliases: _`W_JAVA_UTF8`_, _`W_MOD_UTF8`_
 
 _**Continuous Function Input constant over file streams.**_
 
@@ -119,9 +119,9 @@ Since Version: _6.1.0_
 ---
 
 
-### W_STRING
+### W_UTF8
 
-This symbol can be reached by the following aliases: _`W_STRING`_, _`W_UTF_8`_, _`W_UTF8`_
+This symbol can be reached by the following aliases: _`W_UTF8`_, _`W_STRING`_, _`W_UTF_8`_
 
 _**Continuous Function Input constant over file streams. This has no read variant due to the nature of not knowing how many bytes the entire UTF8 chunk could be. Your problem.**_
 
@@ -229,9 +229,9 @@ Since Version: _6.1.0_
 ---
 
 
-### R_BOOL
+### R_BOOLEAN
 
-This symbol can be reached by the following aliases: _`R_BOOL`_, _`R_BOOLEAN`_
+This symbol can be reached by the following aliases: _`R_BOOLEAN`_, _`R_BOOL`_
 
 _**Continuous Function Input constant over file streams.**_
 
@@ -251,9 +251,9 @@ Since Version: _6.1.0_
 ---
 
 
-### W_BOOL
+### W_BOOLEAN
 
-This symbol can be reached by the following aliases: _`W_BOOL`_, _`W_BOOLEAN`_
+This symbol can be reached by the following aliases: _`W_BOOLEAN`_, _`W_BOOL`_
 
 _**Continuous Function Input constant over file streams.**_
 

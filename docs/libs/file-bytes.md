@@ -5,7 +5,7 @@ _Allows byte level reading and writing of files onto disk. This makes use of con
 This library exports the following libraries: 
 - file/bytes/const
 
-Exported Symbols Include: `R_INT`, `R_INTEGER`, `W_INT`, `W_INTEGER`, `R_MOD_UTF8`, `R_JAVA_UTF8`, `W_MOD_UTF8`, `W_JAVA_UTF8`, `W_STRING`, `W_UTF_8`, `W_UTF8`, `R_DOUBLE`, `W_DOUBLE`, `R_LONG`, `W_LONG`, `R_BOOL`, `R_BOOLEAN`, `W_BOOL`, `W_BOOLEAN`, `R_BYTE`, `W_BYTE`, `R_BYTES`
+Exported Symbols Include: `R_INTEGER`, `R_INT`, `W_INTEGER`, `W_INT`, `R_JAVA_UTF8`, `R_MOD_UTF8`, `W_JAVA_UTF8`, `W_MOD_UTF8`, `W_UTF8`, `W_STRING`, `W_UTF_8`, `R_DOUBLE`, `W_DOUBLE`, `R_LONG`, `W_LONG`, `R_BOOLEAN`, `R_BOOL`, `W_BOOLEAN`, `W_BOOL`, `R_BYTE`, `W_BYTE`, `R_BYTES`
 
 ## Table of Contents
 | Alias | Link |

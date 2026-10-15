@@ -6,22 +6,22 @@ This library exports the following libraries:
 ## Table of Contents
 | Alias | Link |
 | --- | --- |
-| C_INPUT | [C_INPUT](#C_INPUT) |
-| C_READ | [C_READ](#C_INPUT) |
-| C_OUTPUT | [C_OUTPUT](#C_OUTPUT) |
-| C_WRITE | [C_WRITE](#C_OUTPUT) |
+| C_READ | [C_READ](#C_READ) |
+| C_INPUT | [C_INPUT](#C_READ) |
+| C_WRITE | [C_WRITE](#C_WRITE) |
+| C_OUTPUT | [C_OUTPUT](#C_WRITE) |
 | C_FLUSH | [C_FLUSH](#C_FLUSH) |
-| C_END_OF_FILE | [C_END_OF_FILE](#C_END_OF_FILE) |
-| C_EOF | [C_EOF](#C_END_OF_FILE) |
-| C_END | [C_END](#C_END) |
-| C_FINISH | [C_FINISH](#C_END) |
-| C_CLOSE | [C_CLOSE](#C_END) |
+| C_EOF | [C_EOF](#C_EOF) |
+| C_END_OF_FILE | [C_END_OF_FILE](#C_EOF) |
+| C_CLOSE | [C_CLOSE](#C_CLOSE) |
+| C_END | [C_END](#C_CLOSE) |
+| C_FINISH | [C_FINISH](#C_CLOSE) |
 ## Functions
 ## Variables
 
-### C_INPUT
+### C_READ
 
-This symbol can be reached by the following aliases: _`C_INPUT`_, _`C_READ`_
+This symbol can be reached by the following aliases: _`C_READ`_, _`C_INPUT`_
 
 _**Key of the reader function if this continuous function closes over a read/input operation**_
 
@@ -53,9 +53,9 @@ cont(C_READ)()! @ Calls the returned function.
 ---
 
 
-### C_OUTPUT
+### C_WRITE
 
-This symbol can be reached by the following aliases: _`C_OUTPUT`_, _`C_WRITE`_
+This symbol can be reached by the following aliases: _`C_WRITE`_, _`C_OUTPUT`_
 
 _**Key of the output function if this continuous function closes over a write/output operation**_
 
@@ -121,9 +121,9 @@ cont(C_FLUSH)()! @ Calls the returned function.
 ---
 
 
-### C_END_OF_FILE
+### C_EOF
 
-This symbol can be reached by the following aliases: _`C_END_OF_FILE`_, _`C_EOF`_
+This symbol can be reached by the following aliases: _`C_EOF`_, _`C_END_OF_FILE`_
 
 _**(Only associated with continuous input functions) Key of the function which signals that an input continuous function has reached the end of it's data. Specific semantics depend on implementations as not all input continuous functions may make use of this.**_
 
@@ -155,9 +155,9 @@ cont(C_EOF)()! @ Calls the returned function.
 ---
 
 
-### C_END
+### C_CLOSE
 
-This symbol can be reached by the following aliases: _`C_END`_, _`C_FINISH`_, _`C_CLOSE`_
+This symbol can be reached by the following aliases: _`C_CLOSE`_, _`C_END`_, _`C_FINISH`_
 
 _**Key of the function which closes the continuous function, effectively ending it and freeing resources. This always needs to be called to avoid resource leaks.**_
 

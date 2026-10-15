@@ -16,5 +16,8 @@ Literlaly just plumbing
 - Encapsulate some fields and make a lot of classes final
 - Ponder switching from Java 21 to Java 25 for sealed permits syntax (Jaiva 7...)
 - Fix aliased library symbols not being aliased in JSON output
+  - For LibrarySymbol, even if a symbol's canonical name is within the alias list already,
+  it's removed and readded as the first entry to ensure it's always encountered first no amtter
+  what.
 - Fix file md output formatting (didn't call .trim())
 - Fix some runtime exceptions (some)
