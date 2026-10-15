@@ -69,7 +69,7 @@ public class Main {
      * .<build number>"
      * (SemVar).
      */
-    public static String version = "6.1.2";
+    public static String version = "6.2.0";
     /**
      * Author, it's just me.
      */

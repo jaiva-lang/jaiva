@@ -1,6 +1,6 @@
 <h1> <img src="images/jaiva-full-logo.png" width="50"> Jaiva!</h1>
 
-Version : **_6.1.2_**
+Version : **_6.2.0_**
 
 [![](https://jitpack.io/v/yetnt/jaiva.svg)](https://jitpack.io/#yetnt/jaiva)
 
