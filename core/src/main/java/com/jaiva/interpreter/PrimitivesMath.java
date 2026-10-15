@@ -5,6 +5,8 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TExpression;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,9 +17,10 @@ import java.util.regex.Pattern;
 // cuz java doesnt FUCKING allow you to just FUCKING compare generic FUCKING number.
 // is there a better way? probably. i couldnt care less tho
 
-public class PrimitivesMath {
+public final class PrimitivesMath {
 
-    private static String err(String op, Object lhs, Object rhs) {
+    @NotNull
+    private static String err(String op, @NotNull Object lhs, @NotNull Object rhs) {
         return "You cannot apply the " + op + " operator to a " + lhs.getClass().getSimpleName() + "(lhs) " +
                 rhs.getClass().getSimpleName() + "(rhs) combination operation.";
     }
@@ -302,6 +305,8 @@ public class PrimitivesMath {
         return void.class;
     }
 
+    @NotNull
+    @Contract("_, _, null, _, _ -> fail")
     static Object compareStuff(Scope scope, TExpression tExpression, Object lhs, Object rhs, String op) throws InterpreterException.TExpressionResolutionException, InterpreterException.CatchAllException {
         // however if its these the input is a number or a double
         // check input first of all
@@ -317,88 +322,89 @@ public class PrimitivesMath {
         InterpreterException.CatchAllException catchAllException =
                 new InterpreterException.CatchAllException(scope,"Uhm something soff bout da line", tExpression.lineNumber);
 
-        if (lhs instanceof Integer v && rhs instanceof Integer v1) {
-            // handle ints
-            return switch (op) {
-                case ">=" -> v >= v1;
-                case "<=" -> v <= v1;
-                case "<"  -> v < v1;
-                case ">"  -> v > v1;
-                default -> throw catchAllException;
-            };
-        } else if (lhs instanceof Double v && rhs instanceof Double v1) {
-            // handle doubles
-            return switch (op) {
-                case ">=" -> v >= v1;
-                case "<=" -> v <= v1;
-                case "<"  -> v < v1;
-                case ">"  -> v > v1;
-                default -> throw catchAllException;
-            };
-        } else if (lhs instanceof Long v && rhs instanceof Long v1) {
-            // handle doubles
-            return switch (op) {
-                case ">=" -> v >= v1;
-                case "<=" -> v <= v1;
-                case "<"  -> v < v1;
-                case ">"  -> v > v1;
-                default -> throw catchAllException;
-            };
-        } else if (lhs instanceof Integer v && rhs instanceof Double v1) {
-            // handle doubles
-            return switch (op) {
-                case ">=" -> v >= v1;
-                case "<=" -> v <= v1;
-                case "<"  -> v < v1;
-                case ">"  -> v > v1;
-                default -> throw catchAllException;
-            };
-        } else if (lhs instanceof Integer v && rhs instanceof Long v1) {
-            // handle doubles
-            return switch (op) {
-                case ">=" -> v >= v1;
-                case "<=" -> v <= v1;
-                case "<"  -> v < v1;
-                case ">"  -> v > v1;
-                default -> throw catchAllException;
-            };
-        } else if (lhs instanceof Double v && rhs instanceof Integer v1) {
-            // handle doubles
-            return switch (op) {
-                case ">=" -> v >= v1;
-                case "<=" -> v <= v1;
-                case "<"  -> v < v1;
-                case ">"  -> v > v1;
-                default -> throw catchAllException;
-            };
-        } else if (lhs instanceof Long v && rhs instanceof Integer v1) {
-            // handle doubles
-            return switch (op) {
-                case ">=" -> v >= v1;
-                case "<=" -> v <= v1;
-                case "<"  -> v < v1;
-                case ">"  -> v > v1;
-                default -> throw catchAllException;
-            };
-        } else if (lhs instanceof Long v && rhs instanceof Double v1) {
-            // handle doubles
-            return switch (op) {
-                case ">=" -> v >= v1;
-                case "<=" -> v <= v1;
-                case "<"  -> v < v1;
-                case ">"  -> v > v1;
-                default -> throw catchAllException;
-            };
-        } else if (lhs instanceof Double v && rhs instanceof Long v1) {
-            // handle doubles
-            return switch (op) {
-                case ">=" -> v >= v1;
-                case "<=" -> v <= v1;
-                case "<"  -> v < v1;
-                case ">"  -> v > v1;
-                default -> throw catchAllException;
-            };
-        }
-        return null;
+        return switch (lhs) {
+            case Integer v when rhs instanceof Integer v1 ->
+                // handle ints
+                    switch (op) {
+                        case ">=" -> v >= v1;
+                        case "<=" -> v <= v1;
+                        case "<" -> v < v1;
+                        case ">" -> v > v1;
+                        default -> throw catchAllException;
+                    };
+            case Double v when rhs instanceof Double v1 ->
+                // handle doubles
+                    switch (op) {
+                        case ">=" -> v >= v1;
+                        case "<=" -> v <= v1;
+                        case "<" -> v < v1;
+                        case ">" -> v > v1;
+                        default -> throw catchAllException;
+                    };
+            case Long v when rhs instanceof Long v1 ->
+                // handle doubles
+                    switch (op) {
+                        case ">=" -> v >= v1;
+                        case "<=" -> v <= v1;
+                        case "<" -> v < v1;
+                        case ">" -> v > v1;
+                        default -> throw catchAllException;
+                    };
+            case Integer v when rhs instanceof Double v1 ->
+                // handle doubles
+                    switch (op) {
+                        case ">=" -> v >= v1;
+                        case "<=" -> v <= v1;
+                        case "<" -> v < v1;
+                        case ">" -> v > v1;
+                        default -> throw catchAllException;
+                    };
+            case Integer v when rhs instanceof Long v1 ->
+                // handle doubles
+                    switch (op) {
+                        case ">=" -> v >= v1;
+                        case "<=" -> v <= v1;
+                        case "<" -> v < v1;
+                        case ">" -> v > v1;
+                        default -> throw catchAllException;
+                    };
+            case Double v when rhs instanceof Integer v1 ->
+                // handle doubles
+                    switch (op) {
+                        case ">=" -> v >= v1;
+                        case "<=" -> v <= v1;
+                        case "<" -> v < v1;
+                        case ">" -> v > v1;
+                        default -> throw catchAllException;
+                    };
+            case Long v when rhs instanceof Integer v1 ->
+                // handle doubles
+                    switch (op) {
+                        case ">=" -> v >= v1;
+                        case "<=" -> v <= v1;
+                        case "<" -> v < v1;
+                        case ">" -> v > v1;
+                        default -> throw catchAllException;
+                    };
+            case Long v when rhs instanceof Double v1 ->
+                // handle doubles
+                    switch (op) {
+                        case ">=" -> v >= v1;
+                        case "<=" -> v <= v1;
+                        case "<" -> v < v1;
+                        case ">" -> v > v1;
+                        default -> throw catchAllException;
+                    };
+            case Double v when rhs instanceof Long v1 ->
+                // handle doubles
+                    switch (op) {
+                        case ">=" -> v >= v1;
+                        case "<=" -> v <= v1;
+                        case "<" -> v < v1;
+                        case ">" -> v > v1;
+                        default -> throw catchAllException;
+                    };
+            default -> null;
+        };
     }
 }

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class ExternalLibraryLoader {
+public final class ExternalLibraryLoader {
     private static final String LIB_DIR = "lib/";
     private static final ArrayList<String> libFiles = new ArrayList<>(Arrays.asList(
             "arrays.jiv"

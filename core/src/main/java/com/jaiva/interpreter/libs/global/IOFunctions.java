@@ -1,9 +1,6 @@
 package com.jaiva.interpreter.libs.global;
 
 import com.jaiva.errors.InterpreterException;
-import com.jaiva.interpreter.Interpreter;
-import com.jaiva.interpreter.Interpreter.ThrowIfGlobalContext;
-import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -18,7 +15,6 @@ import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
 
 import java.util.ArrayList;
@@ -83,15 +79,15 @@ public class IOFunctions extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             String output;
             Object o = !callProperties.params().isEmpty() ? callProperties.params().getFirst() : null;
             Object newO = o;
             if (o == null || o instanceof TVoidValue) {
                 if (callProperties.config().isStreamer())
-                    return Token.voidValue(callProperties.tFuncCall().lineNumber);
+                    return Token.voidValue(callProperties.getLineNumber());
                 System.out.println();
-                return Token.voidValue(callProperties.tFuncCall().lineNumber);
+                return Token.voidValue(callProperties.getLineNumber());
             }
             Object v = callProperties.params().size() > 1
                     ? callProperties.params().get(1)
@@ -115,7 +111,7 @@ public class IOFunctions extends BaseLibrary {
 //                // loop context or cima was called with a custom error.
 //                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
 //                        "Cannot use 'voetsek' or 'nevermind' outside of a loop context, or 'cima' was called with a custom error.",
-//                        callProperties.tFuncCall().lineNumber);
+//                        callProperties.getLineNumber());
 //            } else {
                 output = o.toString();
 //            }
@@ -123,18 +119,18 @@ public class IOFunctions extends BaseLibrary {
             String isJustStr = newO instanceof String && callProperties.config().isPrintStacks() ? "\"" : "";
 
             if (callProperties.config().isStreamer())
-                return Token.voidValue(callProperties.tFuncCall().lineNumber);
+                return Token.voidValue(callProperties.getLineNumber());
             if (v instanceof Boolean && (Boolean) v) {
                 System.out.print(
-                        isJustStr + EscapeSequence.fromEscape(output, callProperties.tFuncCall().lineNumber) + isJustStr);
+                        isJustStr + EscapeSequence.fromEscape(output, callProperties.getLineNumber()) + isJustStr);
             } else if (newO instanceof ArrayList<?> arr)
             {
                 System.out.println(arrToString(arr));
             }else{
                 System.out.println(
-                        isJustStr + EscapeSequence.fromEscape(output, callProperties.tFuncCall().lineNumber) + isJustStr);
+                        isJustStr + EscapeSequence.fromEscape(output, callProperties.getLineNumber()) + isJustStr);
             }
-            return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            return Token.voidValue(callProperties.getLineNumber());
         }
 
         private String arrToString(ArrayList<?> arr) {
@@ -179,7 +175,7 @@ public class IOFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             if (callProperties.config().isStreamer())
-                return Token.voidValue(callProperties.tFuncCall().lineNumber);
+                return Token.voidValue(callProperties.getLineNumber());
 
             return callProperties.config().getGlobalResources()
                     .ofCurrentThread()
@@ -230,10 +226,10 @@ public class IOFunctions extends BaseLibrary {
                 throws InterpreterException {
             // Clear the console using ANSI escape codes.
             if (callProperties.config().isStreamer())
-                return Token.voidValue(callProperties.tFuncCall().lineNumber);
+                return Token.voidValue(callProperties.getLineNumber());
             System.out.print("\033[H\033[2J");
             System.out.flush();
-            return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            return Token.voidValue(callProperties.getLineNumber());
         }
     }
 

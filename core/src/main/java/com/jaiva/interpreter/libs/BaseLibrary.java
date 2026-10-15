@@ -1,7 +1,6 @@
 package com.jaiva.interpreter.libs;
 
 import com.jaiva.Main;
-import com.jaiva.errors.InterpreterException;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.errors.LoadException;
 import com.jaiva.interpreter.MapValue;
@@ -16,6 +15,7 @@ import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.TokenDefault;
 import com.yetnt.utils.builders.SimpleJSON;
 import com.yetnt.utils.collection.HashMultiMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -59,7 +59,7 @@ public class BaseLibrary {
         Arrays.stream(syms).forEach(symbol -> symbols.add(new LibrarySymbol(symbol)));
     }
 
-    protected void add(BaseLibrary bis) {
+    protected void add(@NotNull BaseLibrary bis) {
         symbols.addAll(bis.getSymbols());
     }
 
@@ -73,6 +73,7 @@ public class BaseLibrary {
         return vfs;
     }
 
+    @NotNull
     public Vfs getVfs(IConfig<Object> config, Globals globals) throws JaivaException {
         Vfs vfs = getUniqueVfs();
         if (importPromises.isEmpty()) {
@@ -124,8 +125,9 @@ public class BaseLibrary {
         return vfs;
     }
 
+    @SuppressWarnings("unchecked")
     protected static BaseLibrary instantiate(
-            Class<?> clazz,
+            @NotNull Class<?> clazz,
             IConfig<Object> config,
             Globals globals
 //            ,
@@ -181,7 +183,7 @@ public class BaseLibrary {
         return libraryInstance;
     }
 
-    public static String vfsToJson(Vfs VFS) throws JaivaException {
+    public static String vfsToJson(@NotNull Vfs VFS) throws JaivaException {
 
         SimpleJSON json = new SimpleJSON();
         ArrayList<Object> tokens = new ArrayList<>();
@@ -222,7 +224,7 @@ public class BaseLibrary {
         PATH, DESCRIPTION
     }
 
-    public static Optional<String> getFromAnnotation(Class<? extends BaseLibrary> clazz, Metadata metadata) {
+    public static Optional<String> getFromAnnotation(@NotNull Class<? extends BaseLibrary> clazz, Metadata metadata) {
         JaivaLibrary library = clazz.getAnnotation(JaivaLibrary.class);
         if (library != null) return Optional.of(metadata == Metadata.DESCRIPTION ? library.description() : library.path());
 
@@ -235,7 +237,7 @@ public class BaseLibrary {
         return Optional.empty();
     }
 
-    public static Optional<String> getFromSymbol(Vfs vfs, Metadata metadata) throws LoadException.LibraryMetadataException {
+    public static Optional<String> getFromSymbol(@NotNull Vfs vfs, Metadata metadata) throws LoadException.LibraryMetadataException {
         String str = metadata == Metadata.DESCRIPTION ? "description" : "path";
         Optional<Map.Entry<String, MapValue>> symEntry = vfs.entrySet()
                 .stream()
@@ -255,7 +257,7 @@ public class BaseLibrary {
                         token.lineNumber
                 );
             }
-            return Optional.of(doc.getDescription());
+            return Optional.of(doc.getDescription().trim());
         }
         return Optional.empty();
     }
@@ -274,7 +276,7 @@ public class BaseLibrary {
      * @return the value of the "path" field
      * @throws IllegalStateException if the field is not found, not public static String, or null/blank
      */
-    public static String externalLibraryRequirements(Class<?> clazz) throws LoadException.LibraryAnnotationException {
+    public static String externalLibraryRequirements(@NotNull Class<?> clazz) throws LoadException.LibraryAnnotationException {
         boolean publicLibAnnotFound = false;
         boolean isPublic = false;
         for (Annotation annotation : clazz.getAnnotations()) {

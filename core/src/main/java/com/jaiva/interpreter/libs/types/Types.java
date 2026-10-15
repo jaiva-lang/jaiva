@@ -77,12 +77,12 @@ public class Types extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
+            this.checkParams(callProperties.toCheckParams());
             Object val = callProperties.params().getFirst();
 
             if (!(val instanceof String value))
                 throw new WtfAreYouDoingException(callProperties.scope(), callProperties.params().getFirst() + " cannot become a number kau",
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
 
             int type = value.startsWith("0b") ? 2 : value.startsWith("0x") ? 16 : value.startsWith("0c") ? 8 : -1;
             value = type != -1 ? value.substring(2) : value;
@@ -98,7 +98,7 @@ public class Types extends BaseLibrary {
 
                 Object r = p.get(1);
                 if (!(r instanceof TVoidValue) && !(r instanceof Integer))
-                    throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
+                    throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.getLineNumber());
                 int radix = r instanceof TVoidValue ? -1 : (int) r;
 
                 return Long.parseLong(v, t != -1 ? t : radix != -1 ? radix : 10);
@@ -119,7 +119,7 @@ public class Types extends BaseLibrary {
 
                     Object r = callProperties.params().get(1);
                     if (!(r instanceof TVoidValue) && !(r instanceof Integer))
-                        throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
+                        throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.getLineNumber());
                     int radix = r instanceof TVoidValue ? -1 : (int) r;
 
                     return Integer.parseInt(value, type != -1 ? type : radix != -1 ? radix : 10);
@@ -131,11 +131,11 @@ public class Types extends BaseLibrary {
                         return attemptLong.apply(type, callProperties.params(), value);
                     } else {
                         throw new WtfAreYouDoingException(callProperties.scope(), callProperties.params().getFirst() + " cannot become a number kau",
-                                callProperties.tFuncCall().lineNumber);
+                                callProperties.getLineNumber());
                     }
                 } catch (NumberFormatException e2){
                     throw new WtfAreYouDoingException(callProperties.scope(), callProperties.params().getFirst() + " cannot become a number kau",
-                            callProperties.tFuncCall().lineNumber);
+                            callProperties.getLineNumber());
                 }
             }
         }
@@ -186,7 +186,7 @@ public class Types extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
+            this.checkParams(callProperties.toCheckParams());
             Object val = callProperties.params().getFirst();
 
             return switch (val) {
@@ -202,7 +202,7 @@ public class Types extends BaseLibrary {
                         yield val.toString();
                     Object r = callProperties.params().get(1);
                     if (!(r instanceof TVoidValue) && !(r instanceof Integer))
-                        throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
+                        throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.getLineNumber());
                     int radix = r instanceof TVoidValue ? -1 : (int) r;
                     yield switch (radix) {
                         case 2 -> "0b" + Long.toBinaryString(l);
@@ -216,7 +216,7 @@ public class Types extends BaseLibrary {
                         yield val.toString();
                     Object r = callProperties.params().get(1);
                     if (!(r instanceof TVoidValue) && !(r instanceof Integer))
-                        throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.tFuncCall().lineNumber);
+                        throw new FunctionParametersException(callProperties.scope(), this, "2", r, Integer.class, callProperties.getLineNumber());
                     int radix = r instanceof TVoidValue ? -1 : (int) r;
                     yield switch (radix) {
                         case 2 -> "0b" + Integer.toBinaryString(integer);
@@ -228,7 +228,7 @@ public class Types extends BaseLibrary {
                 case TVoidValue v -> v.toString();
                 case String s -> s;
                 case null, default -> throw new WtfAreYouDoingException(callProperties.scope(), val + " cannot become a string kau",
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
             };
         }
     }

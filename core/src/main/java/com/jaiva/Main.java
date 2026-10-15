@@ -13,6 +13,7 @@ import com.jaiva.interpreter.libs.global.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.md.MDInputProps;
 import com.jaiva.md.ToMarkdown;
+import com.jaiva.tokenizer.NewJson;
 import com.jaiva.tokenizer.TConfig;
 import com.jaiva.tokenizer.Tokenizer;
 import com.jaiva.tokenizer.jdoc.JDoc;
@@ -24,6 +25,7 @@ import com.jaiva.tokenizer.tokens.specific.TExtendParams;
 import com.jaiva.utils.generic.BlockChain;
 import com.jaiva.utils.generic.MultipleLinesOutput;
 import com.yetnt.utils.builders.AnsiColour;
+import com.yetnt.utils.builders.SimpleJSON;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -255,35 +257,7 @@ public class Main {
                     case "-j", "--json" -> {
                         if (args[0].startsWith("jaiva/") || args[0].startsWith("jaiva\\"))
                             throw new JaivaException.UnknownFileException("You can't print tokens of the built-in jaiva libs.");
-                        System.out.println();
-                        System.out.print("[");
-                        System.out.print(new Globals(iconfig).returnGlobalsJSON(iconfig, false));
-                        for (int i = 0; i < tokens.size(); i++) {
-                            Token<?> token = tokens.get(i);
-                            System.out.print(token.value().toJson());
-                            if (i != tokens.size() - 1) {
-                                System.out.print(",");
-                            }
-                        }
-                        System.out.print("]");
-                        System.out.println();
-                        System.exit(0);
-                        return;
-                    }
-                    case "-jg", "--json-with-globals" -> {
-                        if (args[0].contains("jaiva/") || args[0].contains("jaiva\\"))
-                            throw new JaivaException.UnknownFileException("The globals (built-in) will be included with the given file's tokens automatically.");
-                        System.out.println();
-                        System.out.print("[");
-                        System.out.print(new Globals(iconfig).returnGlobalsJSON(iconfig, false));
-                        for (int i = 0; i < tokens.size(); i++) {
-                            Token<?> token = tokens.get(i);
-                            System.out.print(token.value().toJson());
-                            if (i != tokens.size() - 1) {
-                                System.out.print(",");
-                            }
-                        }
-                        System.out.print("]");
+                        System.out.println(new NewJson().collectionToString(tokens));
                         System.out.println();
                         System.exit(0);
                         return;

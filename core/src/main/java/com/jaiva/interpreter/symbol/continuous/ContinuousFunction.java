@@ -166,19 +166,19 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
     @Override
     public Object call(CallProperties callProperties) throws Exception {
         // do all the handling logic dispatch and new function creation shenangians
-        checkParams(callProperties.tFuncCall(), callProperties.scope());
+        checkParams(callProperties.toCheckParams());
         if (!callProperties.params().isEmpty()) {
             Object prot = Primitives.toPrimitive(callProperties.params().getFirst(), false, callProperties.config(), callProperties.scope());
             if (!(prot instanceof String protocol))
                 throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "1", prot, String.class, callProperties.tFuncCall().lineNumber
+                        callProperties.scope(), this, "1", prot, String.class, callProperties.getLineNumber()
                 );
 
             protocol = protocol.toLowerCase();
             if (!CFuncInput.isValid(protocol))
                 throw new InterpreterException.WtfAreYouDoingException(
                         callProperties.scope(), "A continuous function can only take string inputs of: " +
-                        " \"read\", \"write\", \"flush\" or \"close\"!", callProperties.tFuncCall().lineNumber
+                        " \"read\", \"write\", \"flush\" or \"close\"!", callProperties.getLineNumber()
                 );
 
             // isValid allows this to pass.
@@ -193,7 +193,7 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
                 case EOF -> eofClosure;
             };
         }
-        return Token.voidValue(callProperties.tFuncCall().lineNumber);
+        return Token.voidValue(callProperties.getLineNumber());
     }
 
 }

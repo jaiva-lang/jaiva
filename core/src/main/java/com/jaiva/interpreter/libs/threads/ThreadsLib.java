@@ -99,12 +99,12 @@ public class ThreadsLib extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             Object funcToCall =
                     callProperties.params().getFirst();
             if (!(funcToCall instanceof BaseFunction function))
                 throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "1", funcToCall, BaseFunction.class, callProperties.tFuncCall().lineNumber
+                        callProperties.scope(), this, "1", funcToCall, BaseFunction.class, callProperties.getLineNumber()
                 );
 
             BaseFunction cleanup;
@@ -113,7 +113,7 @@ public class ThreadsLib extends BaseLibrary {
                         callProperties.params().get(1);
                 if (!(funcForCleanup instanceof BaseFunction) && !(funcForCleanup instanceof TVoidValue))
                     throw new InterpreterException.FunctionParametersException(
-                            callProperties.scope(), this, "1", funcForCleanup, BaseFunction.class, callProperties.tFuncCall().lineNumber
+                            callProperties.scope(), this, "1", funcForCleanup, BaseFunction.class, callProperties.getLineNumber()
                     );
 
                 // if they put idk the value, then its the same as not putting a value.

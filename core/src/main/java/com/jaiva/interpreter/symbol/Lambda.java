@@ -2,12 +2,15 @@ package com.jaiva.interpreter.symbol;
 
 import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.Scope;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.tokenizer.tokens.specific.TFunction;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class Lambda extends DefinedFunction {
+public final class Lambda extends DefinedFunction {
+    /**
+     * This one field enables currying lmao.
+     */
     private final Scope lambdaScope;
 
     Lambda(String name, TFunction token, Scope scope) {
@@ -21,7 +24,7 @@ public class Lambda extends DefinedFunction {
      * @return A list of prepared parameters.
      * @throws Exception If an error occurs during parameter preparation.
      */
-    private ArrayList<Object> prepareParams(CallProperties callProperties) throws Exception {
+    private ArrayList<Object> prepareParams(@NotNull CallProperties callProperties) throws Exception {
         ArrayList<Object> preparedParams = new ArrayList<>();
         for (Object param : callProperties.params()) {
             if (param == null && callProperties.params().size() == 1) return preparedParams;
@@ -31,7 +34,7 @@ public class Lambda extends DefinedFunction {
     }
 
     @Override
-    public Object call(CallProperties callProperties) throws Exception {
+    public Object call(@NotNull CallProperties callProperties) throws Exception {
         // Because we're going into a closure now, m
         return super.call(
                 new CallProperties(callProperties.tFuncCall(),

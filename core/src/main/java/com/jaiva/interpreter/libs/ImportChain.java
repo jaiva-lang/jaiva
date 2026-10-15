@@ -2,6 +2,7 @@ package com.jaiva.interpreter.libs;
 
 import com.jaiva.interpreter.libs.global.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -22,6 +23,7 @@ public record ImportChain(
         Class<? extends BaseLibrary> importedFrom,
         Optional<ImportChain> link
 ) {
+    @NotNull
     public ArrayList<Class<? extends BaseLibrary>> getClassesInChain() {
         ArrayList<Class<? extends BaseLibrary>> list = new ArrayList<>();
 

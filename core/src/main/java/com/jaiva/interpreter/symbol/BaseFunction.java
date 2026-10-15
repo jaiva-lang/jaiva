@@ -1,7 +1,7 @@
 package com.jaiva.interpreter.symbol;
 
 import com.jaiva.errors.InterpreterException;
-import com.jaiva.errors.JaivaException;
+import com.jaiva.interpreter.Interpreter;
 import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -13,16 +13,39 @@ import com.jaiva.tokenizer.tokens.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 import com.jaiva.tokenizer.tokens.specific.TFunction;
 import com.jaiva.tokenizer.tokens.specific.TVoidValue;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
 /**
- * BaseFunction class is a base class for all functions in Jaiva.
+ * BaseFunction class is, the function. It is what Jaiva classifies as a callable entity.
+ * <p>
+ *     Instances of {@link BaseFunction} can be passed around in {@link Primitives}
+ *     as if they are normal values. (higher order functions.)
+ * </p>
+ * <p>
+ *     A user defined function, is a {@link DefinedFunction}, where as a user defined
+ *     lambda is a further specialisation, being a {@link Lambda}. But they are all functions
+ *     nonetheless. (Except for the fact that {@link Lambda} stores it's creation scope).
+ * </p>
+ * @see #call(CallProperties)
+ * @see DefinedFunction
+ * @see Lambda
+ * @see Symbol
+ * @see Interpreter
+ * @see TFunction
+ * @see TFuncCall
+ * @see Primitives
+ * @author Lehlogonolo Poole
  */
 public class BaseFunction extends Symbol {
 
+    /**
+     * Whether to evaluate parameters early or delegate to the function itself's job.
+     */
     private boolean evaluateParamsEarly = true;
 
     /**
@@ -39,17 +62,25 @@ public class BaseFunction extends Symbol {
      * Constructs a new BaseFunction instance with da specified function builder
      * @param functionBuilder da builder.
      */
-    public BaseFunction(FunctionBuilder functionBuilder) {
+    public BaseFunction(@NotNull FunctionBuilder functionBuilder) {
         super(functionBuilder.getName(), SymbolType.FUNCTION, functionBuilder.toToken());
     }
 
+    /**
+     * Prints the function definition string from the token
+     * @return The definition string
+     */
     @Override
-    public String toString() {
+    public final String toString() {
         return ((TFunction)token).toDefinitionString();
     }
 
+    /**
+     * dbg str
+     * @return dbg str
+     */
     @Override
-    public String toDebugString() {
+    public final String toDebugString() {
         return this.toString();
     }
 
@@ -63,7 +94,7 @@ public class BaseFunction extends Symbol {
      * @throws Exception If an error occurs during the function call.
      */
     public Object call(CallProperties callProperties) throws Exception {
-        return Token.voidValue(callProperties.tFuncCall().lineNumber);
+        return Token.voidValue(callProperties.getLineNumber());
     }
 
     /**
@@ -76,12 +107,13 @@ public class BaseFunction extends Symbol {
      * @return something
      * @throws Exception if anthing wrong lol
      */
+    @Deprecated(since = "6.2.0")
     public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
         return call(new CallProperties(tFuncCall, params, config, scope));
     }
 
-    public Object call(ArrayList<Object> params,
-                       IConfig<Object> config, Scope scope, TFuncCall originalCall) throws Exception {
+    public final Object call(@NotNull ArrayList<Object> params,
+                       IConfig<Object> config, Scope scope, @NotNull TFuncCall originalCall) throws Exception {
         // inject stuff into scope
         // TODO this is most definitely unsafe. only called when a library function needs to call a function, sorta like composing in java using andThen()
         ArrayList<Object> tokens = new ArrayList<>();
@@ -104,11 +136,44 @@ public class BaseFunction extends Symbol {
                 ), params, config, scope));
     }
 
-    public boolean isEvaluateParamsEarly() {
+    /**
+     * Whether parameters will be evaluated to primitive values before the function
+     * is called. If you need to override this behaviour, call {@link #evaluateParamsLater()}
+     * in the function constructor.
+     * @return true if so (Default). False otherwise
+     */
+    public final boolean isEvaluateParamsEarly() {
         return evaluateParamsEarly;
     }
 
-    protected void evaluateParamsLater() {
+    /**
+     * Sets this function to be responsible for parameter validation.
+     * @implNote <p>
+     *     What this means is, the given {@link CallProperties#params()}
+     *     may either contain:
+     *     <ul>
+     *         <li>A primitive value</li>
+     *         <li>A {@link Token}</li>
+     *         <li>
+     *             A mix of them (This usually only happens when the user function call
+     *             has an argument which has been spread into the function call
+     *             arguments. In that case the spreaded arguments arrive already parsed
+     *             where as other arguments may have not been aprsed.)
+     *         </li>
+     *     </ul>
+     *     By calling this, it is up to the function to
+     *     call the following method on the parameter of choice to evaluate it.
+     *     <pre>{@code
+     *     Primitives.toPrimitive(params.getFirst(), false, config, scope);
+     *     }</pre>
+     * </p>
+     * This usually only comes in helpful for functions which are more reflective
+     * over the {@link TFuncCall} token then actual runtime parsing. in that case
+     * it's better to call this.
+     * @implSpec This is to be called in a function implementor's constructor.
+     * @see Primitives#toPrimitive(Object, boolean, IConfig, Scope)
+     */
+    protected final void evaluateParamsLater() {
         this.evaluateParamsEarly = false;
     }
 
@@ -122,7 +187,9 @@ public class BaseFunction extends Symbol {
      * @return A list of resolved parameters for the function call.
      * @throws Exception If an error occurs during parameter resolution.
      */
-    public static ArrayList<Object> resolveParameters(BaseFunction f, TFuncCall tFuncCall, IConfig<Object> config, Scope scope) throws Exception {
+    @NotNull
+    @Contract(pure = true)
+    public static ArrayList<Object> resolveSpreadOperator(BaseFunction f, @NotNull TFuncCall tFuncCall, IConfig<Object> config, Scope scope) throws Exception {
         ArrayList<Object> newTokenArgs = new ArrayList<>();
         // Go through each arg.
 
@@ -170,15 +237,21 @@ public class BaseFunction extends Symbol {
         return newTokenArgs;
     }
 
+    public record CheckParams(
+            TFuncCall tFuncCall,
+            Scope scope
+    ) {}
+
     /**
      * Checks if the parameters passed to a function call match the function's definition.
      * This method validates the number of arguments and their optionality.
      *
-     * @param tFuncCall The function call token containing the arguments.
-     * @param scope     The current scope for error reporting.
+     * @param checkParams The parameters object.
      * @throws InterpreterException If there's a mismatch in parameters (e.g., missing required arguments).
      */
-    protected void checkParams(TFuncCall tFuncCall, Scope scope) throws Exception {
+    protected void checkParams(@NotNull CheckParams checkParams) throws InterpreterException {
+        TFuncCall tFuncCall = checkParams.tFuncCall;
+        Scope scope = checkParams.scope;
         TFunction tFunc = (TFunction) this.token;
 
         // this if sanitizes tFuncCall, as if it has 1 singular entry and that entry is
@@ -201,7 +274,7 @@ public class BaseFunction extends Symbol {
                     tFuncCall.lineNumber);
         }
         for (int i = 0; i < tFunc.isArgOptional.size(); i++) {
-            boolean isOptional = (boolean) tFunc.isArgOptional.get(i);
+            boolean isOptional = tFunc.isArgOptional.get(i);
             // check if the current param was given an input of TVoidValue
             // if so, error as we dont want them to pass in idk to a paramter thats not
             // optional
@@ -227,6 +300,19 @@ public class BaseFunction extends Symbol {
         }
     }
 
+    /**
+     * Checks if the parameters passed to a function call match the function's definition.
+     * This method validates the number of arguments and their optionality.
+     * @deprecated Use {{@link #checkParams(CheckParams)} instead}
+     *
+     * @param tFuncCall The function call token containing the arguments.
+     * @param scope     The current scope for error reporting.
+     * @throws InterpreterException If there's a mismatch in parameters (e.g., missing required arguments).
+     */
+    @Deprecated(since = "6.2.0")
+    protected final void checkParams(@NotNull TFuncCall tFuncCall, Scope scope) throws InterpreterException {
+        checkParams(new CheckParams(tFuncCall, scope));
+    }
 
     @Override
     public Symbol clone() throws CloneNotSupportedException {
@@ -240,6 +326,8 @@ public class BaseFunction extends Symbol {
      * @param token Function token
      * @return A User Defined Function.
      */
+    @NotNull
+    @Contract("_, _ -> new")
     public static DefinedFunction createFunction(String name, TFunction token) {
         return new DefinedFunction(name, token);
     }
@@ -251,6 +339,10 @@ public class BaseFunction extends Symbol {
      * @param scope It's scope
      * @return A Lambda
      */
-    public static Lambda createLambda(String name, TFunction token, Scope scope) {return new Lambda(name, token, scope);}
+    @NotNull
+    @Contract("_, _, _ -> new")
+    public static Lambda createLambda(String name, TFunction token, Scope scope) {
+        return new Lambda(name, token, scope);
+    }
 
 }

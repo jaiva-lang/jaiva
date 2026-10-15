@@ -3,11 +3,9 @@ package com.jaiva.interpreter.libs.global;
 // To scan for all the internal libraries isntead of having to renference everytime
 
 import com.jaiva.JBundler;
-import com.jaiva.Main;
 import com.jaiva.Plugin;
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.errors.JaivaException;
-import com.jaiva.interpreter.MapValue;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.Vfs;
 import com.jaiva.interpreter.libs.BaseLibrary;
@@ -18,17 +16,15 @@ import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.libs.annotation.PublicLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.Symbol;
-import com.jaiva.interpreter.symbol.SymbolType;
-import com.jaiva.tokenizer.NewJson;
-import com.yetnt.utils.builders.SimpleJSON;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Globals class has 2 pretty signifact jobs lol
@@ -102,7 +98,7 @@ public class Globals extends BaseLibrary {
      * @param external The list of external classes to store
      * @throws InterpreterException if something goes wrong lol
      */
-    public Globals(IConfig<Object> config, ClassLoader classLoader, List<Class<? extends BaseLibrary>> external) throws JaivaException {
+    public Globals(IConfig<Object> config, ClassLoader classLoader, @NotNull List<Class<? extends BaseLibrary>> external) throws JaivaException {
         super();
         allClassLibraries.addAll(putGlobals(config, classLoader == null ? Globals.class.getClassLoader() : classLoader));
         for (Class<? extends BaseLibrary> ext : external) {
@@ -132,7 +128,8 @@ public class Globals extends BaseLibrary {
      * @return An arraylist of {@link LibraryLike} objects wrapping the {@link BaseLibrary} class
      * to be used downstream.
      */
-    private ArrayList<LibraryLike> putJaivaLibraries(List<Class<? extends BaseLibrary>> libs) {
+    @NotNull
+    private ArrayList<LibraryLike> putJaivaLibraries(@NotNull List<Class<? extends BaseLibrary>> libs) {
         ArrayList<LibraryLike> libraries = new ArrayList<>();
         for (Class<? extends BaseLibrary> lib : libs) {
             JaivaLibrary library = lib.getAnnotation(JaivaLibrary.class);
@@ -153,27 +150,7 @@ public class Globals extends BaseLibrary {
         return new ArrayList<>(externalLibraries);
     }
 
-    /**
-     * Returns the JSON of the globals
-     * 
-     * @param removeTrailingComma Remove the trailing comma
-     * @return string with the JSON representation of the global tokens.
-     */
-    public String returnGlobalsJSON(IConfig<Object> config, boolean removeTrailingComma) throws JaivaException {
-        StringBuilder string = new StringBuilder();
-        getVfs(config, this).forEach((name, vf) -> {
-            Symbol symbol = vf.getValue();
-            try {
-                string.append(symbol.token.toJson());
-            } catch (JaivaException e) {
-                throw new RuntimeException(e);
-            }
-            string.append(",");
-        });
-        return string.substring(0, string.length() - (removeTrailingComma ? 1 : 0));
-    }
-
-    public String returnGlobalsOf(String label, IConfig<Object> i) throws Exception {
+    public String returnGlobalsOf(@NotNull String label, IConfig<Object> i) throws Exception {
         Vfs VFS = getVfs(i, this);
         if (!label.equals("jaiva/global")) {
             String label2 = label.replace("jaiva/", "").replace("jaiva\\", "");
@@ -181,38 +158,11 @@ public class Globals extends BaseLibrary {
             if (l != null)
                 VFS = l.load(i, this);
         }
-        StringBuilder string = new StringBuilder();
-        string.append("{").append("\"version\":\"").append(Main.version).append("\",");
-        string.append("\"tokens\":");
-        string.append("[");
-        HashMap<String, NewJson> jsonMap = new HashMap<>();
-        for (Map.Entry<String, MapValue> entry : VFS.entrySet()) {
-            String name = entry.getKey();
-            MapValue vf = entry.getValue();
-            Symbol symbol = vf.getValue();
-            if (jsonMap.containsKey(symbol.name)) {
-                SimpleJSON symJson = jsonMap.get(symbol.name).copy();
-                if (symbol.symbolType == SymbolType.FUNCTION) {
-                    // TFunction token adds F~ syntax to name
-                    symJson.set("name", "F~" + name);
-                } else {
-                    symJson.set("name",  name);
-                }
-                string.append(symJson);
-            } else {
-                NewJson json = symbol.token.toJson();
-                string.append(json);
-                jsonMap.put(symbol.name, json);
-            }
-            string.append(",");
-        }
-        string.deleteCharAt(string.length() - 1);
-        string.append("]");
-        string.append("}");
-        return string.toString();
+        return BaseLibrary.vfsToJson(VFS);
     }
 
-    public Vfs getBuiltInGlobal(String name) throws Exception {
+    @Nullable
+    public Vfs getBuiltInGlobal(@NotNull String name) throws Exception {
         if (name.startsWith("jaiva/") || name.startsWith("jaiva\\")) {
             name = name.substring(6);
         }
@@ -220,6 +170,7 @@ public class Globals extends BaseLibrary {
         return builtInGlobals.get(name).load(new IConfig<>(), this);
     }
 
+    @NotNull
     public static List<Class<? extends BaseLibrary>> findInternalLibraries(
             ClassLoader cl
     ) {

@@ -35,7 +35,7 @@ class CustomLib extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
+            this.checkParams(callProperties.toCheckParams());
             return callProperties.params().getFirst();
         }
     }

@@ -6,6 +6,7 @@ import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.Symbol;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +36,7 @@ public final class LibrarySymbol {
      * constructor adding the symbol name to the alias list if it isn't already in the list.
      */
     public LibrarySymbol(
-            Symbol symbol,
+            @NotNull Symbol symbol,
             String... aliases
     ) {
         this.symbol = symbol;

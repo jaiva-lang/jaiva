@@ -7,13 +7,17 @@ import com.yetnt.utils.builders.SimpleJSON;
 import org.jetbrains.annotations.NotNull;
 
 public class NewJson extends SimpleJSON {
+
     public NewJson(boolean exportSymbol, String name, String type, int ln, Object tooltip) {
+        this();
         set("type", type);
         set("name", name);
         set("exportSymbol", exportSymbol);
         setJdoc("toolTip", tooltip); // usually a string or JDoc object.
         set("lineNumber", ln);
-        // Add special support for Token
+    }
+
+    public NewJson() {
         addSupportFor(Token.class, (token) -> {
             try {
                 return token.value().toJson();
@@ -22,7 +26,6 @@ public class NewJson extends SimpleJSON {
                 throw new RuntimeException(e);
             }
         });
-        // TokenDefault implements ToJson so its handled by default.
     }
 
     public boolean keyExists(String key) {

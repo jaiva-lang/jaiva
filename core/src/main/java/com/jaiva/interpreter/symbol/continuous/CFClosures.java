@@ -48,7 +48,7 @@ public class CFClosures {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             // parse every object in params
-            if (readStreamSupplier == null) return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            if (readStreamSupplier == null) return Token.voidValue(callProperties.getLineNumber());
             ArrayList<Object> parsedParams = new ArrayList<>();
             if (!callProperties.params().isEmpty() && (callProperties.params().size() != 1 || callProperties.params().getFirst() != null)) {
                 for (Object p : callProperties.params()) {
@@ -92,7 +92,7 @@ public class CFClosures {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             // parse every object in params
-            if (writeStreamConsumer == null) return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            if (writeStreamConsumer == null) return Token.voidValue(callProperties.getLineNumber());
             ArrayList<Object> parsedParams = new ArrayList<>();
             for (Object p : callProperties.params()) {
                 parsedParams.add(Primitives.toPrimitive(p, false, callProperties.config(), callProperties.scope()));
@@ -107,7 +107,7 @@ public class CFClosures {
             // TODO: In this case, we just consume the first argument within paras. Caller is responbisle for mutating params
 
             method.apply(parsedParams.getFirst());
-            return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            return Token.voidValue(callProperties.getLineNumber());
         }
     }
 
@@ -121,9 +121,9 @@ public class CFClosures {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             // we dont care about args.
-            if (!(cls instanceof OutputStream os)) return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            if (!(cls instanceof OutputStream os)) return Token.voidValue(callProperties.getLineNumber());
             os.flush();
-            return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            return Token.voidValue(callProperties.getLineNumber());
         }
     }
 
@@ -138,7 +138,7 @@ public class CFClosures {
         public Object call(CallProperties callProperties) throws Exception {
             // dont care about args again
             callProperties.config().getGlobalResources().ofCurrentThread().releaseResource(resourceId);
-            return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            return Token.voidValue(callProperties.getLineNumber());
         }
     }
 }

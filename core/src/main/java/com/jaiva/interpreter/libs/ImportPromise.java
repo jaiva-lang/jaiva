@@ -4,6 +4,7 @@ import com.jaiva.interpreter.Vfs;
 import com.jaiva.interpreter.libs.annotation.Exports;
 import com.jaiva.interpreter.libs.global.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,7 +51,8 @@ public record ImportPromise(
      * @return The Set of which contains classes which appear in a promise from both lists. Otherwise an empty set if none
      * were found
      */
-    public static HashSet<Class<? extends BaseLibrary>> intersect(ArrayList<ImportPromise> a, ArrayList<ImportPromise> b) {
+    @NotNull
+    public static HashSet<Class<? extends BaseLibrary>> intersect(@NotNull ArrayList<ImportPromise> a, ArrayList<ImportPromise> b) {
         HashSet<Class<? extends BaseLibrary>> result = new HashSet<>();
         if (a.isEmpty() || b.isEmpty()) return result;
 

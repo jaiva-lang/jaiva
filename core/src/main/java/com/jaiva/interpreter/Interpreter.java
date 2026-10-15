@@ -21,6 +21,9 @@ import com.jaiva.tokenizer.tokens.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
 import com.yetnt.utils.functional.consumer.ThrowableBiConsumer;
 import com.yetnt.utils.tuple.Pair;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -30,47 +33,7 @@ import java.util.*;
  * <p>
  * It is responsible for interpreting Jaiva code and executing it.
  */
-public class Interpreter {
-
-    /**
-     * The ThrowIfGlobalContext class is a helper class which is thrown when the
-     * interpreter does not return a usual value, like it returns maybe an error or
-     * it exits out of a loop.
-     * <p>
-     * It's the same idea as a software interrupt. Execution is halted to handle
-     * whatever needs to be handled
-     * <p>
-     * For example, we could be deeply nested in a function and some other
-     * constructs, and it decides to break. This class helps to keep exiting out of
-     * the nested calls until we are in a loop to break out if. UNLESS we're in the
-     * global context then it throws an error.
-     */
-    public static class ThrowIfGlobalContext {
-        /**
-         * The line number of the token which caused the interuption.
-         */
-        public int lineNumber = 0;
-        /**
-         * The object which caused the interuption.
-         * <p>
-         * This can be a function return, a loop control, or an error.
-         */
-        public Object c;
-
-        /**
-         * The constructor for the ThrowIfGlobalContext class.
-         * <p>
-         * This is used to createFunction a new instance of the class with the given object and
-         * line number.
-         *
-         * @param cObject    The object which caused the interuption.
-         * @param ln The line number of the token which caused the interuption.
-         */
-        public ThrowIfGlobalContext(Object cObject, int ln) {
-            c = cObject;
-            lineNumber = ln;
-        }
-    }
+public final class Interpreter {
 
     /**
      * The throwIfGlobalContext method is used to check if the context is global and
@@ -92,6 +55,8 @@ public class Interpreter {
      *                                 and the object is an
      *                                 error.
      */
+    @NotNull
+    @Contract("_, _, _ -> new")
     public static ThrowIfGlobalContext throwIfGlobalContext(Scope scope, Object lc, int lineNumber)
             throws Exception {
         if (lc instanceof ThrowIfGlobalContext) {
@@ -136,7 +101,7 @@ public class Interpreter {
      * @param s The symbol in question
      * @param s2 The current scope.
      */
-    private static void freezeIfScopeConfig(Symbol s, Scope s2) {
+    private static void freezeIfScopeConfig(Symbol s, @NotNull Scope s2) {
         if (s2.getConfig().freezeAll()) s.freeze();
     }
 
@@ -166,6 +131,7 @@ public class Interpreter {
      *                   variable, or
      *                   performing an invalid operation.
      */
+    @Nullable
     public static Object handleVariables(Object t, IConfig<Object> config, Scope scope)
             throws Exception {
         // fast path
@@ -204,7 +170,7 @@ public class Interpreter {
                 freezeIfScopeConfig(var, scope);
                 scope.getVfs().put(tStringVar.name, var);
             }
-            case TUnknownScalar tUnknownScalar -> {
+            case TUnknownScalar<?, ?> tUnknownScalar -> {
                 Object something = Primitives.toPrimitive(tUnknownScalar.value, false, config, scope);
                 Symbol var;
                 if (something instanceof TThrowError) {
@@ -319,8 +285,11 @@ public class Interpreter {
      *                   unknown
      *                   variable or an invalid operation.
      */
-    public static Object interpret(ArrayList<Token<?>> tokens, Scope scope, IConfig<Object> config)
-            throws Exception {
+    public static Object interpret(
+            @NotNull ArrayList<Token<?>> tokens,
+            @NotNull Scope scope,
+            @NotNull IConfig<Object> config
+    ) throws Exception {
         // prepare a new vfs.
         scope.setVfs(
                 config.getImportVfs().active && scope.getCurrent() == Context.GLOBAL

@@ -82,12 +82,12 @@ public class FileBytes extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
 
             Object p = callProperties.params().getFirst();
             if (!(p instanceof String path))
                 throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "1", p, String.class, callProperties.tFuncCall().lineNumber
+                        callProperties.scope(), this, "1", p, String.class, callProperties.getLineNumber()
                 );
 
             boolean append = true;
@@ -215,19 +215,19 @@ public class FileBytes extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
 
             Object p = callProperties.params().getFirst();
             if (!(p instanceof String path))
                 throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "1", p, String.class, callProperties.tFuncCall().lineNumber
+                        callProperties.scope(), this, "1", p, String.class, callProperties.getLineNumber()
                 );
 
             File f = new File(path);
 
             if (!f.exists())
                 throw new InterpreterException.WtfAreYouDoingException(
-                        callProperties.scope(),  "File no existy", callProperties.tFuncCall().lineNumber
+                        callProperties.scope(),  "File no existy", callProperties.getLineNumber()
                 );
 
             DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(f)));
@@ -235,7 +235,7 @@ public class FileBytes extends BaseLibrary {
             CFClosures.EOF eof = new CFClosures.EOF();
 
             ThrowableSupplier<Object, IOException> unknown
-                    = () -> Token.voidValue(callProperties.tFuncCall().lineNumber);
+                    = () -> Token.voidValue(callProperties.getLineNumber());
 
             // The code is only as such due to the fact that we need to handle the EOFException
             // in this call site and nowhere else. Other implementers might genuinely be better

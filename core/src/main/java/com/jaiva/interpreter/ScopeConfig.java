@@ -1,8 +1,9 @@
 package com.jaiva.interpreter;
 
 import com.jaiva.errors.InterpreterException;
+import org.jetbrains.annotations.NotNull;
 
-public class ScopeConfig {
+public final class ScopeConfig {
     /**
      * Flags defines whether all symbols defined in this scope are frozen
      * after creation.
@@ -20,7 +21,7 @@ public class ScopeConfig {
     public ScopeConfig() {
     }
 
-    public void set(int lineNumber, Scope scope, String ...strings) throws InterpreterException.WtfAreYouDoingException {
+    public void set(int lineNumber, Scope scope, @NotNull String ...strings) throws InterpreterException.WtfAreYouDoingException {
         for (String s : strings) {
             switch (s.toLowerCase()) {
                 case "freezeall", "constant", "freeze": freezeAll = true; break;

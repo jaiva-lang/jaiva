@@ -5,6 +5,9 @@ import com.jaiva.errors.LoadException;
 import com.jaiva.interpreter.Vfs;
 import com.jaiva.interpreter.libs.global.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A class that represents either a built-in library class or an external library by name.
@@ -14,7 +17,7 @@ import com.jaiva.interpreter.runtime.IConfig;
  *     for built-in libraries, or a String representing the name of an external library.
  * </p>
  */
-public class LibraryLike {
+public final class LibraryLike {
     private final Object lib;
     private LibraryLike(Class<? extends BaseLibrary> lib) {
         this.lib = lib;
@@ -23,10 +26,14 @@ public class LibraryLike {
         this.lib = libName;
     }
 
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
     public static LibraryLike of(Class<? extends BaseLibrary> lib) {
         return new LibraryLike(lib);
     }
 
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
     public static LibraryLike of(String libName) {
         return new LibraryLike(libName);
     }
@@ -40,6 +47,7 @@ public class LibraryLike {
         return BaseLibrary.instantiate(c, i, globals);
     }
 
+    @NotNull
     public Vfs load(IConfig<Object> i, Globals globals) throws Exception {
         switch (lib) {
             case Class<?> ignored -> {
@@ -64,6 +72,7 @@ public class LibraryLike {
         return lib instanceof Class<?> c;
     }
 
+    @Nullable
     public Class<? extends BaseLibrary> getLibClass() {
         if (!hasClass()) return null;
         return (Class<? extends BaseLibrary>) lib;

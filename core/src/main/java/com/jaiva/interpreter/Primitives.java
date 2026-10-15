@@ -12,6 +12,7 @@ import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
 import com.yetnt.utils.builders.AnsiColour;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -26,7 +27,7 @@ import java.util.Objects;
  * parsing and evaluating conditions in loops and if statements.
  * <p>
  */
-public class Primitives {
+public final class Primitives {
     /**
      * Checks if a given {@link Symbol} has a {@link SymbolConfig} annotation and prints
      * deprecation or experimental warnings if applicable.
@@ -37,7 +38,7 @@ public class Primitives {
         if (s == null) return;
         Class<?> actual = s.getClass();
         SymbolConfig c = actual.getAnnotation(SymbolConfig.class);
-        TokenDefault token = s.token;
+        TokenDefault<?> token = s.token;
         JDoc doc = JDoc.from(token.tooltip);
         if (!Objects.isNull(c) || !Objects.isNull(doc)) {
             String depStr = Objects.isNull(doc) ? "" : doc.getDeprecatedString();
@@ -160,8 +161,7 @@ public class Primitives {
                             }
                         }
                         case ">=", "<=", "<", ">" -> {
-                            Object lhs1 = PrimitivesMath.compareStuff(scope, tExpression, lhs, rhs, op);
-                            if (lhs1 != null) return lhs1;
+                            return PrimitivesMath.compareStuff(scope, tExpression, lhs, rhs, op);
                         }
                         case "=", "!=" -> {
                             // here, the inputs can be either a
@@ -245,10 +245,6 @@ public class Primitives {
                         || tVarRef.varName instanceof TVarRef)) {
                     // it's an array ref, where we have an index
                     ArrayList<Object> arr = variable.a_getAll();
-//                if (!(index instanceof Integer) && index != null)
-//                    throw new WtfAreYouDoingException(cTrace,
-//                            tVarRef, Integer.valueOf(0).getClass(),
-//                            tVarRef.lineNumber);
                     if (tVarRef.varName instanceof Token) {
                         Object t = Primitives.toPrimitive(tVarRef.varName, returnName,
                                 config, scope);
@@ -287,7 +283,7 @@ public class Primitives {
             }
             case TFuncCall tFuncCall -> {
                 if (returnName) {
-                    Object t = toPrimitive(tFuncCall.functionName, returnName, config, scope);
+                    Object t = toPrimitive(tFuncCall.functionName, true, config, scope);
                     if (t instanceof String)
                         return t;
                 }
@@ -332,7 +328,7 @@ public class Primitives {
 
                 checkSymbolAnnotation(function, tFuncCall.lineNumber, scope, config);
 
-                ArrayList<Object> args = BaseFunction.resolveParameters(function, tFuncCall, config, scope);
+                ArrayList<Object> args = BaseFunction.resolveSpreadOperator(function, tFuncCall, config, scope);
                 ArrayList<Object> newArgs = new ArrayList<>();
 
                 if (function.isEvaluateParamsEarly()) {
@@ -359,7 +355,7 @@ public class Primitives {
                 else
                     return toPrimitive(ternary.falseExpr, false, config, scope);
             }
-            case null, default -> {
+            default -> {
 //        else if (isPrimitive(token)) {
                 // Primitives include: Boolean, Integer, Double, String, TVoidValue, ArrayList
                 // If we got here, then
@@ -419,7 +415,8 @@ public class Primitives {
      * @throws Exception If the condition cannot be resolved to a `Boolean` or if
      *                   there is an error during variable handling or parsing.
      */
-    public static Object setCondition(TokenDefault t, IConfig<Object> config, Scope scope) throws Exception {
+    @NotNull
+    public static Object setCondition(TokenDefault<?> t, IConfig<Object> config, Scope scope) throws Exception {
         Object c;
 
         if (t instanceof TConditional conditional)
@@ -434,7 +431,7 @@ public class Primitives {
             assert condition != null;
             assert c != null;
             throw new TExpressionResolutionException(scope,
-                    t, c instanceof Token c2 ? (TExpression) c2.value() : ((TExpression) c),
+                    t, c instanceof Token<?>(Object value) ? (TExpression) value : ((TExpression) c),
                     "boolean", condition.getClass().getName());
         }
 

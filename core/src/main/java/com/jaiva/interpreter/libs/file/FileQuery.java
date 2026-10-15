@@ -60,12 +60,12 @@ public class FileQuery extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
+            checkParams(callProperties.toCheckParams()); // Ensure correct number of parameters
             Object fileObj = callProperties.params().getFirst();
             if (!(fileObj instanceof ArrayList<?> arr))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                        "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);
-            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.tFuncCall().lineNumber);
+                        "The parameter 'file' needs to be an array like come on!", callProperties.getLineNumber());
+            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.getLineNumber());
             return file.getFileName();
         }
     }
@@ -96,12 +96,12 @@ public class FileQuery extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
+            checkParams(callProperties.toCheckParams()); // Ensure correct number of parameters
             Object fileObj = callProperties.params().getFirst();
             if (!(fileObj instanceof ArrayList<?> arr))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                        "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);
-            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.tFuncCall().lineNumber);
+                        "The parameter 'file' needs to be an array like come on!", callProperties.getLineNumber());
+            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.getLineNumber());
             return file.getFilePath();
         }
     }
@@ -132,12 +132,12 @@ public class FileQuery extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
+            checkParams(callProperties.toCheckParams()); // Ensure correct number of parameters
             Object fileObj = callProperties.params().getFirst();
             if (!(fileObj instanceof ArrayList<?> arr))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                        "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);
-            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.tFuncCall().lineNumber);
+                        "The parameter 'file' needs to be an array like come on!", callProperties.getLineNumber());
+            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.getLineNumber());
             return file.getFileContent();
         }
     }
@@ -214,7 +214,7 @@ public class FileQuery extends BaseLibrary {
 
             @Override
             public Object call(CallProperties callProperties) throws Exception {
-                checkParams(callProperties.tFuncCall(), callProperties.scope());
+                checkParams(callProperties.toCheckParams());
                 if (callProperties.params().isEmpty()) {
                     // Return all permissions as an array
                     return file.get(3);
@@ -239,7 +239,7 @@ public class FileQuery extends BaseLibrary {
                                 return file.canExecute();
                             }
                             default -> throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                                    "Invalid permission string. Use 'read'/'r', 'write'/'w', or 'execute'/'x'.", callProperties.tFuncCall().lineNumber);
+                                    "Invalid permission string. Use 'read'/'r', 'write'/'w', or 'execute'/'x'.", callProperties.getLineNumber());
                         }
                     } else if (permObj instanceof Number permNum) {
                         int index = permNum.intValue();
@@ -254,11 +254,11 @@ public class FileQuery extends BaseLibrary {
                                 return file.canExecute();
                             }
                             default -> throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                                    "Invalid permission index. Use 0 for read, 1 for write, or 2 for execute.", callProperties.tFuncCall().lineNumber);
+                                    "Invalid permission index. Use 0 for read, 1 for write, or 2 for execute.", callProperties.getLineNumber());
                         }
                     } else {
                         throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                                "Permission parameter must be a string or number.", callProperties.tFuncCall().lineNumber);
+                                "Permission parameter must be a string or number.", callProperties.getLineNumber());
                     }
                 }
             }
@@ -266,12 +266,12 @@ public class FileQuery extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope()); // Ensure correct number of parameters
+            checkParams(callProperties.toCheckParams()); // Ensure correct number of parameters
             Object fileObj = callProperties.params().getFirst();
             if (!(fileObj instanceof ArrayList<?> arr))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                        "The parameter 'file' needs to be an array like come on!", callProperties.tFuncCall().lineNumber);
-            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.tFuncCall().lineNumber);
+                        "The parameter 'file' needs to be an array like come on!", callProperties.getLineNumber());
+            FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.getLineNumber());
             return new FPermissions(file);
         }
     }

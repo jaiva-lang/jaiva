@@ -87,21 +87,21 @@ public class GlobalFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties) throws Exception {
             ArrayList<String> s = new ArrayList<>();
 
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             callProperties.params().forEach(o -> {
                 try {
                     if (o instanceof String s2) {
                         s.add(s2);
                     } else {
-                        throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "scope() only accepts input of string.", callProperties.tFuncCall().lineNumber);
+                        throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "scope() only accepts input of string.", callProperties.getLineNumber());
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             });
 
-            callProperties.scope().getConfig().set(callProperties.tFuncCall().lineNumber, callProperties.scope(), s.toArray(String[]::new));
-            return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            callProperties.scope().getConfig().set(callProperties.getLineNumber(), callProperties.scope(), s.toArray(String[]::new));
+            return Token.voidValue(callProperties.getLineNumber());
         }
     }
 
@@ -139,7 +139,7 @@ public class GlobalFunctions extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             String name;
             ArrayList<Object> args = callProperties.tFuncCall().args;
             if (args.getFirst() instanceof String str) {
@@ -149,16 +149,16 @@ public class GlobalFunctions extends BaseLibrary {
             } else {
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
                         "getVarClass() only accepts a variable reference or a string, whatever you sent is disgusting.",
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
             }
             MapValue var = callProperties.scope().getVfs().get(name);
             if (var == null) {
-                throw new InterpreterException.UnknownVariableException(callProperties.scope(), name, callProperties.tFuncCall().lineNumber);
+                throw new InterpreterException.UnknownVariableException(callProperties.scope(), name, callProperties.getLineNumber());
             }
             if (!(var.getValue() instanceof Symbol symbol)) {
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
                         name + " is not a variable nor a function, wtf. this error shouldn't happen.",
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
             }
             // We need to convert the named token to a raw token so we can call .toString()
             // on it.
@@ -210,7 +210,7 @@ public class GlobalFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             Object value = callProperties.config().getCallerValue();
-            return value == null ? Token.voidValue(callProperties.tFuncCall().lineNumber) : value;
+            return value == null ? Token.voidValue(callProperties.getLineNumber()) : value;
         }
     }
 
@@ -269,7 +269,7 @@ public class GlobalFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
 
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             ArrayList<Object> returned = new ArrayList<>();
             callProperties.params().forEach(arg -> {
                 if (arg instanceof TVarRef && ((TVarRef) arg).index == null) {
@@ -343,15 +343,15 @@ public class GlobalFunctions extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             Object val = callProperties.params().getFirst();
             if (!(val instanceof Integer integer))
                 throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "Bruv, you can't just like, pls put number",
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
 
             Thread.sleep(integer);
 
-            return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            return Token.voidValue(callProperties.getLineNumber());
         }
     }
 
@@ -391,10 +391,10 @@ public class GlobalFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
 
-//            checkParams(callProperties.tFuncCall(), callProperties.scope());
+//            checkParams(callProperties.toCheckParams());
 
             if (callProperties.params().isEmpty())
-                return Token.voidValue(callProperties.tFuncCall().lineNumber);
+                return Token.voidValue(callProperties.getLineNumber());
 
             return switch (callProperties.params().getFirst()) {
                 case Integer ignored2 -> "integer";
@@ -402,7 +402,7 @@ public class GlobalFunctions extends BaseLibrary {
                 case Long ignored -> "long";
                 case null, default ->
 // there is no other type to possibly check for.
-                        Token.voidValue(callProperties.tFuncCall().lineNumber);
+                        Token.voidValue(callProperties.getLineNumber());
             };
         }
     }
@@ -444,9 +444,9 @@ public class GlobalFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
 
-//            this.checkParams(callProperties.tFuncCall(), callProperties.scope());
+//            this.checkParams(callProperties.toCheckParams());
             if (callProperties.params().isEmpty())
-                return Token.voidValue(callProperties.tFuncCall().lineNumber);
+                return Token.voidValue(callProperties.getLineNumber());
 
             return switch (callProperties.params().getFirst()) {
                 case ArrayList ignored -> "array";
@@ -456,7 +456,7 @@ public class GlobalFunctions extends BaseLibrary {
                 case String ignored -> "string";
                 case null, default ->
 // there is no other type to possibly check for.
-                        Token.voidValue(callProperties.tFuncCall().lineNumber);
+                        Token.voidValue(callProperties.getLineNumber());
             };
         }
     }

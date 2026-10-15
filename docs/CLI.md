@@ -10,7 +10,7 @@ Simple CLI Ngl.
 
 ```sh
 > jaiva [-p | -h | -v | -t | -u | -js]
-> jaiva <filePath> [-j | -jg | -s | -jog | -md]
+> jaiva <filePath> [-j | -s | -jog | -md]
 ```
 
 1. (No flags) launches the REPL.
@@ -82,21 +82,10 @@ Simple CLI Ngl.
     ```
    
    > [!NOTE]
-   > This JSON output is after the interpreter is ran, so it includes the JSON of the global
-   > symbols too at the top level.
+   > This is the file's JSON representation without any
+   > interpretation.
 
-4. Return tokens of the global scope in JSON format
-
-    ```sh
-    > jaiva <filePath> -jg
-    > jaiva <filePath> --json-with-globals
-    ```
-   
-   > [!NOTE]
-   > I might remove this later... it's functionally identical to the above but it ignores the file
-   > and only uses the global scope symbols in the JSON. Not sure where this is needed...
-
-5. Return tokens of the given library file in JSON format
+4. Return tokens of the given library file in JSON format
 
     ```sh
     > jaiva <filePath> -jog
@@ -104,9 +93,6 @@ Simple CLI Ngl.
     ```
    
    where `<filePath>` is the full qualified jaiva import path like `jaiva jaiva/arrays -jog`
-
-   > [!NOTE]
-   > Running `jaiva globals -jog` is functionally identical to running `jaiva <filePath> -jg`
 
    > [!NOTE]
    > unlike the other JSON outputs which are a top level array, this one returns an object
@@ -118,21 +104,21 @@ Simple CLI Ngl.
    > }
    > ```
 
-6. Run Jaiva file (No flags.), however if there are any errors, throw the entire Java stack trace
+5. Run Jaiva file (No flags.), however if there are any errors, throw the entire Java stack trace
 
     ```sh
     > jaiva <filePath> -is
     > jaiva <filePath> --include-stacks
     ```
 
-7. Enable debugging mode. See [Debugger Commands](#debugger-commands)
+6. Enable debugging mode. See [Debugger Commands](#debugger-commands)
 
     ```sh
     > jaiva <filePath> -d
     > jaiva <filePath> --debug
     ```
 
-8. Export library as Markdown documentation
+7. Export library as Markdown documentation
 
    > ```sh
    > jaiva <filePath> --markdown <outputFolder> -p:[opts]

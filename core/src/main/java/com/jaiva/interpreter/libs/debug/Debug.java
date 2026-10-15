@@ -77,7 +77,7 @@ public class Debug extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             TokenDefault<?> refA = null;
             TokenDefault<?> refB = null;
 
@@ -93,16 +93,16 @@ public class Debug extends BaseLibrary {
             assert refA != null;
             assert refB != null;
             if (!(refA instanceof TVarRef))
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "The first parameter has to be a reference or variable.", callProperties.tFuncCall().lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "The first parameter has to be a reference or variable.", callProperties.getLineNumber());
             if  (!(refB instanceof TVarRef))
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "The second parameter has to be a reference or variable.", callProperties.tFuncCall().lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "The second parameter has to be a reference or variable.", callProperties.getLineNumber());
 
             MapValue mv = callProperties.scope().getVfs().get(((TVarRef) refA).varName.toString());
             if (mv == null || MapValue.isEmpty(mv))
-                throw new InterpreterException.UnknownVariableException(callProperties.scope(), refA.name, callProperties.tFuncCall().lineNumber);
+                throw new InterpreterException.UnknownVariableException(callProperties.scope(), refA.name, callProperties.getLineNumber());
 
             callProperties.scope().getVfs().put(((TVarRef) refB).varName.toString(), mv); // This does mean, if the second reference doesnt exist this function woll create it.
-            return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            return Token.voidValue(callProperties.getLineNumber());
         }
     }
 
@@ -138,7 +138,7 @@ public class Debug extends BaseLibrary {
             // exception should be in the catch.
             ArrayList<Object> components = new ArrayList<>();
             try {
-                checkParams(callProperties.tFuncCall(), callProperties.scope()); // throws if params aren't correct. So naturally we loose having
+                checkParams(callProperties.toCheckParams()); // throws if params aren't correct. So naturally we loose having
                                                 // varargs, so its
                 // fine.
                 if (!callProperties.params().isEmpty()) {
@@ -153,7 +153,7 @@ public class Debug extends BaseLibrary {
             } catch (Exception e) {
                 throw new DebugException(e);
             }
-            throw new DebugException(components, callProperties.scope(), callProperties.config(), callProperties.tFuncCall().lineNumber);
+            throw new DebugException(components, callProperties.scope(), callProperties.config(), callProperties.getLineNumber());
         }
     }
 

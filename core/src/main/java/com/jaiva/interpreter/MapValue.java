@@ -10,7 +10,7 @@ import java.util.Objects;
  * This is so that when we're ina scope and variables get copied over,
  * inner stuff still ave access to the exact same instance of something.
  */
-public class MapValue {
+public final class MapValue {
     /**
      * The value of this object.
      * <p>

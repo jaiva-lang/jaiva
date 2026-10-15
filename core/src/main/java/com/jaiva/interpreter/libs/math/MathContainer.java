@@ -80,11 +80,11 @@ public class MathContainer extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             if (callProperties.params().size() < 2)
-                throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, callProperties.params().size(), 2, callProperties.tFuncCall().lineNumber);
+                throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, callProperties.params().size(), 2, callProperties.getLineNumber());
 
-            ArrayList<Number> nums = toIntegerList(callProperties.params(), "gcd", this, callProperties.scope(), callProperties.tFuncCall().lineNumber);
+            ArrayList<Number> nums = toIntegerList(callProperties.params(), "gcd", this, callProperties.scope(), callProperties.getLineNumber());
 
             Number gcd = nums.getFirst();
             for (int i = 1; i < nums.size(); i++) {
@@ -122,11 +122,11 @@ public class MathContainer extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             if (callProperties.params().size() < 2)
-                throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, callProperties.params().size(), 2, callProperties.tFuncCall().lineNumber);
+                throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, callProperties.params().size(), 2, callProperties.getLineNumber());
 
-            ArrayList<Number> nums = toIntegerList(callProperties.params(), "lcm", this, callProperties.scope(), callProperties.tFuncCall().lineNumber);
+            ArrayList<Number> nums = toIntegerList(callProperties.params(), "lcm", this, callProperties.scope(), callProperties.getLineNumber());
 
             Number lcm = nums.getFirst();
             for (int i = 1; i < nums.size(); i++) {

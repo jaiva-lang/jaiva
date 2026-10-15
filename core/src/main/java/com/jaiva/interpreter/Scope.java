@@ -1,11 +1,11 @@
 package com.jaiva.interpreter;
 
-import com.jaiva.errors.InterpreterException;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.global.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.tokenizer.tokens.TokenDefault;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import java.util.List;
  * the line number where it is defined or used, and the parent scope if
  * any.
  */
-public class Scope {
+public final class Scope {
     private ScopeConfig config = new ScopeConfig();
     private final Context current;
     private final TokenDefault<?> token;
@@ -78,7 +78,7 @@ public class Scope {
      * @param token      The token associated with the current scope, if any.
      * @param parent     The parent scope, if any.
      */
-    public Scope(Context newC, TokenDefault<?> token, Scope parent) {
+    public Scope(Context newC, TokenDefault<?> token, @NotNull Scope parent) {
         this.current = newC;
         this.token = token;
         this.lineNumber = token == null ? 0 : token.lineNumber;
@@ -98,7 +98,7 @@ public class Scope {
      * @param parent The parent scope
      * @param vfs The vfs for this scope.
      */
-    public Scope(Context newC, TokenDefault<?> token, Scope parent, Vfs vfs) {
+    public Scope(Context newC, TokenDefault<?> token, @NotNull Scope parent, Vfs vfs) {
         this.current = newC;
         this.token = token;
         this.lineNumber = token == null ? 0 : token.lineNumber;

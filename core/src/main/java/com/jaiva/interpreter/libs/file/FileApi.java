@@ -261,11 +261,11 @@ public class FileApi extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             Object path = callProperties.params().getFirst();
             if (!(path instanceof String))
                 throw new WtfAreYouDoingException(callProperties.scope(), "Da path must be a string.",
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
 
             Path baseDir = (callProperties.config().getFilePath() != null) ? callProperties.config().getFilePath().getParent() : null;
             Path filePath;
@@ -281,7 +281,7 @@ public class FileApi extends BaseLibrary {
             java.io.File file = filePath.toFile();
             if (!file.exists())
                 throw new WtfAreYouDoingException(new Scope(callProperties.config()), "FileApi does not exist: " + filePath,
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
 
             ArrayList<String> contents = new ArrayList<>();
             try (Scanner scanner = new Scanner(file)) {
@@ -290,13 +290,13 @@ public class FileApi extends BaseLibrary {
                 }
             } catch (FileNotFoundException e) {
                 throw new CatchAllException(new Scope(callProperties.config()),
-                        "Cannot read file but we found it... " + filePath, callProperties.tFuncCall().lineNumber);
+                        "Cannot read file but we found it... " + filePath, callProperties.getLineNumber());
             }
 
             ArrayList<Object> result = new ArrayList<>();
             result.add(file.getName());
             result.add(file.getParentFile() != null ? file.getParentFile().getAbsolutePath()
-                    : Token.voidValue(callProperties.tFuncCall().lineNumber));
+                    : Token.voidValue(callProperties.getLineNumber()));
             result.add(contents);
             result.add(new ArrayList<>(Arrays.asList(file.canRead(), file.canWrite(), file.canExecute())));
             return result;
@@ -377,18 +377,18 @@ public class FileApi extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             Object path = callProperties.params().getFirst();
             if (!(path instanceof String))
                 throw new FunctionParametersException(callProperties.scope(), this, "1", callProperties.params().get(0), String.class,
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
 
             Object content = callProperties.params().get(1);
             StringBuilder outBuilder = new StringBuilder();
             String output = content instanceof String ? (String) content : "";
             if (!(content instanceof String) && !(content instanceof ArrayList))
                 throw new FunctionParametersException(callProperties.scope(), this, "2", callProperties.params().get(1), String.class,
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
             if (content instanceof ArrayList<?> list) {
                 if (list.isEmpty())
                     output = "";
@@ -409,21 +409,21 @@ public class FileApi extends BaseLibrary {
                 Object cr = callProperties.params().get(2);
                 if (!(cr instanceof Boolean))
                     throw new FunctionParametersException(callProperties.scope(), this, "3", callProperties.params().get(2), boolean.class,
-                            callProperties.tFuncCall().lineNumber);
+                            callProperties.getLineNumber());
                 canRead = cr.equals(Boolean.TRUE);
             }
             if (callProperties.params().size() > 3) {
                 Object cw = callProperties.params().get(3);
                 if (!(cw instanceof Boolean))
                     throw new FunctionParametersException(callProperties.scope(), this, "4", callProperties.params().get(3), boolean.class,
-                            callProperties.tFuncCall().lineNumber);
+                            callProperties.getLineNumber());
                 canWrite = cw.equals(Boolean.TRUE);
             }
             if (callProperties.params().size() > 4) {
                 Object ce = callProperties.params().get(4);
                 if (!(ce instanceof Boolean))
                     throw new FunctionParametersException(callProperties.scope(), this, "5", callProperties.params().get(4), boolean.class,
-                            callProperties.tFuncCall().lineNumber);
+                            callProperties.getLineNumber());
                 canExecute = ce.equals(Boolean.TRUE);
             }
             Path baseDir = (callProperties.config().getFilePath() != null) ? callProperties.config().getFilePath().getParent() : null;

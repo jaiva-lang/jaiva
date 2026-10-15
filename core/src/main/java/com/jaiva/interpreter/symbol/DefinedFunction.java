@@ -6,6 +6,8 @@ import com.jaiva.interpreter.*;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.*;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +16,7 @@ import java.util.Collections;
  * A Function that is defined by the user at runtime.
  */
 public class DefinedFunction extends BaseFunction {
+
     DefinedFunction(String name, TFunction token) {
         super(name, token);
     }
@@ -35,14 +38,14 @@ public class DefinedFunction extends BaseFunction {
                 for (Object o : callProperties.params()) {
                     // Parse each param
                     if (o instanceof String)
-                        o = EscapeSequence.fromEscape((String) o, callProperties.tFuncCall().lineNumber);
+                        o = EscapeSequence.fromEscape((String) o, callProperties.getLineNumber());
                     varArgsArr.add(Primitives.toPrimitive(o, false, callProperties.config(), callProperties.scope()));
                 }
             newVfs.put(paramNames[0], new BaseVariable(paramNames[0],
-                    new TArrayVar(paramNames[0], varArgsArr, callProperties.tFuncCall().lineNumber),
+                    new TArrayVar(paramNames[0], varArgsArr, callProperties.getLineNumber()),
                     varArgsArr));
         } else {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             for (int i = 0; i < paramNames.length; i++) {
                 String name = paramNames[i];
                 Object value;
@@ -50,11 +53,11 @@ public class DefinedFunction extends BaseFunction {
                     value = callProperties.params().get(i);
                 } catch (IndexOutOfBoundsException e) {
                     // optional as we checked params above, so set it to TVoidValue
-                    value = Token.voidValue(callProperties.tFuncCall().lineNumber);
+                    value = Token.voidValue(callProperties.getLineNumber());
                 }
                 if (value instanceof String)
-                    value = EscapeSequence.fromEscape((String) value, callProperties.tFuncCall().lineNumber);
-                Object wrappedValue = Token.voidValue(callProperties.tFuncCall().lineNumber);
+                    value = EscapeSequence.fromEscape((String) value, callProperties.getLineNumber());
+                Object wrappedValue = Token.voidValue(callProperties.getLineNumber());
 
 
                 if (name.startsWith("F~")) {
@@ -95,7 +98,7 @@ public class DefinedFunction extends BaseFunction {
                         wrappedValue = l;
                     else
                         wrappedValue = BaseVariable.create(name,
-                                new TUnknownScalar(name, o, callProperties.tFuncCall().lineNumber),
+                                new TUnknownScalar(name, o, callProperties.getLineNumber()),
                                 o instanceof ArrayList ? (ArrayList) o : new ArrayList<>(Collections.singletonList(o)), false);
                 }
                 newVfs.put(name.replace("F~", "").replace("V~", ""), (Symbol) wrappedValue);
@@ -103,10 +106,10 @@ public class DefinedFunction extends BaseFunction {
         }
         Object t = Interpreter.interpret(((TFunction) this.token).body.lines,
                 new Scope(Context.FUNCTION, token, callProperties.scope(), newVfs), callProperties.config());
-        if (t instanceof Interpreter.ThrowIfGlobalContext) {
-            return ((Interpreter.ThrowIfGlobalContext) t).c;
+        if (t instanceof ThrowIfGlobalContext) {
+            return ((ThrowIfGlobalContext) t).c;
         } else {
-            return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            return Token.voidValue(callProperties.getLineNumber());
         }
     }
 
@@ -122,6 +125,8 @@ public class DefinedFunction extends BaseFunction {
      * otherwise, it's parsed as a singleton list, with it's boolean marked as false.
      * therefore allowing BaseVariable to extract the single value and label the variable as scalar.
      */
+    @NotNull
+    @Contract("_, _, _ -> new")
     private BaseVariable createScalarOrArr(String name, Object value, TFuncCall tFuncCall) throws JaivaException {
         return BaseVariable.create(name,
                 value instanceof ArrayList ? new TArrayVar(name, (ArrayList) value, tFuncCall.lineNumber)

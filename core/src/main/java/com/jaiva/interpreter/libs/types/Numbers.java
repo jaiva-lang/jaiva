@@ -54,13 +54,13 @@ public class Numbers extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
 
             Object val = callProperties.params().getFirst();
 
             if (!(val instanceof Double d))
                 throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "1", val, Double.class,
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
 
             return Double.doubleToLongBits(d);
         }
@@ -94,13 +94,13 @@ public class Numbers extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
 
             Object val = callProperties.params().getFirst();
 
             if (!(val instanceof Long l))
                 throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "1", val, Long.class,
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
 
             return Double.longBitsToDouble(l);
         }
@@ -137,7 +137,7 @@ public class Numbers extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            if (callProperties.params().isEmpty() || (callProperties.params().size() == 1 && callProperties.params().getFirst() == null)) return Token.voidValue(callProperties.tFuncCall().lineNumber);
+            if (callProperties.params().isEmpty() || (callProperties.params().size() == 1 && callProperties.params().getFirst() == null)) return Token.voidValue(callProperties.getLineNumber());
             byte[] collectedBytss = new byte[callProperties.params().size()];
             for (int i = 0; i < callProperties.params().size(); i++) {
                 Object val = callProperties.params().get(i);
@@ -148,11 +148,11 @@ public class Numbers extends BaseLibrary {
                     else if (val instanceof Long l)
                         collectedBytss[i] = TypeConverter.toByte(l);
                     else throw new InterpreterException.WtfAreYouDoingException(
-                                callProperties.scope(), "Okay so like " + val + " just isnt something that can be represented as a byte bro.", callProperties.tFuncCall().lineNumber
+                                callProperties.scope(), "Okay so like " + val + " just isnt something that can be represented as a byte bro.", callProperties.getLineNumber()
                         );
                 } catch (IllegalArgumentException e) {
                     throw new InterpreterException.WtfAreYouDoingException(
-                            callProperties.scope(), "One of the integer/long values in the array was either lwoert ahn 0 or higher than 255!", callProperties.tFuncCall().lineNumber
+                            callProperties.scope(), "One of the integer/long values in the array was either lwoert ahn 0 or higher than 255!", callProperties.getLineNumber()
                     );
                 }
             }

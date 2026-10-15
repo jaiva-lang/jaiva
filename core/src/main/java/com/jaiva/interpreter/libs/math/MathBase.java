@@ -69,7 +69,7 @@ public class MathBase extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             Object value = callProperties.params().getFirst();
 
             return switch (value) {
@@ -77,7 +77,7 @@ public class MathBase extends BaseLibrary {
                 case Double d -> Math.abs(d);
                 case Long l -> Math.abs(l);
                 case null, default ->
-                        throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
+                        throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.getLineNumber());
             };
 
         }
@@ -128,14 +128,14 @@ public class MathBase extends BaseLibrary {
             if (callProperties.params().isEmpty())
                 return ThreadLocalRandom.current().nextDouble();
 
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
 
             Object lowerObject = callProperties.params().getFirst();
             Object upperObject = callProperties.params().size() > 1 ?callProperties.params().get(1) : null;
 
             if (!(lowerObject instanceof Integer lower))
                 throw new FunctionParametersException(callProperties.scope(), this, "1", lowerObject, Integer.class,
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
 
             if (upperObject == null) {
                 // only one param was given, so treat lower as upper and 0 as lower.
@@ -143,17 +143,17 @@ public class MathBase extends BaseLibrary {
                 if (lower < 0)
                     throw new WtfAreYouDoingException(callProperties.scope(),
                             "When only one argument is given, it is treated as the upper bound, and the lower bound is 0. Therefore, the upper bound cannot be negative.",
-                            callProperties.tFuncCall().lineNumber);
+                            callProperties.getLineNumber());
                 return ThreadLocalRandom.current().nextInt(0, lower + 1);
             }
 
             if (!(upperObject instanceof Integer upper))
                 throw new FunctionParametersException(callProperties.scope(), this, "2", upperObject, Integer.class,
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
 
             if (lower > upper)
                 throw new WtfAreYouDoingException(callProperties.scope(), "The lower bound cannot be bigger than the upper bound.",
-                        callProperties.tFuncCall().lineNumber);
+                        callProperties.getLineNumber());
 
             // When Jaiva was truly the best
 //            if (lower == 6 && upper == 9)
@@ -191,7 +191,7 @@ public class MathBase extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             
             Object value = callProperties.params().getFirst();
 
@@ -200,7 +200,7 @@ public class MathBase extends BaseLibrary {
             else if (value instanceof Double d)
                 return (int) java.lang.Math.round(d);
             else
-                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.getLineNumber());
 
         }
     }
@@ -233,7 +233,7 @@ public class MathBase extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
 
             Object value = callProperties.params().getFirst();
 
@@ -242,7 +242,7 @@ public class MathBase extends BaseLibrary {
                 case Double d -> Math.sqrt(d);
                 case Long l -> Math.sqrt(l.doubleValue());
                 case null, default ->
-                        throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
+                        throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.getLineNumber());
             };
 
             return ifNan(callProperties.tFuncCall(), n);
@@ -275,7 +275,7 @@ public class MathBase extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             Object value = callProperties.params().getFirst();
 
             if (value instanceof Integer i)
@@ -283,7 +283,7 @@ public class MathBase extends BaseLibrary {
             else if (value instanceof Double d)
                 return (int) java.lang.Math.floor(d);
             else
-                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.getLineNumber());
         }
     }
 
@@ -320,7 +320,7 @@ public class MathBase extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             Object value = callProperties.params().getFirst();
 
             if (value instanceof Integer i)
@@ -328,7 +328,7 @@ public class MathBase extends BaseLibrary {
             else if (value instanceof Double d)
                 return (int) java.lang.Math.ceil(d);
             else
-                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.getLineNumber());
         }
     }
 
@@ -361,16 +361,16 @@ public class MathBase extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
 
             Object value = callProperties.params().getFirst();
             Object base =
                     callProperties.params().size() > 1 ? callProperties.params().get(1) : 10;
 
             if (!(value instanceof Number v))
-                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.tFuncCall().lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.getLineNumber());
             if (!(base instanceof Number b))
-                throw new FunctionParametersException(callProperties.scope(), this, "2", base, Number.class, callProperties.tFuncCall().lineNumber);
+                throw new FunctionParametersException(callProperties.scope(), this, "2", base, Number.class, callProperties.getLineNumber());
 
             double val = v.doubleValue();
             double bas = b.doubleValue();

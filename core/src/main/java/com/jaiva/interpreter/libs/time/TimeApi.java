@@ -44,7 +44,7 @@ public class TimeApi extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             return System.currentTimeMillis();
         }
     }
@@ -69,10 +69,10 @@ public class TimeApi extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             Object val = callProperties.params().getFirst();
             if (!(val instanceof Number num))
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_msToSec() only accepts a number.", callProperties.tFuncCall().lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_msToSec() only accepts a number.", callProperties.getLineNumber());
 
             return num.doubleValue() / 1000.0;
         }
@@ -124,16 +124,16 @@ public class TimeApi extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.tFuncCall(), callProperties.scope());
+            checkParams(callProperties.toCheckParams());
             Object dateStringObj = callProperties.params().getFirst();
             if (!(dateStringObj instanceof String dateString))
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_parseDate() expects a date string as the first argument.", callProperties.tFuncCall().lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_parseDate() expects a date string as the first argument.", callProperties.getLineNumber());
 
             String format = null;
             if (callProperties.params().size() > 1) {
                 Object formatObj = callProperties.params().get(1);
                 if (!(formatObj instanceof String) && !(formatObj instanceof TVoidValue))
-                    throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_parseDate() expects a format string as the second argument.", callProperties.tFuncCall().lineNumber);
+                    throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_parseDate() expects a format string as the second argument.", callProperties.getLineNumber());
                 format = formatObj instanceof TVoidValue ? null : (String) formatObj;
             }
 
@@ -143,7 +143,7 @@ public class TimeApi extends BaseLibrary {
                     formatter = DateTimeFormatter.ofPattern(format);
                 } catch (IllegalArgumentException e) {
                     throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "Pls put valid format for date gng. "+
-                            "(One day i'll make a format package, and that same day ill make the inverse to this function)", callProperties.tFuncCall().lineNumber);
+                            "(One day i'll make a format package, and that same day ill make the inverse to this function)", callProperties.getLineNumber());
                 }
             } else
                 formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -154,7 +154,7 @@ public class TimeApi extends BaseLibrary {
             if (callProperties.params().size() > 2) {
                 Object formatObj = callProperties.params().get(2);
                 if (!(formatObj instanceof String))
-                    throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "3", formatObj, String.class, callProperties.tFuncCall().lineNumber);
+                    throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "3", formatObj, String.class, callProperties.getLineNumber());
 //                    throw new InterpreterException.WtfAreYouDoingException(scope, "t_parseDate() needs the 3rd param to be a string zawg.", tFuncCall.lineNumber);
                 timezone = (String) formatObj;
             }
@@ -163,7 +163,7 @@ public class TimeApi extends BaseLibrary {
             try {
                 timeZoneId = ZoneId.of(timezone);
             } catch (DateTimeException f) {
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "If you parse a zoneID it has to be valid zawlf", callProperties.tFuncCall().lineNumber);
+                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "If you parse a zoneID it has to be valid zawlf", callProperties.getLineNumber());
             }
 
             ZonedDateTime zonedDateTime = dateTime.atZone(timeZoneId);
