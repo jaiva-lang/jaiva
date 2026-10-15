@@ -181,12 +181,13 @@ public class BaseLibrary {
         return libraryInstance;
     }
 
-    public String toToolingJSON(IConfig<Object> config, Globals globals) throws JaivaException {
-        Vfs VFS = getVfs(config, globals);
-        StringBuilder string = new StringBuilder();
-        string.append("{").append("\"version\":\"").append(Main.version).append("\",");
-        string.append("\"tokens\":");
-        string.append("[");
+    public static String vfsToJson(Vfs VFS) throws JaivaException {
+
+        SimpleJSON json = new SimpleJSON();
+        ArrayList<Object> tokens = new ArrayList<>();
+        json.set("version", Main.version);
+        json.set("tokens", tokens);
+
         HashMap<String, NewJson> jsonMap = new HashMap<>();
         for (Map.Entry<String, MapValue> entry : VFS.entrySet()) {
             String name = entry.getKey();
@@ -200,18 +201,21 @@ public class BaseLibrary {
                 } else {
                     symJson.set("name",  name);
                 }
-                string.append(symJson);
+                tokens.add(symJson);
             } else {
-                NewJson json = symbol.token.toJson();
-                string.append(json);
-                jsonMap.put(symbol.name, json);
+                NewJson json2 = symbol.token.toJson();
+                tokens.add(json2);
+                jsonMap.put(symbol.name, json2);
             }
-            string.append(",");
         }
-        string.deleteCharAt(string.length() - 1);
-        string.append("]");
-        string.append("}");
-        return string.toString();
+
+        return json.toString();
+
+    }
+
+    public String toToolingJSON(IConfig<Object> config, Globals globals) throws JaivaException {
+        Vfs VFS = getVfs(config, globals);
+        return vfsToJson(VFS);
     }
 
     public enum Metadata {

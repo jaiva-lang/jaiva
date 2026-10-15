@@ -84,6 +84,7 @@ public class TokenDefault<T extends TokenDefault<T>> implements Convertible {
      * @return the final JSON representation.
      * @throws JaivaException For any errors
      */
+    @Override
     public NewJson toJson() throws JaivaException {
         return json;
     }

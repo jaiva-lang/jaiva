@@ -24,6 +24,9 @@ import com.jaiva.utils.generic.BlockChain;
 import com.jaiva.utils.generic.MultipleLinesOutput;
 import com.yetnt.utils.tuple.Pair;
 import com.yetnt.utils.tuple.SamePair;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -55,7 +58,7 @@ public final class Tokenizer {
      * @param lineNumber The line's number.
      * @throws TokenizerException (Specifically MalformedSyntaxException)
      */
-    private static void checkForMalformedConstruct(String construct, String line, int lineNumber)
+    private static void checkForMalformedConstruct(@NotNull String construct, String line, int lineNumber)
             throws TokenizerException {
         if (!construct.equals(Keywords.FOR) && (!line.contains(Character.toString(Chars.STATEMENT_OPEN))
                 || !line.contains(Character.toString(Chars.STATEMENT_CLOSE))))
@@ -79,8 +82,9 @@ public final class Tokenizer {
             throw new MalformedSyntaxException("Closeth thy brace.", lineNumber);
     }
 
+    @Nullable
     private static Object handleBlocks(boolean isComment, String line,
-                                       MultipleLinesOutput multipleLinesOutput, String entireLine, String t, String[] args,
+                                       @Nullable MultipleLinesOutput multipleLinesOutput, String entireLine, String t, String[] args,
                                        Token<?> blockChain, int lineNumber) {
         MultipleLinesOutput m;
         if (multipleLinesOutput != null) {
@@ -113,7 +117,7 @@ public final class Tokenizer {
      * <p>
      * This method is used to handle the arguments for the given type. It is used in
      * the
-     * {@link Tokenizer#readLine(String, String, Object, BlockChain, int, TConfig)}
+     * {@link Tokenizer#readLine(String, String, MultipleLinesOutput, BlockChain, int, TConfig)}
      * method.
      * <p>
      * The arguments are handled based on the type of block it is. For example, if
@@ -125,6 +129,8 @@ public final class Tokenizer {
      * @param line The line to handle the arguments for.
      * @return The arguments for the given type.
      */
+    @NotNull
+    @Contract("_, _, _ -> new")
     private static String[] handleArgs(String type, String line, int lineNumber) throws TokenizerException {
         try {
             switch (type) {
@@ -194,7 +200,7 @@ public final class Tokenizer {
      * This method is used to handle the block lines for the given line. It is used
      * in
      * the
-     * {@link Tokenizer#readLine(String, String, Object, BlockChain, int, TConfig)}
+     * {@link Tokenizer#readLine(String, String, MultipleLinesOutput, BlockChain, int, TConfig)}
      * method.
      *
      * @param isComment           Whether the line is a comment or not.
@@ -208,9 +214,10 @@ public final class Tokenizer {
      * @param lineNumber          The line number of the line.
      * @return The tokens for the given line.
      */
+    @Nullable
     @SuppressWarnings("unchecked")
     private static Object processBlockLines(boolean isComment, String line,
-            MultipleLinesOutput multipleLinesOutput,
+            @Nullable MultipleLinesOutput multipleLinesOutput,
             String tokenizerLine, ArrayList<Token<?>> tokens, String type, String[] args,
             Token<?> blockChain, int lineNumber, TConfig config)
             throws Exception {
@@ -245,7 +252,7 @@ public final class Tokenizer {
                 nestedTokens.add((Token<?>) stuff);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new TokenizerException.CatchAllException(e.getMessage(), lineNumber);
         }
         TCodeblock codeblock = new TCodeblock(nestedTokens, finalMOutput.lineNumber, lineNumber);
         // Okay cool, we've parsed everything, but what if its different types?
@@ -311,7 +318,7 @@ public final class Tokenizer {
                 String cond = args[0].replaceFirst(Pattern.quote(Character.toString(Chars.STATEMENT_OPEN)),
                         Matcher.quoteReplacement(" ")).trim();
                 if (!args[2].equals(Keywords.FOR_EACH)) {
-                    TokenDefault var = ((ArrayList<Token<?>>) Objects.requireNonNull(readLine(
+                    TokenDefault<?> var = ((ArrayList<Token<?>>) Objects.requireNonNull(readLine(
                             Keywords.D_VAR + " "
                                     + cond
                                     + Chars.END_LINE,
@@ -391,7 +398,9 @@ public final class Tokenizer {
         return tokens;
     }
 
-    private static Pair<String, Boolean> formatPreline(MultipleLinesOutput finalMOutput) {
+    @NotNull
+    @Contract("_ -> new")
+    private static Pair<String, Boolean> formatPreline(@NotNull MultipleLinesOutput finalMOutput) {
         boolean isInline = false;
         String preLine = finalMOutput.preLine;
         preLine = preLine.startsWith(Keywords.D_FUNCTION) ? preLine.replaceFirst(Keywords.D_FUNCTION, "") : preLine;
@@ -414,7 +423,7 @@ public final class Tokenizer {
      * <p>
      * This method is used to handle the variable declaration and assignment. It is
      * used in the
-     * {@link Tokenizer#readLine(String, String, Object, BlockChain, int, TConfig)}
+     * {@link Tokenizer#readLine(String, String, MultipleLinesOutput, BlockChain, int, TConfig)}
      * method.
      *
      * @param line       The line to handle the variable declaration and assignment
@@ -422,7 +431,9 @@ public final class Tokenizer {
      * @param lineNumber The line number of the line.
      * @return The token for the given line.
      */
-    private static Token<?> processVariable(String line, int lineNumber)
+    @NotNull
+    @Contract("_, _ -> new")
+    private static Token<?> processVariable(@NotNull String line, int lineNumber)
             throws JaivaException {
         boolean isString = false;
         if (line.contains(Chars.ARRAY_ASSIGNMENT)) {
@@ -430,24 +441,20 @@ public final class Tokenizer {
             line = line.substring(4);
             String[] parts = line.split("<-\\|");
             parts[0] = parts[0].trim();
-            if (parts[0].isEmpty()) {
+            if (parts[0].isEmpty())
                 throw new MalformedSyntaxException(
                         "Bro defined a variable on line with no name lmao.", lineNumber);
-            }
+
             ArrayList<Object> parsedValues = new ArrayList<>();
 
-            if (parts.length == 1) {
+            if (parts.length == 1)
                 // delcared with no value, empty array.
                 return new TArrayVar(parts[0], parsedValues, lineNumber).toToken();
-            }
 
-            Token.splitByTopLevelComma(parts[1]).forEach(value -> {
-                try {
-                    parsedValues.add(Token.processContext(value.trim(), lineNumber));
-                } catch (JaivaException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+
+            for (String value : Token.splitByTopLevelComma(parts[1])) {
+                parsedValues.add(Token.processContext(value.trim(), lineNumber));
+            }
             return new TArrayVar(parts[0], parsedValues, lineNumber).toToken();
 
         }
@@ -475,7 +482,7 @@ public final class Tokenizer {
                 throw new MalformedSyntaxException(
                         "if you're finna define a variable without a value, remove the assignment operator.",
                         lineNumber);
-            return new TUnknownScalar(name, new TVoidValue(lineNumber), lineNumber)
+            return new TUnknownScalar<>(name, new TVoidValue(lineNumber), lineNumber)
                     .toToken();
         }
         String[] parts = new String[] {
@@ -515,7 +522,7 @@ public final class Tokenizer {
                             }
                         }
 
-                        return new TUnknownScalar(parts[0], object, lineNumber).toToken();
+                        return new TUnknownScalar<>(parts[0], object, lineNumber).toToken();
                     }
                 }
             }
@@ -526,15 +533,16 @@ public final class Tokenizer {
      * Handles the import statement.
      * <p>
      * This method is used to handle the import statement. It is used in the
-     * {@link Tokenizer#readLine(String, String, Object, BlockChain, int, TConfig)}
+     * {@link Tokenizer#readLine(String, String, MultipleLinesOutput, BlockChain, int, TConfig)}
      * method.
      *
      * @param line       The line to handle the import statement for.
      * @param lineNumber The line number of the line.
-     * @param config     Tokenizer configuration
      * @return The token for the given line.
      */
-    private static Token<?> handleImport(String line, int lineNumber, TConfig config)
+    @NotNull
+    @Contract("_, _ -> new")
+    private static Token<?> handleImport(String line, int lineNumber)
             throws JaivaException {
         // tsea "path"
         // tsea "path" <- funcz, funca
@@ -623,7 +631,7 @@ public final class Tokenizer {
      *      original token (such as if else chains)
      *     </li>
      *     <li>
-     *         {@code void.class} if this is so obscure that no other exception even caught it.
+     *         {@code null} if this is so obscure that no other exception even caught it.
      *     </li>
      * </ul>
      *
@@ -694,9 +702,10 @@ public final class Tokenizer {
      *
      * @author Lehlogonolo Poole
      */
+    @Nullable
     @SuppressWarnings("unchecked")
-    public static Object readLine(String line, String previousLine, Object multipleLinesOutput, BlockChain blockChain,
-            int lineNumber, TConfig config)
+    public static Object readLine(String line, String previousLine, @Nullable MultipleLinesOutput multipleLinesOutput, @Nullable BlockChain blockChain,
+                                  int lineNumber, @NotNull TConfig config)
             throws Exception {
         line = EscapeSequence.escapeAll(line);
         if (config.flags.SKIP_READLINE_TRIM) {
@@ -705,12 +714,12 @@ public final class Tokenizer {
             line = line.trim();
         }
 
-        boolean cont = multipleLinesOutput instanceof MultipleLinesOutput;
-        boolean isComment = (cont && ((MultipleLinesOutput) multipleLinesOutput).isComment)
+        boolean cont = multipleLinesOutput != null;
+        boolean isComment = (cont && multipleLinesOutput.isComment)
                 || (multipleLinesOutput == null && (line.startsWith(Character.toString(Chars.COMMENT_OPEN))
                         || (line.indexOf(Chars.COMMENT_OPEN) != -1
                                 && line.charAt(line.indexOf(Chars.COMMENT_OPEN)) != Chars.ESCAPE)));
-        boolean isCodeBlock = (cont && !((MultipleLinesOutput) multipleLinesOutput).isComment)
+        boolean isCodeBlock = (cont && !multipleLinesOutput.isComment)
                 || (line.startsWith(Keywords.IF) || line.startsWith(Keywords.D_FUNCTION)
                         || line.startsWith(Keywords.FOR))
                 || line.startsWith(Keywords.WHILE) || line.startsWith(Keywords.ELSE) || line.startsWith(Keywords.TRY)
@@ -718,41 +727,7 @@ public final class Tokenizer {
 
         // To the developer who would like to understand this.
         // Don't. Just don't. It's a mess. I am NOT sorry.
-        String type;
-        if (multipleLinesOutput != null) {
-            assert multipleLinesOutput instanceof MultipleLinesOutput;
-            type = ((MultipleLinesOutput) multipleLinesOutput).b_type;
-        } else {
-            type = line.startsWith(Keywords.IF) ? Keywords.IF
-                    : line.startsWith(Keywords.D_FUNCTION) ? Keywords.D_FUNCTION
-                            : line.startsWith(Keywords.FOR) ? Keywords.FOR
-                                    : line.startsWith(Keywords.WHILE) ? Keywords.WHILE
-                                            : line.replace(Chars.BLOCK_CLOSE, "").trim()
-                                                    .startsWith(Keywords.ELSE + " " + Keywords.IF)
-                                                            ? Keywords.ELSE + " " + Keywords.IF // check for "ELSE
-                                                                                                // IF"
-                                                                                                // before
-                                                                                                // checking for "IF"
-                                                            : line.replace(Chars.BLOCK_CLOSE, "").trim()
-                                                                    .startsWith(Keywords.ELSE) ? Keywords.ELSE
-                                                                            : line.startsWith(Keywords.TRY)
-                                                                                    ? Keywords.TRY
-                                                                                    : line.replace(
-                                                                                            Chars.BLOCK_CLOSE,
-                                                                                            "")
-                                                                                            .trim()
-                                                                                            .startsWith(
-                                                                                                    Keywords.CATCH)
-                                                                                                            ? Keywords.CATCH
-                                                                                                            : null;
-        }
-
-        if ((line.contains(Chars.BLOCK_OPEN) && line.indexOf(Chars.BLOCK_OPEN) < line.indexOf("\n")) && type == null
-                && !line.startsWith(Character.toString(Chars.COMMENT)))
-            // A block of code but the type waws not catched, invaliud keyword then.
-            // This is a syntax error.
-            throw new MalformedSyntaxException(
-                    line.split(" ")[0] + " aint a real keyword homie.", lineNumber);
+        String type = getType(line, multipleLinesOutput, lineNumber);
 
         ArrayList<Token<?>> tokens = new ArrayList<>();
         String[] ls = line.split("\n");
@@ -792,14 +767,14 @@ public final class Tokenizer {
                         b = null;
                         if (((ArrayList<Token<?>>) something).size() == 1) {
                             for (Token<?> t : (ArrayList<Token<?>>) something) {
-                                TokenDefault g = t.value();
+                                TokenDefault<?> g = t.value();
                                 if (comment == null || (!(g instanceof TArrayVar) && !(g instanceof TUnknownScalar)
                                         && !(g instanceof TFunction)))
                                     continue;
                                 JDoc doc = new JDoc(lineNumber, comment.trim());
                                 g.tooltip = doc;
                                 g.json.removeKey("toolTip");
-                                g.json.set("toolTip", doc);
+                                g.json.setJdoc("toolTip", doc);
                             }
 
                         }
@@ -834,7 +809,7 @@ public final class Tokenizer {
                             JDoc doc = new JDoc(t.lineNumber, comment.trim());
                             t.tooltip = doc;
                             t.json.removeKey("toolTip");
-                            t.json.set("toolTip", doc);
+                            t.json.setJdoc("toolTip", doc);
                         }
                         tokens.add(token);
                         m = null;
@@ -942,7 +917,7 @@ public final class Tokenizer {
 
 
         if (line.startsWith(Keywords.IMPORT.get(0)) || line.startsWith(Keywords.IMPORT.get(1)))
-            return handleImport(line, lineNumber, config);
+            return handleImport(line, lineNumber);
 
         // #STRING# is (khutla 100!) syntax which is a function return.
 
@@ -1016,12 +991,53 @@ public final class Tokenizer {
             return tokens;
         }
 
-        // Last resort: Don't fucking know what this line is supposed to tokenize as
+        // Last resort: Don't fucking know what this line is supposed to tokenise as
         // Therefore:
-        return void.class;
+        return null;
     }
 
-    private static String getString(String line, int lineNumber) throws MalformedSyntaxException {
+    @Nullable
+    private static String getType(String line, Object multipleLinesOutput, int lineNumber) throws MalformedSyntaxException {
+        String type;
+        if (multipleLinesOutput != null) {
+            assert multipleLinesOutput instanceof MultipleLinesOutput;
+            type = ((MultipleLinesOutput) multipleLinesOutput).b_type;
+        } else {
+            type = line.startsWith(Keywords.IF) ? Keywords.IF
+                    : line.startsWith(Keywords.D_FUNCTION) ? Keywords.D_FUNCTION
+                            : line.startsWith(Keywords.FOR) ? Keywords.FOR
+                                    : line.startsWith(Keywords.WHILE) ? Keywords.WHILE
+                                            : line.replace(Chars.BLOCK_CLOSE, "").trim()
+                                                    .startsWith(Keywords.ELSE + " " + Keywords.IF)
+                                                            ? Keywords.ELSE + " " + Keywords.IF // check for "ELSE
+                                                                                                // IF"
+                                                                                                // before
+                                                                                                // checking for "IF"
+                                                            : line.replace(Chars.BLOCK_CLOSE, "").trim()
+                                                                    .startsWith(Keywords.ELSE) ? Keywords.ELSE
+                                                                            : line.startsWith(Keywords.TRY)
+                                                                                    ? Keywords.TRY
+                                                                                    : line.replace(
+                                                                                            Chars.BLOCK_CLOSE,
+                                                                                            "")
+                                                                                            .trim()
+                                                                                            .startsWith(
+                                                                                                    Keywords.CATCH)
+                                                                                                            ? Keywords.CATCH
+                                                                                                            : null;
+        }
+
+        if ((line.contains(Chars.BLOCK_OPEN) && line.indexOf(Chars.BLOCK_OPEN) < line.indexOf("\n")) && type == null
+                && !line.startsWith(Character.toString(Chars.COMMENT)))
+            // A block of code but the type waws not catched, invaliud keyword then.
+            // This is a syntax error.
+            throw new MalformedSyntaxException(
+                    line.split(" ")[0] + " aint a real keyword homie.", lineNumber);
+        return type;
+    }
+
+    @NotNull
+    private static String getString(@NotNull String line, int lineNumber) throws MalformedSyntaxException {
         String withoutKeyword = line.substring(Keywords.THROW.length()).trim();
         // Split on the operator "<=="
         String[] parts = withoutKeyword.split(Chars.THROW_ERROR);

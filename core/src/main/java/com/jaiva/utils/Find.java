@@ -9,6 +9,9 @@ import com.jaiva.utils.generic.LeastImportantOperator;
 import com.jaiva.utils.generic.MultipleLinesOutput;
 import com.yetnt.utils.tuple.Pair;
 import com.yetnt.utils.tuple.SamePair;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,21 +33,23 @@ import java.util.List;
  * Any if not all functions and or sub classes which are related to "finding"
  * something, are in this class.
  */
-public class Find {
+public final class Find {
 
     /**
      * Find the index of the enclosing character in a string.
      * This takes in startCount and endCount so that it doesnt have to traverse the
      * entire string again but rather just the new portion.
-     * 
+     * <p>
      * overload for codeblocks
      * 
      * @param line  The string to search in.
      * @param start The starting character.
      * @param end   The ending character.
-     * @return
+     * @return a MultipleLinesOutput obj
      */
-    public static MultipleLinesOutput closingCharIndexML(String line, String start,
+    @NotNull
+    @Contract("_, _, _, _, _, _, _, _, _, _ -> new")
+    public static MultipleLinesOutput closingCharIndexML(String line, @NotNull String start,
                                                          String end,
                                                          int startCount, int endCount, String previousLines, String type, String[] args, Token<?> blockChain,
                                                          int lineNumber) {
@@ -53,21 +58,21 @@ public class Find {
         boolean isStart = true;
 
         for (int i = 0; i < line.length(); i++) {
-//            boolean char1equals = line.charAt(i) == end.charAt(0);
-//            boolean char2Equals = i + 1 < line.length() && line.charAt(i + 1) == end.charAt(1);
+            boolean b = i + 1 < line.length() && line.charAt(i + 1) == end.charAt(1);
+            boolean b1 = line.charAt(i) == end.charAt(0);
             if (!start.equals(end)) {
                 if (line.charAt(i) == start.charAt(0)) {
                     startCount += (i + 1 < line.length() && line.charAt(i + 1) == start.charAt(1)) ? 1 : 0;
-                } else if (line.charAt(i) == end.charAt(0)) {
-                    endCount += (i + 1 < line.length() && line.charAt(i + 1) == end.charAt(1)) ? 1 : 0;
+                } else if (b1) {
+                    endCount += b ? 1 : 0;
                 }
                 if (startCount == endCount && startCount != 0) {
                     return new MultipleLinesOutput(startCount, endCount, previousLines + line, type,
                             args, blockChain, lineNumber);
                 }
             } else {
-                if (line.charAt(i) == end.charAt(0)) {
-                    if (i + 1 < line.length() && line.charAt(i + 1) == end.charAt(1)) {
+                if (b1) {
+                    if (b) {
                         return new MultipleLinesOutput(i, i, previousLines + line, type, args, blockChain, lineNumber);
                     }
                     isStart = !isStart;
@@ -91,9 +96,11 @@ public class Find {
      *                   object
      * @return A MultipleLinesOutput Object indicating that either this line needs continuation or its complete.
      */
-    public static MultipleLinesOutput closingCharIndexML(String line, char start, char end,
-            int startCount,
-            int endCount) {
+    @NotNull
+    @Contract("_, _, _, _, _ -> new")
+    public static MultipleLinesOutput closingCharIndexML(@NotNull String line, char start, char end,
+                                                         int startCount,
+                                                         int endCount) {
         boolean isStart = true;
         for (int i = 0; i < line.length(); i++) {
             if (start != end) {
@@ -125,7 +132,7 @@ public class Find {
      * @param end   The ending character.
      * @return The index of the closing char. -1 if none found.
      */
-    public static int closingCharIndex(String line, char start, char end) {
+    public static int closingCharIndex(@NotNull String line, char start, char end) {
         int startCount = 0;
         int endCount = 0;
         boolean isStart = true;
@@ -196,6 +203,7 @@ public class Find {
      * @param line Input.
      * @return the pair where the outermost brace pair starts
      */
+    @Nullable
     public static SamePair<Integer> lastOutermostBracePair(String line) {
         BracePairs bp = Find.bracePairs(line);
         ArrayList<SamePair<Integer>> closed = bp.closedPairs();
@@ -239,7 +247,9 @@ public class Find {
      *         {@code Validate.isOperator(char)}, {@code Operators.getAll()}, and
      *         {@code Operators.getType(String)}.
      */
-    public static LeastImportantOperator leastImportantOperator(String statement) {
+    @NotNull
+    @Contract("_ -> new")
+    public static LeastImportantOperator leastImportantOperator(@NotNull String statement) {
         int level = 0;
         if (statement.trim().isEmpty())
             return new LeastImportantOperator();
@@ -329,13 +339,15 @@ public class Find {
      * @return A sanitized list of operator indexes, excluding those that
      *         correspond to unary minus operators.
      */
+    @NotNull
     public static ArrayList<Integer> sanitizeStatement(String statement, ArrayList<Integer> opIndexes) {
         ArrayList<Integer> remInt = removeUNARY(statement, opIndexes);
 
         return removeNOT(statement, remInt);
     }
 
-    public static ArrayList<Integer> removeUNARY(String statement, ArrayList<Integer> opIndexes) {
+    @NotNull
+    public static ArrayList<Integer> removeUNARY(String statement, @NotNull ArrayList<Integer> opIndexes) {
         ArrayList<Integer> sanitized = new ArrayList<>();
 
         for (int i = 0; i < opIndexes.size(); i++) {
@@ -355,7 +367,8 @@ public class Find {
         return sanitized;
     }
 
-    public static ArrayList<Integer> removeNOT(String statement, ArrayList<Integer> opIndexes) {
+    @NotNull
+    public static ArrayList<Integer> removeNOT(String statement, @NotNull ArrayList<Integer> opIndexes) {
         ArrayList<Integer> sanitized = new ArrayList<>();
 
         for (int i = 0; i < opIndexes.size(); i++) {
@@ -381,7 +394,7 @@ public class Find {
      * @param string String to find an operator index.
      * @return An int corresponding to the operator index. Note since it takes in a character array it only finds single operators and not multi
      */
-    public static int operatorIndex(char[] string) {
+    public static int operatorIndex(@NotNull char[] string) {
         for (int i = 0; i < string.length; i++) {
             if (Operators.getAllChars().contains(string[i]))
                 return i;
@@ -403,7 +416,8 @@ public class Find {
      *         marks.
      *         If no pairs are found, an empty list is returned.
      */
-    public static ArrayList<SamePair<Integer>> quotationPairs(String line) {
+    @NotNull
+    public static ArrayList<SamePair<Integer>> quotationPairs(@NotNull String line) {
         ArrayList<SamePair<Integer>> arr = new ArrayList<>();
         int oldCharIndex = -1;
         for (int i = 0; i < line.length(); i++) {
@@ -440,8 +454,10 @@ public class Find {
      * unmatched
      * braces.
      */
+    @NotNull
+    @Contract("_ -> new")
     public static BracePairs bracePairs(
-            String line) {
+            @NotNull String line) {
         ArrayList<SamePair<Integer>> finalArr = new ArrayList<>();
         ArrayList<Pair<Integer, Character>> stack = new ArrayList<>();
         ArrayList<Pair<Integer, Character>> danglingclose = new ArrayList<>();

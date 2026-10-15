@@ -54,9 +54,10 @@ public class TIfStatement extends TokenDefault<TIfStatement> implements TConstru
      *
      * @param body the TIfStatement representing the else if body to be appended
      */
-    public void appendElseIf(TIfStatement body) {
+    public void appendElseIf(TIfStatement body) throws JaivaException {
         if (elseIfs == null) {
             elseIfs = new ArrayList<>();
+            json();
         }
         elseIfs.add(body);
     }

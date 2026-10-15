@@ -13,6 +13,8 @@ import com.jaiva.utils.cd.ContextDispatcher;
 import com.jaiva.utils.cd.ContextDispatcher.To;
 import com.jaiva.utils.cd.ReservedCases;
 import com.jaiva.utils.generic.BracePairs;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,16 +35,7 @@ import java.util.UUID;
  * @param <T>   the type of the value held by this token
  * @param value The value held by this token.
  */
-public record Token<T extends TokenDefault>(T value) {
-
-    /**
-     * Constructs a new Token with the specified value.
-     *
-     * @param value the value to be held by this token
-     */
-    public Token {
-    }
-
+public record Token<T extends TokenDefault<?>>(T value) {
     /**
      * Returns the value held by this token.
      *
@@ -53,6 +46,7 @@ public record Token<T extends TokenDefault>(T value) {
         return value;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "Token { " +
@@ -69,6 +63,8 @@ public record Token<T extends TokenDefault>(T value) {
      *                   ignored and set to 0)
      * @return a new {@link TVoidValue} instance
      */
+    @NotNull
+    @Contract("_ -> new")
     public static TVoidValue voidValue(int lineNumber) {
         return new TVoidValue(lineNumber);
     }
@@ -80,7 +76,8 @@ public record Token<T extends TokenDefault>(T value) {
      * @param argsString The string to split.
      * @return A list of strings split by top-level commas.
      */
-    public static List<String> splitByTopLevelComma(String argsString) {
+    @NotNull
+    public static List<String> splitByTopLevelComma(@NotNull String argsString) {
         List<String> parts = new ArrayList<>();
         int level = 0;
         int lastSplit = 0;
@@ -112,7 +109,7 @@ public record Token<T extends TokenDefault>(T value) {
      * @param prefix     The prefix to add.
      * @return The simplified identifier.
      */
-    private static String simplifyIdentifier(String identifier, String prefix) {
+    private static String simplifyIdentifier(@NotNull String identifier, String prefix) {
         return identifier.contains(")") || identifier.contains("(") || identifier.contains("[")
                 || identifier.contains("]") || Validate.containsOperator(identifier.toCharArray()) != -1 ? identifier
                 : prefix + identifier;
@@ -226,63 +223,63 @@ public record Token<T extends TokenDefault>(T value) {
                 parsedArgs.add(processContext((String) arg, lineNumber));
             }
             return new TExtendParams(parsedArgs, lineNumber).toToken();
-        } else if (index != -1 && (line.charAt(index) == '(')) {
-            // then its a TFuncCall
-            String name = line.substring(0, index).trim();
-            String params = line.substring(index + 1, line.lastIndexOf(")")).trim();
-
-            ArrayList<String> args = new ArrayList<>(Token.splitByTopLevelComma(params));
-//            if (args.size() == 1 && args.getFirst().isBlank()) {
-//                args.removeFirst();
-//            }
-            ArrayList<Object> parsedArgs = new ArrayList<>();
-            for (String arg : args) {
-                parsedArgs.add(processContext((String) arg, lineNumber));
-            }
-            return new TFuncCall(processContext(simplifyIdentifier(name, "F~"), lineNumber), parsedArgs,
-                    lineNumber, line.charAt(line.length() - 1) == Chars.LENGTH_CHAR,
-                    line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD)).toToken();
-        } else if (index != -1 && (line.charAt(index) == '[')) {
-            // then its a variable call an array one to be specific
-            // name[index]
-            String name = line.substring(0, index).trim();
-            String arrayIndex = line.substring(index + 1, line.lastIndexOf("]")).trim();
-            return new TVarRef(
-                    processContext(simplifyIdentifier(name, "V~"), lineNumber),
-                    processContext(arrayIndex, lineNumber),
-                    lineNumber,
-                    line.charAt(line.length() - 1) == Chars.LENGTH_CHAR,
-                    line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD)
-                    )
-                    .toToken();
         } else {
-            // here, processTFuncCall will try to parse "line" as a primitive type. (if not
-            // a bool, int, or string)
-            // if it fails, return TVarRef
-            // if it succeeds, return the primitive type
-            try {
-                return parseNumberLiteral(line);
-            } catch (NumberFormatException e) {
+            boolean hasLengthChar = line.charAt(line.length() - 1) == Chars.LENGTH_CHAR;
+            if (index != -1 && (line.charAt(index) == '(')) {
+                // then its a TFuncCall
+                String name = line.substring(0, index).trim();
+                String params = line.substring(index + 1, line.lastIndexOf(")")).trim();
+
+                ArrayList<String> args = new ArrayList<>(Token.splitByTopLevelComma(params));
+                ArrayList<Object> parsedArgs = new ArrayList<>();
+                for (String arg : args) {
+                    parsedArgs.add(processContext((String) arg, lineNumber));
+                }
+                return new TFuncCall(processContext(simplifyIdentifier(name, "F~"), lineNumber), parsedArgs,
+                        lineNumber, hasLengthChar,
+                        line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD)).toToken();
+            } else if (index != -1 && (line.charAt(index) == '[')) {
+                // then its a variable call an array one to be specific
+                // name[index]
+                String name = line.substring(0, index).trim();
+                String arrayIndex = line.substring(index + 1, line.lastIndexOf("]")).trim();
+                return new TVarRef(
+                        processContext(simplifyIdentifier(name, "V~"), lineNumber),
+                        processContext(arrayIndex, lineNumber),
+                        lineNumber,
+                        hasLengthChar,
+                        line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD)
+                        )
+                        .toToken();
+            } else {
+                // here, processTFuncCall will try to parse "line" as a primitive type. (if not
+                // a bool, int, or string)
+                // if it fails, return TVarRef
+                // if it succeeds, return the primitive type
                 try {
-                    return Double.parseDouble(line);
-                } catch (NumberFormatException e2) {
-                    if (line.equals("true") || line.equals("false") || line.equals(Keywords.TRUE)
-                            || line.equals(Keywords.FALSE)) {
-                        line = line.replace(Keywords.TRUE, "true").replace(Keywords.FALSE, "false");
-                        return Boolean.parseBoolean(line);
-                    } else if (line.contains("\"")) {
-                        return line.substring(1, line.length() - 1).replace("\"", "");
-                    } else if (line.isBlank()) {
-                        return null;
-                    } else if (line.equals(Keywords.UNDEFINED)) {
-                        return new TVoidValue(lineNumber);
-                    } else {
-                        if (line.startsWith("V~") || line.startsWith("F~")) {
-                            return line.substring(2);
+                    return parseNumberLiteral(line);
+                } catch (NumberFormatException e) {
+                    try {
+                        return Double.parseDouble(line);
+                    } catch (NumberFormatException e2) {
+                        if (line.equals("true") || line.equals("false") || line.equals(Keywords.TRUE)
+                                || line.equals(Keywords.FALSE)) {
+                            line = line.replace(Keywords.TRUE, "true").replace(Keywords.FALSE, "false");
+                            return Boolean.parseBoolean(line);
+                        } else if (line.contains("\"")) {
+                            return line.substring(1, line.length() - 1).replace("\"", "");
+                        } else if (line.isBlank()) {
+                            return null;
+                        } else if (line.equals(Keywords.UNDEFINED)) {
+                            return new TVoidValue(lineNumber);
                         } else {
-                            return new TVarRef(line, lineNumber, line.charAt(line.length() - 1) == '~',
-                                    line.endsWith(Chars.SPREAD)
-                            ).toToken();
+                            if (line.startsWith("V~") || line.startsWith("F~")) {
+                                return line.substring(2);
+                            } else {
+                                return new TVarRef(line, lineNumber, line.charAt(line.length() - 1) == '~',
+                                        line.endsWith(Chars.SPREAD)
+                                ).toToken();
+                            }
                         }
                     }
                 }

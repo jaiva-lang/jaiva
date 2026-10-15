@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * Or Validate somethign such that if it fails, it throws an error.
  * 
  */
-public class Validate {
+public final class Validate {
     /**
      * These are for your if, while loops, for loops, where we need to make sure
      * that its NOT an integer, string or null.

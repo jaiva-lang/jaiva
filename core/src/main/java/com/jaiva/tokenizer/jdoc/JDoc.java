@@ -158,7 +158,7 @@ public class JDoc {
 //        return this;
     }
 
-    public ArrayList<Object> toJson() {
+    public ArrayList<Object> simpleJsonList() {
         ArrayList<Object> json = new ArrayList<>();
         tags.forEach(t -> json.add(new SimpleJSON(t.attributes)));
         return json;
@@ -167,7 +167,7 @@ public class JDoc {
     @Override
     public String toString() {
         return tags.size() == 1 && tags.getFirst() instanceof Tag.DGeneric ?
-                ("\"" + ((String)tags.getFirst().attributes.get("description")) + "\"")
+                ("\"" + tags.getFirst().attributes.get("description") + "\"")
                 : tags.toString();
     }
 }

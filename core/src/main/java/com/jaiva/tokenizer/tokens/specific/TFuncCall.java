@@ -75,7 +75,7 @@ public class TFuncCall extends TokenDefault<TFuncCall> implements TReference, TP
         json.set("functionName", functionName);
         json.set("getLength", getLength);
         json.set("spreadArr", spreadArr);
-        json.set("args", args.toArray());
+        json.set("args", args);
     }
 
     /**

@@ -41,7 +41,7 @@ public class TBooleanVar extends TUnknownScalar<Object, TBooleanVar> {
         json();
     }
 
-    public void json() throws JaivaException {
+    public void json() {
         json.set("value", value);
     }
 

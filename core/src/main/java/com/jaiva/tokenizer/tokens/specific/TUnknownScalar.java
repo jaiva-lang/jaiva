@@ -69,14 +69,7 @@ public class TUnknownScalar<Type, K extends TokenDefault<K>> extends TokenDefaul
 
     public void json() throws JaivaException {
         if (!json.keyExists("value"))
-            switch (value) {
-                case Number n -> json.set("value", n);
-                case String s -> json.set("value", s);
-                case Boolean b -> json.set("value", b);
-                case Token token -> json.set("value", token);
-                case TokenDefault tokenDefault -> json.set("value", tokenDefault);
-                default -> throw new IllegalArgumentException("Shit.");
-            }
+            json.set("value", value);
     }
 
     /**
