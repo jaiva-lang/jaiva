@@ -224,7 +224,6 @@ public record Token<T extends TokenDefault<?>>(T value) {
             }
             return new TExtendParams(parsedArgs, lineNumber).toToken();
         } else {
-            boolean hasLengthChar = line.charAt(line.length() - 1) == Chars.LENGTH_CHAR;
             if (index != -1 && (line.charAt(index) == '(')) {
                 // then its a TFuncCall
                 String name = line.substring(0, index).trim();
@@ -236,7 +235,7 @@ public record Token<T extends TokenDefault<?>>(T value) {
                     parsedArgs.add(processContext((String) arg, lineNumber));
                 }
                 return new TFuncCall(processContext(simplifyIdentifier(name, "F~"), lineNumber), parsedArgs,
-                        lineNumber, hasLengthChar,
+                        lineNumber, line.charAt(line.length() - 1) == Chars.LENGTH_CHAR,
                         line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD)).toToken();
             } else if (index != -1 && (line.charAt(index) == '[')) {
                 // then its a variable call an array one to be specific
@@ -247,7 +246,7 @@ public record Token<T extends TokenDefault<?>>(T value) {
                         processContext(simplifyIdentifier(name, "V~"), lineNumber),
                         processContext(arrayIndex, lineNumber),
                         lineNumber,
-                        hasLengthChar,
+                        line.charAt(line.length() - 1) == Chars.LENGTH_CHAR,
                         line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD)
                         )
                         .toToken();
