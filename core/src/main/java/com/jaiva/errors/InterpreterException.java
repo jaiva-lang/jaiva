@@ -515,4 +515,17 @@ public class InterpreterException extends JaivaException {
             super(ct, linNumber, err);
         }
     }
+
+    /**
+     * Exception thrown when an exception is thrown by either the tokenizer or interpreter while its trying
+     * to parse an import. The inner exception is wrapped by this exception so the user still gets
+     * nice output.
+     */
+    public static class TseaException extends InterpreterException {
+        public TseaException(Scope ct, int lineNumber, Exception exception) {
+            super(ct, lineNumber, "Couldn't import symbols! " +
+                    AnsiColour.print("(" + AnsiColour.remove(exception.getMessage()) + ")", AnsiColour.FONT.UNDERLINE)
+            );
+        }
+    }
 }

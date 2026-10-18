@@ -14,6 +14,7 @@ import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.libs.annotation.PublicLibrary;
 import com.jaiva.interpreter.libs.global.GlobalFunctions;
 import com.jaiva.interpreter.libs.global.IOFunctions;
+import com.jaiva.interpreter.libs.global.UnsafeGlobals;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.Symbol;
 import io.github.classgraph.ClassGraph;
@@ -114,6 +115,7 @@ public class Globals extends BaseLibrary {
 
         // add the actual global stuff to this current isntance of globals
         add(new GlobalFunctions(config));
+        add(new UnsafeGlobals());
 
         // cuz its a file we have to add manually
         builtInGlobals.put("arrays", LibraryLike.of("arrays.jiv"));

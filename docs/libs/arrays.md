@@ -1,6 +1,6 @@
-#  arrays (Library)
+# arrays (Library)
 
-_ Jaiva's arrays standard library which is itself, made in Jaiva.  It really just contains convenience methods such that you don't  have to index into or look for things yourself._
+_Jaiva's arrays standard library which is itself, made in Jaiva.  It really just contains convenience methods such that you don't  have to index into or look for things yourself._
 
 ## Table of Contents
 | Alias | Link |

@@ -21,6 +21,8 @@ This library exports the following libraries:
 | clear | [clear](#clear) |
 | args | [args](#args) |
 | uArgs | [uArgs](#uArgs) |
+| linker | [linker](#linker) |
+| tseaf | [tseaf](#tseaf) |
 ## Functions
 
 ### getVarClass
@@ -410,6 +412,121 @@ Since Version: _1.0.0_
 
 ```jaiva
 clear()! @ Clears the console output.
+```
+
+
+---
+
+
+### linker
+
+This symbol can be reached by the following aliases: _`linker`_
+
+_**Links the MapValue instance of 'a' into 'b' such that they hold the same value and if one is edited the other will also have that edit.**_
+
+
+#### Definition
+
+```jaiva
+F~linker(a, b)
+```
+
+- **_a_**  **`<-`** _**idk**_
+	 - _The symbol which holds the MapValue to be linked._
+- **_b_**  **`<-`** _**idk**_
+	 - _The symbol who's MapValue will either be created or overwritten_
+
+_**Returns:**_ **idk**
+
+> [!NOTE]
+> _A usual (b <- a) syntax would suffice if you'd like to copy the value of a into b.
+However when a is changed, b will stay the value you set earlier. This function fixes that where it will
+link the exact MapValue from a into b, discarding b's old MapValue. such that editing any one of the symbols
+via the reassignment syntax will update the linked variable.
+
+In the case that the "b" parameter does not actually exist in the symbol table, d_link will try to make it, itself.
+_
+
+
+Since Version: _5.0.4_
+
+
+#### Example: 
+
+```jaiva
+maak a <- f~() : 10! @ Lambda that returns 10
+maak b <- true! @ boolean value true
+
+@ With normal reassignment syntax, setting b to a then changing b does not update a
+b <- a!
+b <- 10!
+khuluma(a)! @ prints the lambda signature and not 10.
+
+@ With d_link, the exact MapValue held by that alias is copied.
+d_link(a, b)!
+b <- 10!
+khuluma(a)! @ prints 10
+a <- 100!
+khuluma(b)! @ prints 100
+```
+
+
+---
+
+
+### tseaf
+
+This symbol can be reached by the following aliases: _`tseaf`_
+
+_**Imports and immediately returns the imported symbol from the given file or library**_
+
+
+#### Definition
+
+```jaiva
+F~tseaf(path, symbol)
+```
+
+- **_path_**  **`<-`** _**string**_
+	 - _The path to import from._
+- **_symbol_**  **`<-`** _**string**_
+	 - _The symbol to import from. This can either be a string, or a non-existing variable reference._
+
+_**Returns:**_ **The value, if the requested symbol is of a variable, the function if the requested symbol is a function, but otherwise idk if the library/file doesnt expose such a symbol.**
+
+> [!NOTE]
+> _This isn't special, the "jaiva/" prefix for libraries like normal tsea syntax is still requried to differentiate a file from a library import._
+
+
+Since Version: _6.2.0_
+
+
+#### Example: 
+
+```jaiva
+@ Normally, you have to go via import syntax just to import a single variable
+tsea "jaiva/somewhere" <- func!
+func()!
+
+@ Using tseaf you can do the following
+tseaf("jaiva/somewhere", "func")()!
+
+@ Or otherwise alias it yourself
+maak func_1 <- tseaf("jaiva/somewhere", "func")!
+func_1()!
+
+@ Works for files that expose symbols too
+maak arr <- tseaf("../path", "array")!
+khuluma(arr~)! @ Prints array length
+
+@ And for the symbol name, it's not required to pass a string.
+@ Provided the reference does not exist in the scope, then it will
+@ use that non-existing reference's name. Otherwise if it exists it
+@ will use that reference's value like normal.
+
+maak funcp <- 10!
+tseaf("jaiva/somewhere", funca)! @ Will retrieve funca from the list
+tseaf("jaiva/somewhere", funcp)! @ Will fail, since funcp will pass the number 10 as the argument.
 ```
 
 

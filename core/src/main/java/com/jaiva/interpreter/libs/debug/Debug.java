@@ -42,6 +42,9 @@ public class Debug extends BaseLibrary {
                             )
                             .docs(
                                     JDoc.builder()
+                                            .markDeprecated(
+                                                    "This function has moved to the global scope and is now named \"linker\". Use that instead as this may be removed"
+                                            )
                                             .addDesc("Links the MapValue instance of 'a' into 'b' such that they hold the same value and if one is edited the other will also have that edit.")
                                             .sinceVersion("5.0.4")
                                             .addReturns("idk")

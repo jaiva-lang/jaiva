@@ -320,60 +320,16 @@ public final class Interpreter {
                 continue;
             } else if (token instanceof TImport tImport) {
 //                Globals g = new Globals(config);
-                Globals g = scope.getGlobals();
                 Path importPath = Path.of(tImport.filePath);
 
-                Vfs vfsFromFile;
+                boolean isLib = tImport.isLib;
+                String fileName = tImport.fileName;
+                int lineNumber = tImport.lineNumber;
+                ArrayList<String> symbols = tImport.symbols;
 
-                if (g.builtInGlobals.containsKey(tImport.fileName) && tImport.isLib)
-                    vfsFromFile = g.builtInGlobals.get(tImport.fileName).load(config, g);
-                else {
-
-                    // Check if the path is not absolute
-                    if (!importPath.isAbsolute()) {
-                        // Resolve it relative to the current file's directory,
-                        // then normalize to tidy up any relative path elements.
-                        importPath = config.getFileDirectory().resolve(importPath).normalize();
-                    }
-
-                    importPath = importPath.toAbsolutePath();
-
-                    ArrayList<Token<?>> tks = null;
-                    try {
-                        tks = Main.parseTokens(importPath.toString(), true);
-                    } catch (JaivaException e) {
-                        e.setLineNumber(tImport.lineNumber);
-                        throw e;
-                    }
-
-                    if (tks.isEmpty())
-                        continue; // Nohing to import.
-
-                    IConfig<Object> newConfig = new IConfig<Object>(config.getSanitisedArgs(), importPath.toString()
-                    );
-
-                    newConfig.setImportVfs(new ImportVfs(true, tImport.symbols)); // This tells the interpreter to only parse exported symbols. (Functions
-                                                // and variables)
-
-                    try {
-                        vfsFromFile = ((Vfs) Interpreter.interpret(tks, new Scope(Context.IMPORT, token, scope), newConfig));
-                    } catch (JaivaException e) {
-                        e.setLineNumber(tImport.lineNumber);
-                        throw e;
-                    }
-
-                    if ((vfsFromFile == null)) {
-                        // error? maybe not yet but throw.
-                        throw new CatchAllException(scope,
-                                importPath.toString()
-                                        + " either had nothing to export or somethign wqent horribly wrong.",
-                                tImport.lineNumber);
-                        // continue;
-                    }
-                }
-                if (!tImport.symbols.isEmpty()) {
-                    vfsFromFile.entrySet().removeIf(e -> !tImport.symbols.contains(e.getKey()));
-                }
+                Vfs vfsFromFile
+                        = importHandle(scope, config, fileName, isLib, importPath, lineNumber, symbols, token);
+                if (vfsFromFile == null) continue; // Nohing to import.
                 scope.getVfs().putAll(vfsFromFile);
             } else if (isVariableToken(token)) {
                 if (token instanceof TFuncCall || token instanceof TVarRef || token instanceof TLambda)
@@ -611,6 +567,59 @@ public final class Interpreter {
             config.dc.endOfFile(scope);
         }
         return config.getImportVfs().active || config.isREPL() ? scope.getVfs() : void.class;
+    }
+
+    @Nullable
+    public static Vfs importHandle(@NotNull Scope scope, @NotNull IConfig<Object> config, String fileName, boolean isLib, Path importPath, int lineNumber, ArrayList<String> symbols, TokenDefault<?> token) throws Exception {
+        Vfs vfsFromFile;
+        if (scope.getGlobals().builtInGlobals.containsKey(fileName) && isLib)
+            vfsFromFile = scope.getGlobals().builtInGlobals.get(fileName).load(config, scope.getGlobals());
+        else {
+
+            // Check if the path is not absolute
+            if (!importPath.isAbsolute()) {
+                // Resolve it relative to the current file's directory,
+                // then normalise to tidy up any relative path elements.
+                importPath = config.getFileDirectory().resolve(importPath).normalize();
+            }
+
+            importPath = importPath.toAbsolutePath();
+
+            ArrayList<Token<?>> tks = null;
+            try {
+                tks = Main.parseTokens(importPath.toString(), true);
+            } catch (JaivaException e) {
+                throw new TseaException(scope,  lineNumber, e);
+            }
+
+            if (tks.isEmpty())
+                return null;
+
+            IConfig<Object> newConfig = new IConfig<Object>(config.getSanitisedArgs(), importPath.toString()
+            );
+
+            newConfig.setImportVfs(new ImportVfs(true, symbols)); // This tells the interpreter to only parse exported symbols. (Functions
+                                        // and variables)
+
+            try {
+                vfsFromFile = ((Vfs) Interpreter.interpret(tks, new Scope(Context.IMPORT, token, scope), newConfig));
+            } catch (JaivaException e) {
+                throw new TseaException(scope,  lineNumber, e);
+            }
+
+            if ((vfsFromFile == null)) {
+                // error? maybe not yet but throw.
+                throw new CatchAllException(scope,
+                        importPath
+                                + " either had nothing to export or something went horribly wrong.",
+                        lineNumber);
+                // continue;
+            }
+        }
+        if (!symbols.isEmpty()) {
+            vfsFromFile.entrySet().removeIf(e -> !symbols.contains(e.getKey()));
+        }
+        return vfsFromFile;
     }
 
     public static void handleColonzieLoopIncrementExpresion(

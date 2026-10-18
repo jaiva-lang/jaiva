@@ -21,3 +21,5 @@ Literlaly just plumbing
   what.
 - Fix file md output formatting (didn't call .trim())
 - Fix some runtime exceptions (some)
+- Added `linker` to global scope and in turn deprecated its old version `d_link`
+- Added `tseaf` to import stuff via function
