@@ -27,7 +27,7 @@ public class Symbol implements Cloneable {
     /**
      * The token associated with the symbol.
      */
-    public TokenDefault token;
+    public TokenDefault<?> token;
 
     /**
      * Default Constructor which sets this symbol to null.
@@ -54,7 +54,7 @@ public class Symbol implements Cloneable {
      * @param type  Symbol type.
      * @param token Symbol's token.
      */
-    Symbol(String name, SymbolType type, TokenDefault token) {
+    Symbol(String name, SymbolType type, TokenDefault<?> token) {
         this.symbolType = type;
         this.token = token;
         this.name = name;

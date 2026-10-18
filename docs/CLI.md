@@ -392,3 +392,5 @@ Simple command on both windows and unix based systems
    
    Will update/downgrade to that specific version of jaiva if the version exists and there is
    a valid `jaiva.zip` artefact available.
+
+I've tested, you can install as far back as 1.0.0-beta.0 and back to v6. My script is insane wtf

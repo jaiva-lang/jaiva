@@ -26,7 +26,7 @@ public class VfsToMD {
 
     String path;
 
-    private ArrayList<SymbolLink> symbolToc = new ArrayList<>();
+    private final ArrayList<SymbolLink> symbolToc = new ArrayList<>();
 
     public record SymbolLink(String displayName, String link) {
 

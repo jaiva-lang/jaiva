@@ -25,7 +25,6 @@ import com.jaiva.tokenizer.tokens.specific.TExtendParams;
 import com.jaiva.utils.generic.BlockChain;
 import com.jaiva.utils.generic.MultipleLinesOutput;
 import com.yetnt.utils.builders.AnsiColour;
-import com.yetnt.utils.builders.SimpleJSON;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,15 +34,9 @@ import java.util.*;
 import static com.jaiva.tokenizer.Tokenizer.consumeExtension;
 
 /**
- * The Main class serves as the entry point for the Jaiva programming language
- * tokenizer and
- * interpreter. It handles command-line arguments, initializes the REPL
- * (Read-Eval-Print Loop),
- * and manages the parsing and interpretation of Jaiva source files.
- * <p>
- * The class contains methods for parsing tokens from source files, displaying
- * help information, and executing the interpreter.
+ * The Main class serves as the entry point for the Jaiva. Sorta if ur cli
  */
+@SuppressWarnings("JavaPrintToLogpoint") // its a bloody CLI stfu.
 public class Main {
     /**
      * List of command-line arguments that are used to start the REPL mode.
@@ -172,8 +165,6 @@ public class Main {
                 case "--version", "-v" -> {
 //                    System.out.println(ASCII);
                     System.out.println(AnsiColour.print("Jaiva! " + version, AnsiColour.FONT.BOLD, AnsiColour.FONT.ITALIC));
-//                    System.out.println(
-//                            "Jaiva is a programming language that is designed to be easy to use and understand. (I'm speaking out my ass, I made this cuz i was bored on a random january)");
                     System.out.println("Made with love by: " + author);
                     System.out.println();
                     System.exit(0);
@@ -403,6 +394,7 @@ public class Main {
      *         - Prints the exception message if any other error occurs during
      *         parsing.
      */
+    @SuppressWarnings("unchecked")
     public static ArrayList<Token<?>> parseTokens(String filePath, boolean returnVfs) throws Exception {
 
         // here, args[0] is the file name that must end in either .jaiva, .jiv or .jva
@@ -473,6 +465,7 @@ public class Main {
                 }
                 case Token<?> token -> {
                     TokenDefault<?> t = token.value();
+                    //noinspection StatementWithEmptyBody
                     if (returnVfs && !t.exportSymbol) {
                         // dont do anythin.
                     } else if (comment != null

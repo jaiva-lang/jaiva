@@ -14,6 +14,8 @@ import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
 import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
 import com.jaiva.tokenizer.tokens.Token;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Closeable;
 import java.io.InputStream;
@@ -113,9 +115,20 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
     CFClosures.Flush flushClosure;
     CFClosures.EOF eofClosure;
 
+    // TODO: Refactor a tiny bit to add another method which can take both input and output, specifically for sockets
+    /*
+    On the above comment the idea is,
+    input and output will be allowed
+    flush cna be used for output
+    eof can be used for input
+    close, can now have a parameter to its input function, where it might
+    take in the specific resource to close, otherwise no parameters may
+    close both, but again like ay other continuous function depends on
+    the callee
+     */
 
     private ContinuousFunction(
-            IConfig<Object> config,
+            @NotNull IConfig<Object> config,
             T closeable,
             ContinuousFunctionType continuousFunctionType,
             BFMethodToSupplier<?> readStreamSupplier,
@@ -148,6 +161,8 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
         this.eofClosure = eofClosure;
     }
 
+    @NotNull
+    @Contract("_, _, _, _ -> new")
     public static <T extends InputStream> ContinuousFunction<T> from(
             IConfig<Object> config, T inputStream,
             BFMethodToSupplier<?> inputStreamConsumer,
@@ -156,6 +171,8 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
         return new ContinuousFunction<T>(config, inputStream, ContinuousFunctionType.INPUT, inputStreamConsumer, null, eofClosure);
     }
 
+    @NotNull
+    @Contract("_, _, _ -> new")
     public static <T extends OutputStream> ContinuousFunction<T> from(
             IConfig<Object> config, T outputStream,
             BFMethodToConsumer<Object> outputStreamConsumer
@@ -164,7 +181,7 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
     }
 
     @Override
-    public Object call(CallProperties callProperties) throws Exception {
+    public Object call(@NotNull CallProperties callProperties) throws Exception {
         // do all the handling logic dispatch and new function creation shenangians
         checkParams(callProperties.toCheckParams());
         if (!callProperties.params().isEmpty()) {

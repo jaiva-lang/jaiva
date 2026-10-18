@@ -129,6 +129,7 @@ public final class Tokenizer {
      * @param line The line to handle the arguments for.
      * @return The arguments for the given type.
      */
+    @SuppressWarnings("DuplicateExpressions") // It breaks if you try abstract common checks.
     @NotNull
     @Contract("_, _, _ -> new")
     private static String[] handleArgs(String type, String line, int lineNumber) throws TokenizerException {
@@ -725,8 +726,6 @@ public final class Tokenizer {
                 || line.startsWith(Keywords.WHILE) || line.startsWith(Keywords.ELSE) || line.startsWith(Keywords.TRY)
                 || line.startsWith(Keywords.CATCH);
 
-        // To the developer who would like to understand this.
-        // Don't. Just don't. It's a mess. I am NOT sorry.
         String type = getType(line, multipleLinesOutput, lineNumber);
 
         ArrayList<Token<?>> tokens = new ArrayList<>();
@@ -998,6 +997,9 @@ public final class Tokenizer {
 
     @Nullable
     private static String getType(String line, Object multipleLinesOutput, int lineNumber) throws MalformedSyntaxException {
+
+        // To the developer who would like to understand this.
+        // Don't. Just don't. It's a mess. I am NOT sorry.
         String type;
         if (multipleLinesOutput != null) {
             assert multipleLinesOutput instanceof MultipleLinesOutput;

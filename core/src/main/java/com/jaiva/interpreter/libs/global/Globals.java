@@ -112,11 +112,14 @@ public class Globals extends BaseLibrary {
 
     public ArrayList<LibraryLike> putGlobals(IConfig<Object> config, ClassLoader cl) throws JaivaException {
 
+        // add the actual global stuff to this current isntance of globals
         add(new GlobalFunctions(config));
 
-//        if (!config.destroyLibraryCircularDependancy)
+        // cuz its a file we have to add manually
         builtInGlobals.put("arrays", LibraryLike.of("arrays.jiv"));
-
+        // we could also add a class def LibraryLike accepts it and eworks normally
+        // builtInGlobals.put("path", LibraryLike.of(Something.class));
+        // but nowadays classes are found reflectively in com.jaiva.interpreter.libs
         return putJaivaLibraries(
                 findInternalLibraries(cl)
         );
