@@ -2,7 +2,7 @@ package com.jaiva.interpreter.libs.annotation;
 
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.LibraryLike;
-import com.jaiva.interpreter.libs.global.Globals;
+import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 
 import java.lang.annotation.ElementType;

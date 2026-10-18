@@ -9,7 +9,7 @@ import com.jaiva.interpreter.Interpreter;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.Vfs;
 import com.jaiva.interpreter.libs.BaseLibrary;
-import com.jaiva.interpreter.libs.global.Globals;
+import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.md.MDInputProps;
 import com.jaiva.md.ToMarkdown;

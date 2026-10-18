@@ -1,4 +1,4 @@
-package com.jaiva.interpreter.libs.global;
+package com.jaiva.interpreter.libs;
 
 // To scan for all the internal libraries isntead of having to renference everytime
 
@@ -8,12 +8,12 @@ import com.jaiva.errors.InterpreterException;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.Vfs;
-import com.jaiva.interpreter.libs.BaseLibrary;
-import com.jaiva.interpreter.libs.LibraryLike;
 import com.jaiva.interpreter.libs.annotation.Exports;
 import com.jaiva.interpreter.libs.annotation.GlobalsLib;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.libs.annotation.PublicLibrary;
+import com.jaiva.interpreter.libs.global.GlobalFunctions;
+import com.jaiva.interpreter.libs.global.IOFunctions;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.Symbol;
 import io.github.classgraph.ClassGraph;

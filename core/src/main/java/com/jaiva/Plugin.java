@@ -5,7 +5,7 @@ import com.jaiva.errors.LoadException;
 import com.jaiva.interpreter.Vfs;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.LibraryLike;
-import com.jaiva.interpreter.libs.global.Globals;
+import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.md.MDInputProps;
 import com.jaiva.md.MDOutputProps;

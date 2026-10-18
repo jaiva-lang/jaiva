@@ -1,7 +1,6 @@
 package com.jaiva.interpreter.libs;
 
 import com.jaiva.interpreter.Vfs;
-import com.jaiva.interpreter.libs.global.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;

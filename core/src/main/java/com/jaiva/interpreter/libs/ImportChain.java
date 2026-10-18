@@ -1,6 +1,5 @@
 package com.jaiva.interpreter.libs;
 
-import com.jaiva.interpreter.libs.global.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 import org.jetbrains.annotations.NotNull;
 

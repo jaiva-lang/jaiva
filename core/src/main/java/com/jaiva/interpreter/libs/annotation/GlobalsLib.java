@@ -1,6 +1,6 @@
 package com.jaiva.interpreter.libs.annotation;
 
-import com.jaiva.interpreter.libs.global.Globals;
+import com.jaiva.interpreter.libs.Globals;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

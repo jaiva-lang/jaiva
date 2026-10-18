@@ -3,7 +3,6 @@ package com.jaiva.interpreter.libs;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.errors.LoadException;
 import com.jaiva.interpreter.Vfs;
-import com.jaiva.interpreter.libs.global.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

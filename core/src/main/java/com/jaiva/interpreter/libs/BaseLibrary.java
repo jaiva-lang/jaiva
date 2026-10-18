@@ -6,7 +6,6 @@ import com.jaiva.errors.LoadException;
 import com.jaiva.interpreter.MapValue;
 import com.jaiva.interpreter.Vfs;
 import com.jaiva.interpreter.libs.annotation.*;
-import com.jaiva.interpreter.libs.global.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.interpreter.symbol.SymbolType;
