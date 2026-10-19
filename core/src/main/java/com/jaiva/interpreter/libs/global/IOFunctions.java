@@ -16,6 +16,7 @@ import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -133,7 +134,8 @@ public class IOFunctions extends BaseLibrary {
             return Token.voidValue(callProperties.getLineNumber());
         }
 
-        private String arrToString(ArrayList<?> arr) {
+        @NotNull
+        private String arrToString(@NotNull ArrayList<?> arr) {
             StringBuilder b = new StringBuilder();
             b.append("[");
             for (int i = 0; i < arr.size(); i++) {

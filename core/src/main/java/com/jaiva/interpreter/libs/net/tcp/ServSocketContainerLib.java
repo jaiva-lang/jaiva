@@ -6,18 +6,10 @@ import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
-import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.CallProperties;
-import com.jaiva.interpreter.symbol.continuous.CFClosures;
-import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
-import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
-import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
 import com.jaiva.tokenizer.tokens.Token;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -25,7 +17,7 @@ import java.util.List;
 
 public class ServSocketContainerLib extends BaseLibrary {
     public ServSocketContainerLib() {
-
+        add(new FTcpServe());
     }
 
     static class WrappedAcceptFunction extends BaseFunction {
@@ -40,8 +32,11 @@ public class ServSocketContainerLib extends BaseLibrary {
         public Object call(CallProperties callProperties) throws Exception {
             Socket s = serverSocket.accept();
             return new ArrayList<>(List.of(
-                    newContinuousFunc(callProperties.config(), s),
-                    s.getLocalAddress(),  // this should be a connection id but idk what exactly lmao.
+                    CFSockets.newContinuousFunc(
+                            callProperties.config(), s,
+                            new ArrayList<>(List.of(s.getLocalAddress().toString(), s.getRemoteSocketAddress().toString()))
+                    ),
+                    s.getLocalAddress().toString(),  // this should be a connection id but idk what exactly lmao.
                     s.getRemoteSocketAddress().toString()
             ));
         }
@@ -119,95 +114,5 @@ public class ServSocketContainerLib extends BaseLibrary {
             return Token.voidValue(callProperties.getLineNumber());
 
         }
-    }
-
-    protected static ContinuousFunction<PushbackInputStream, DataOutputStream> newContinuousFunc(IConfig<Object> config, Socket client) throws IOException {
-        CFClosures.EOF eofClosure = getEofClosure();
-        CFClosures.Closed clsoedClosure = getClosedClosure();
-        return ContinuousFunction.from(
-                config,
-                new PushbackInputStream(new DataInputStream(new BufferedInputStream(client.getInputStream()))),
-                new DataOutputStream(new BufferedOutputStream(client.getOutputStream())),
-                getReadSupplier(eofClosure, clsoedClosure, client),
-                getWriteConsumer(clsoedClosure, client),
-                eofClosure,
-                clsoedClosure
-        );
-    }
-
-    private static BFMethodToConsumer<Object> getWriteConsumer(CFClosures.Closed closedClosure, Socket client) {
-        // TODO: functional handling and all that. Also if closed and the callback wasnt called. Call it
-        return callProperties -> o -> {
-            System.out.println("not implemented");
-        };
-    }
-
-    private static BFMethodToSupplier<?> getReadSupplier(CFClosures.EOF eofClosure, CFClosures.Closed closedClosure, Socket client) {
-        // TODO: functional handling and EOF vs Closed distinction via the PushBackInputStream. Same deal as above if either wasnt already set, call it.
-        return callProperties -> () -> callProperties;
-        /*
-        Conceptually
-
-            PushbackInputStream pbis = new PushbackInputStream(socket.getInputStream());
-
-            // Inside the thread's evaluation loop:
-            int peekByte = pbis.read();
-            if (peekByte == -1)
-                    // This is a clean closure. The remote peer closed the socket between evaluation cycles.
-                    triggerClosedEvent();
-            else
-                    // Data is present. Push it back so the generic reader can consume it seamlessly.
-                    pbis.unread(peekByte);
-
-                    try
-                            // THE FUNCTIONAL STUFF HERE
-                    catch (EOFException e)
-                            // If an EOF happens now, it IS a premature failure because we verified data existed.
-                            triggerPrematureEOFError();
-         */
-    }
-
-    @NotNull
-    @Contract(" -> new")
-    protected static CFClosures.Closed getClosedClosure() {
-        return new CFClosures.Closed(
-                ((callProperties, checkParams, cfClosureClosed) -> {
-                    // We only expect a single parameter
-                    checkParams.apply(callProperties.toCheckParams());
-
-                    // it has to be a function
-                    Object func2 = callProperties.params().getFirst();
-                    if (!(func2 instanceof BaseFunction function))
-                        throw new InterpreterException.FunctionParametersException(
-                                callProperties.scope(), cfClosureClosed, "1", func2, BaseFunction.class,
-                                callProperties.getLineNumber()
-                        );
-
-                    // TODO: The supplier and consumer have to pass the client porperties to this function call.
-                    return function::call;
-                })
-        );
-    }
-
-    @NotNull
-    @Contract(" -> new")
-    protected static CFClosures.EOF getEofClosure() {
-        return new CFClosures.EOF(
-                ((callProperties, checkParams, cfClosureEof) -> {
-                    // We only expect a single parameter
-                    checkParams.apply(callProperties.toCheckParams());
-
-                    // it has to be a function
-                    Object func2 = callProperties.params().getFirst();
-                    if (!(func2 instanceof BaseFunction function))
-                        throw new InterpreterException.FunctionParametersException(
-                                callProperties.scope(), cfClosureEof, "1", func2, BaseFunction.class,
-                                callProperties.getLineNumber()
-                        );
-
-                    // TODO: The supplier and consumer have to pass the client porperties to this function call.
-                    return function::call;
-                })
-        );
     }
 }

@@ -135,7 +135,7 @@ public class ThreadsLib extends BaseLibrary {
                 // if the exception belongs to Jaiva remove colours.
                 String exceptionMessage =
                         ex != null ?
-                        AnsiColour.remove(ex.getMessage()) : "";
+                        ex.getMessage() != null ? AnsiColour.remove(ex.getMessage()) : "null" : "";
 
                 cleanup.call(
                         new ArrayList<>(List.of(code.toString(), exceptionMessage)),
@@ -143,7 +143,11 @@ public class ThreadsLib extends BaseLibrary {
                 );
             };
 
-            ThreadedInterp thread = new ThreadedInterp(callProperties.config(), runnable, cleanupHandler);
+            ThreadedInterp thread = new ThreadedInterp(
+                    callProperties.config(), runnable,
+                    cleanupHandler, callProperties.scope(),
+                    callProperties.getLineNumber()
+            );
 
             thread.start();
 

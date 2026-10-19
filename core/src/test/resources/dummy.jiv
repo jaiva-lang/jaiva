@@ -1,3 +1,21 @@
+tsea "jaiva/continuous"!
+tsea "jaiva/file"!
+tsea "jaiva/threads"!
 
+kwenza stuff() ->
+    maak c <- f_cwriter("./h.jiv")!
 
-khuluma(tseaf("jaiva/arrays", a_fro)("dksd,sdfods, sdfno", ","))!
+    maak wr <- c(C_WRITE)!
+    maak end <- !
+
+    khuluma(end)!
+
+    wr(W_UTF8, "Bitch")!
+    wr(W_UTF8, "$n")!
+    wr(W_UTF8, "Yeah")!
+
+    c(C_FLUSH)()!
+    c(C_CLOSE)()!
+<~
+
+thread(stuff)!

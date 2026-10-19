@@ -15,6 +15,10 @@ import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @JaivaLibrary(path="types/numbers", description = "More complicated converters")
 public class Numbers extends BaseLibrary {
@@ -22,7 +26,8 @@ public class Numbers extends BaseLibrary {
         add(
                 new FDoubleToIEE754Long(),
                 new FLongToIEEE754Double(),
-                new FStringFromByteArray()
+                new FStringFromByteArray(),
+                new FStringToByteArray()
         );
     }
 
@@ -158,6 +163,62 @@ public class Numbers extends BaseLibrary {
             }
 
             return new String(collectedBytss, StandardCharsets.UTF_8);
+        }
+    }
+
+
+    static class FStringToByteArray extends BaseFunction {
+        public FStringToByteArray() {
+            super(
+                    FunctionBuilder.start()
+                            .name("t_strToByteArr")
+                            .arguments(
+                                    Arguments.getInstance().add(
+                                            new AArgument(
+                                                    "string",
+                                                    "The string to convert into UTF-8 bytes",
+                                                    false,
+                                                    Argument.Type.STRING
+                                            )
+                                    )
+                            )
+                            .docs(
+                                    JDoc.builder()
+                                            .addDesc(
+                                                    "Converts the given string into UTF-8 byte values (0–255)"
+                                            )
+                                            .addReturns("The UTF-8 bytes as integer values")
+                                            .sinceVersion("6.2.0")
+                            )
+            );
+            freeze();
+        }
+
+        @Override
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.toCheckParams());
+
+            Object val = callProperties.params().getFirst();
+
+            if (!(val instanceof String s))
+                throw new InterpreterException.FunctionParametersException(
+                        callProperties.scope(),
+                        this,
+                        "1",
+                        val,
+                        String.class,
+                        callProperties.getLineNumber()
+                );
+
+            byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
+            int[] ints = TypeConverter.byteArrToIntArr(bytes);
+
+            ArrayList<Object> ints2 = new ArrayList<>(ints.length);
+            for (int anInt : ints) {
+                ints2.add(anInt);
+            }
+
+            return ints2;
         }
     }
 }

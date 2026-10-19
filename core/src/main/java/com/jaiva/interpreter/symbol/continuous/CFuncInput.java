@@ -29,10 +29,10 @@ public enum CFuncInput {
                     "freeing resources. This always needs to be called to avoid resource leaks.",
             "C_END", "C_FINISH"
     ),
-    CLOSED(
-            "closed",
+    DONE(
+            "done",
             "Key of the function which sets a specific operation to happen for when a given \"something\" is closed.",
-            "C_ENDED", "C_FINISHED"
+            "C_ENDED", "C_FINISHED", "C_CLOSED"
     );
 
     private final String key;

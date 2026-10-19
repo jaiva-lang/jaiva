@@ -2,27 +2,59 @@
 @ client.jiv
 
 tsea "jaiva/continuous"!
-tsea "jaiva/net/tcp"!
+tsea "jaiva/net"!
 tsea "./shared.jiv"!
 
-kwenza client(con) ->
+kwenza client(con, conId, conAddr, F~close) ->
+
+    @ Handle errs
+    kwenza erHandler(_, _2, type) ->
+        @ we have conId and conAddress already.
+        maak identifier <- "Server on " + conAddr!
+
+        @ if i ever introduce a switch, itd naturally replace this.
+        sif (type = "CONNECTION") ?> khutla khuluma(identifier + " was closed.")!
+        sif (type = "ERR") ?> khutla khuluma(identifier + " crashed suddenly!")!
+        sif (type = "INPUT") ?> khutla khuluma(identifier + " closed it's input stream!")!
+        sif (type = "OUTPUT") ?> khutla khuluma(identifier + " closed it's output stream!")!
+
+
+	    close()! @ might as well close if this was invoked.
+    <~
+
+    con(C_CLOSED)(erHandler, true)!
+    con(C_EOF)()!
+        |> f~(_, _2) : khuluma("EOF was reached while reading.... oh no.")!
+        |> true!
+
 	@ read first packet
 	maak greet <- readPacket(con)!
 
-	@ and ig do oter stuff. Maybe listen to the console's systme in so we can
+	khuluma("Received from server " + greet)!
+	khuluma()!
+
+	@ and ig do other stuff. Maybe listen to the console's systme in so we can
 	@ send to server
 
-	nikhil (true;) ->
+	nikhil ((con(C_EOF)()') && (con(C_CLOSED)()')) ->
+
 		khuluma("Send to server:", true)!
 		maak out <- mamela()! @ blocking.
 
-		sif (out = "exit") ?> voetsek!
+		sif (out = "exit" || out~ = 0) ?> voetsek!
 
 		sendPacket(con, out)!
+
+		khuluma()!
 	<~
 
-	khuluma("client is exiting")!
-	con(C_CLOSE)()!
+
+	khuluma("Closing communication with " + conAddr)!
+
+	@ tcp_handshake provides a convenience for this
+    @ con(C_CLOSE)()!
+	@ with the close parameter.
+	close()!
 <~
 
 zama zama ->

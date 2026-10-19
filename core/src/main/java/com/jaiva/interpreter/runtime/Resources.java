@@ -58,9 +58,12 @@ public class Resources {
      * This method should be called to free up resources when they are no longer
      * needed.
      */
-    public void release() throws IOException {
+    public int release() throws IOException {
+        int i = 0;
         for (Closeable c : closeables.values()) {
             c.close();
+            i++;
         }
+        return i;
     }
 }

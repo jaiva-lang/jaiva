@@ -5,6 +5,7 @@ import com.jaiva.errors.Warnings;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.*;
 import com.jaiva.interpreter.symbol.BaseVariable.VariableType;
+import com.jaiva.interpreter.symbol.continuous.CFClosures;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.TConditional;
@@ -326,14 +327,19 @@ public final class Primitives {
                 }
                 function = function != null ? function : (BaseFunction) v.getValue();
 
+                if (function instanceof CFClosures.Close)
+                    System.out.println("Dsf");
+
                 checkSymbolAnnotation(function, tFuncCall.lineNumber, scope, config);
 
                 ArrayList<Object> args = BaseFunction.resolveSpreadOperator(function, tFuncCall, config, scope);
                 ArrayList<Object> newArgs = new ArrayList<>();
 
                 if (function.isEvaluateParamsEarly()) {
-                    for (Object arg : args) {
-                        newArgs.add(toPrimitive(arg, false, config, scope));
+                    if (args.size() != 1 || args.getFirst() != null) {
+                        for (Object arg : args) {
+                            newArgs.add(toPrimitive(arg, false, config, scope));
+                        }
                     }
                 } else {
                     newArgs = args;

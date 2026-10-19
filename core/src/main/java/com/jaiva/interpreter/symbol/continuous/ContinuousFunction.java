@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Closeable;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
  * A ContinuousFunction is a specialisation of your ordinary {@link BaseFunction} with the sole purpose
@@ -124,7 +125,7 @@ public class ContinuousFunction<I extends Closeable, O extends Closeable> extend
             O outputCloseable,
             ContinuousFunctionType continuousFunctionType,
             BFMethodToSupplier<?> readStreamSupplier,
-            BFMethodToConsumer<Object> writeStreamConsumer,
+            BFMethodToConsumer<ArrayList<Object>> writeStreamConsumer,
             CFClosures.EOF eofClosure,
             CFClosures.Closed closedClosure
     ) {
@@ -178,7 +179,7 @@ public class ContinuousFunction<I extends Closeable, O extends Closeable> extend
     @Contract("_, _, _ -> new")
     public static <T extends OutputStream, R extends Closeable> ContinuousFunction<R, T> from(
             IConfig<Object> config, T outputStream,
-            BFMethodToConsumer<Object> outputStreamConsumer
+            BFMethodToConsumer<ArrayList<Object>> outputStreamConsumer
     ) {
         return new ContinuousFunction<>(config, null, outputStream, ContinuousFunctionType.OUTPUT, null, outputStreamConsumer, new CFClosures.EOF(), new CFClosures.Closed());
     }
@@ -188,7 +189,7 @@ public class ContinuousFunction<I extends Closeable, O extends Closeable> extend
     public static <T extends InputStream, R extends OutputStream> ContinuousFunction<T, R> from(
             IConfig<Object> config, T inputStream, R outputStream,
             BFMethodToSupplier<?> inputStreamSupplier,
-            BFMethodToConsumer<Object> outputStreamConsumer,
+            BFMethodToConsumer<ArrayList<Object>> outputStreamConsumer,
             CFClosures.EOF eofClosure,
             CFClosures.Closed closedClosure
     ) {
@@ -218,7 +219,7 @@ public class ContinuousFunction<I extends Closeable, O extends Closeable> extend
             if (!CFuncInput.isValid(protocol))
                 throw new InterpreterException.WtfAreYouDoingException(
                         callProperties.scope(), "A continuous function can only take string inputs of: " +
-                        " \"read\", \"write\", \"flush\", \"closed\" or \"close\"!", callProperties.getLineNumber()
+                        " \"read\", \"write\", \"flush\", \"done\" or \"close\"!", callProperties.getLineNumber()
                 );
 
             // isValid allows this to pass.
@@ -231,10 +232,45 @@ public class ContinuousFunction<I extends Closeable, O extends Closeable> extend
                 case CLOSE -> closeClosure;
                 case FLUSH -> flushClosure;
                 case EOF -> eofClosure;
-                case CLOSED -> closedClosure;
+                case DONE -> closedClosure;
             };
         }
         return Token.voidValue(callProperties.getLineNumber());
     }
 
+    public I getInputCloseable() {
+        return inputCloseable;
+    }
+
+    public O getOutputCloseable() {
+        return outputCloseable;
+    }
+
+    public ContinuousFunctionType getContinuousFunctionType() {
+        return continuousFunctionType;
+    }
+
+    public CFClosures.Input getInputStreamClosure() {
+        return inputStreamClosure;
+    }
+
+    public CFClosures.Output getOutputStreamClosure() {
+        return outputStreamClosure;
+    }
+
+    public CFClosures.Close getCloseClosure() {
+        return closeClosure;
+    }
+
+    public CFClosures.Flush getFlushClosure() {
+        return flushClosure;
+    }
+
+    public CFClosures.EOF getEofClosure() {
+        return eofClosure;
+    }
+
+    public CFClosures.Closed getClosedClosure() {
+        return closedClosure;
+    }
 }

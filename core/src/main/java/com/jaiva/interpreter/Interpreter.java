@@ -13,12 +13,14 @@ import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.BaseVariable.VariableType;
 import com.jaiva.interpreter.symbol.Symbol;
+import com.jaiva.lang.EscapeSequence;
 import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.tokens.TAtomicValue;
 import com.jaiva.tokenizer.tokens.TSymbol;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
+import com.yetnt.utils.builders.AnsiColour;
 import com.yetnt.utils.functional.consumer.ThrowableBiConsumer;
 import com.yetnt.utils.tuple.Pair;
 import org.jetbrains.annotations.Contract;
@@ -534,18 +536,19 @@ public final class Interpreter {
                             // return void.class;
                         }
                     }
-                } catch (Exception e) {
+                } catch (JaivaException e) {
                     // catch any exception, and call the catch block with the error.
                     Token<?> tContainer = new Token<>(null);
 
+                    String string = AnsiColour.remove(e.getMessage());
                     scope.getVfs().put(varName,
                             BaseVariable.create(
                                     varName,
                                     new TStringVar(
-                                            varName, e.getMessage(),
+                                            varName, string,
                                             throwError.catchBlock.lineNumber),
                                     new ArrayList<>(Collections.singletonList(
-                                            e.getMessage())),
+                                            string)),
                                     false));
                     Object out2 = Interpreter.interpret(throwError.catchBlock.lines,
                             new Scope(Context.CATCH, token, scope), config); // line

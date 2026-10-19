@@ -2,21 +2,27 @@
 @ server.jiv
 
 tsea "jaiva/continuous"!
-tsea "jaiva/net/tcp"!
+tsea "jaiva/net"!
 tsea "jaiva/threads"!
-tsea "./shared.jiv"!
+tsea "./shared"!
 
 kwenza connectionHandler(con, conId, conAddress) ->
 
     kwenza closedHandler(_, _2, type) ->
+        khuluma("Socket was closed suddenly! Next message is more specific")!
         @ we have conId and conAddress already.
-        sif (type = "CONNECTION") ?> khutla khuluma(conId + " on "  conAddress + " closed gravefully.")!
+        maak identifier <- "$t |> " + conId + " on " +  conAddress!
 
-        khuluma(conId + " closed it's " + type + " stream!")!
+        @ if i ever introduce a switch, itd naturally replace this.
+        sif (type = "CONNECTION") ?> khuluma(identifier + " closed gracefully.")!
+        sif (type = "ERR") ?> khuluma(identifier + " crashed suddenly!")!
+        sif (type = "INPUT") ?> khuluma(identifier + " closed it's input stream!")!
+        sif (type = "OUTPUT") ?> khuluma(identifier + " closed it's output stream!")!
+
+
+	    con(C_CLOSE)()!
     <~
 
-	@ In an actual implementation you would check if
-	@ type is "CONNECTION" "INPUT" or "OUTPUT"
 	con(C_CLOSED)(closedHandler, true)!
 		@ Calls the con(C_CLOSE)() for us after our function has ran.
 
@@ -26,10 +32,13 @@ kwenza connectionHandler(con, conId, conAddress) ->
 		|> true! @ similar to above.
 
 	zama zama ->
+	    khuluma("sending packet")!
 		sendPacket(con, "What's up bro")!
+		khuluma("packet sent")!
 
-		nikhil (true;) ->
-			khuluma(readPacket(con))!
+		nikhil ((con(C_EOF)()') && (con(C_CLOSED)()')) ->
+		    khuluma("Waiting for " + conAddress + " to send us a packet....")!
+			khuluma("[RECEIVED:]" + readPacket(con))!
 		<~
 
 	<~ chaai ->
@@ -39,20 +48,25 @@ kwenza connectionHandler(con, conId, conAddress) ->
 
 	<~
 
-	con(C_CLOSE)()! @ Default implementaiton will close both streams if no constant input is given.
+	khuluma("Closing communication with " + conAddress)!
 
+	con(C_CLOSE)()! @ Default implementation will close both streams if no constant input is given.
 <~
 
-kwenza server(acceptConn, close) ->
+kwenza server(F~acceptConn, F~close) ->
+    khuluma("Started server")!
     zama zama ->
         nikhil (true;) ->
+            khuluma("Waiting for a connection...")!
             maak c <- acceptConn()! @ [con, conId, conAddress]
-            thread(f~() : connectionHandler(c:::))!
+            khuluma("Established connection from " + c[2])!
+            thread(f~() : connectionHandler(c[0], c[1], c[2]))!
         <~
 	<~ chaai ->
 	    khuluma("Server experienced an error")!
-	    close(); @ close for good measure
+	    khuluma(error)!
+	    close()! @ close for good measure
 	<~
 <~
 
-tcp_start(5050, server)!
+tcp_serve(5050, server)!

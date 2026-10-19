@@ -6,19 +6,18 @@ import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libs.types.TypeConverter;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.CallProperties;
-import com.jaiva.interpreter.symbol.inf.BFMethod;
 import com.jaiva.interpreter.symbol.inf.BFMethodComposition;
 import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
 import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
 import com.jaiva.tokenizer.tokens.Token;
 import com.yetnt.utils.functional.consumer.ThrowableConsumer;
-import com.yetnt.utils.functional.function.ThrowableBiFunction;
 import com.yetnt.utils.functional.function.ThrowableTriFunction;
 import com.yetnt.utils.functional.generic.ThrowableSupplier;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -60,12 +59,25 @@ public class CFClosures {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            if (callbackInitializer != null) {
+            if (callbackInitializer != null && !callProperties.params().isEmpty()) {
                 callback = callbackInitializer.apply(callProperties, this::checkParams, this);
                 return Token.voidValue(callProperties.getLineNumber());
             } else {
                 return eof;
             }
+        }
+
+        public boolean isEof() {
+            return eof;
+        }
+
+        public void handleCallback(ArrayList<Object> params, CallProperties cp) throws Exception {
+            if (isEof()) return;
+            if (callback == null) return;
+            eof = true;
+            callback.apply(
+                    params, cp.config(), cp.scope(), cp.tFuncCall()
+            );
         }
     }
 
@@ -91,22 +103,17 @@ public class CFClosures {
             ThrowableSupplier<?, IOException> method
                     = readStreamSupplier.apply(callProperties);
 
-            // TODO: Handle types, for now if its String, Int, Long, Double, or Boolean, its fine.
-            // TODO: If it's a byte, then convert to int.
-            // TODO: Otherwise, we're fucked.
-
             Object out = method.get();
 
             if (out instanceof Byte b) {
                 return TypeConverter.fromByte(b);
-            } else if (out.getClass().isArray()) {
+            } else if (out instanceof byte[] b) {
                 // most probably a byte array
                 // return as integer list
-                return new ArrayList<>(List.of(
+                return TypeConverter.asArr(
                         TypeConverter.byteArrToIntArr(
-                                (byte[]) out
-                        )
-                ));
+                                b
+                        ));
             } else {
                 return out; // pray.
             }
@@ -114,9 +121,9 @@ public class CFClosures {
     }
 
     public static class Output extends BaseFunction {
-        BFMethodToConsumer<Object> writeStreamConsumer;
+        BFMethodToConsumer<ArrayList<Object>> writeStreamConsumer;
 
-        public Output(BFMethodToConsumer<Object> wsc) {
+        public Output(BFMethodToConsumer<ArrayList<Object>> wsc) {
             super(FunctionBuilder.start());
             this.writeStreamConsumer = wsc;
         }
@@ -130,15 +137,10 @@ public class CFClosures {
                 parsedParams.add(Primitives.toPrimitive(p, false, callProperties.config(), callProperties.scope()));
             }
 
-            ThrowableConsumer<Object, IOException> method
+            ThrowableConsumer<ArrayList<Object>, IOException> method
                     = writeStreamConsumer.apply(callProperties);
 
-            // TODO: Handle types, for now if its String, Int, Long, Double, or Boolean, its fine.
-            // TODO: If it's a byte, then convert to int.
-            // TODO: Otherwise, we're fucked.
-            // TODO: In this case, we just consume the first argument within paras. Caller is responbisle for mutating params
-
-            method.apply(parsedParams.getFirst());
+            method.apply(parsedParams);
             return Token.voidValue(callProperties.getLineNumber());
         }
     }
@@ -161,6 +163,7 @@ public class CFClosures {
 
     public static class Close extends BaseFunction {
         UUID resourceId, secondResource;
+        Socket socket = null;
         public Close(UUID resourceId) {
             super(FunctionBuilder.start());
             this.resourceId = resourceId;
@@ -172,10 +175,53 @@ public class CFClosures {
             this.secondResource = outputId;
         }
 
+        public void addSocket(Socket socket) {
+            this.socket = socket;
+        }
+
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            // TODO: Handle specific stream input. Currently assumes only one stream was given
-            callProperties.config().getGlobalResources().ofCurrentThread().releaseResource(resourceId);
+            if (socket != null) {
+                // check for specific input
+                if (!callProperties.params().isEmpty()) {
+                    if (callProperties.params().getFirst() instanceof String str) {
+                        // naturally, the user wont have the UUID
+                        // so they can pass the CFuncInput type
+                        if (!CFuncInput.isValid(str))
+                            throw new InterpreterException.WtfAreYouDoingException(
+                                    callProperties.scope(),
+                                    "When specifying a resource to close, you can only put \"read\" or \"write\"",
+                                    callProperties.getLineNumber()
+                            );
+
+                        CFuncInput funcInput = CFuncInput.fromChar(str.charAt(0));
+
+                        assert funcInput != null; // it wont be null. cuz isValid. but what fucking ever.
+                        callProperties.config().getGlobalResources().ofCurrentThread()
+                                .releaseResource(switch (funcInput) {
+                                    case READ -> {
+                                        socket.shutdownInput();
+                                        yield resourceId;
+                                    }
+                                    case WRITE -> {
+                                        socket.shutdownOutput();
+                                        yield secondResource;
+                                    }
+                                    default -> throw new InterpreterException.WtfAreYouDoingException(
+                                            callProperties.scope(),
+                                            "Input \"read\" or \"write\" not something else",
+                                            callProperties.getLineNumber()
+                                    );
+                                });
+                    }
+                } else {
+                    socket.close();
+                    callProperties.config().getGlobalResources().ofCurrentThread().releaseResource(resourceId);
+                    callProperties.config().getGlobalResources().ofCurrentThread().releaseResource(secondResource);
+                }
+            } else {
+                callProperties.config().getGlobalResources().ofCurrentThread().releaseResource(resourceId);
+            }
             return Token.voidValue(callProperties.getLineNumber());
         }
     }
@@ -184,6 +230,7 @@ public class CFClosures {
     public static class Closed extends BaseFunction {
         private BFMethodWithExtras<Closed> callbackInitializer = null;
         private BFMethodComposition callback = null;
+        boolean closed = false;
 
         public Closed() {
             super(FunctionBuilder.start());
@@ -204,10 +251,25 @@ public class CFClosures {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            if (callbackInitializer != null)
+            if (callbackInitializer != null &&  !callProperties.params().isEmpty()) {
                 callback = callbackInitializer.apply(callProperties, this::checkParams, this);
+                return Token.voidValue(callProperties.getLineNumber());
+            }
+            return isClosed();
+        }
 
-            return Token.voidValue(callProperties.getLineNumber());
+        public boolean isClosed() {
+            return closed;
+        }
+
+        public void handleCallback(ArrayList<Object> params, CallProperties cp) throws Exception {
+            if (isClosed()) return;
+            if (callback == null) return;
+
+            closed = true;
+            callback.apply(
+                    params, cp.config(), cp.scope(), cp.tFuncCall()
+            );
         }
     }
 }

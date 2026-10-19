@@ -1,17 +1,17 @@
 @ shared.jiv
 
 tsea "jaiva/continuous"!
-tsea "jaiva/net/const"!
+tsea "jaiva/net"!
 
 kwenza *readPacket(con) ->
 	maak msgLen <- con(C_READ)(NET_R_INT)!
 	maak pl <- con(C_READ)(NET_RU_BYTEBUFF, msgLen)!
 	@ NET_RU_BYTEBUFF corresponds to DataInputStream.readFully. ("R"ead "U"ntil)
-	khutla t_strFromByteArr(pl)!
+	khutla tseaf("jaiva/types/numbers", t_strFromByteArr)(pl:::)!
 <~
 
 kwenza *sendPacket(con, msg) ->
-	maak bArr <- t_strToByteArr(msg)!
+	maak bArr <- tseaf("jaiva/types/numbers", t_strToByteArr)(msg)!
 	con(C_WRITE)(NET_W_INT, bArr~)!
 	con(C_WRITE)(NET_W_BYTEBUFF, bArr)!
 	con(C_FLUSH)()!

@@ -7,8 +7,11 @@ import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.yetnt.utils.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.function.BiFunction;
 
 @JaivaLibrary(
@@ -17,7 +20,7 @@ import java.util.function.BiFunction;
 )
 public class NetConst extends BaseLibrary {
 
-    private enum Values {
+    public enum Values {
 
         INTEGER(true, true, "", "INT"),
         JAVA_UTF8(true, true, "", "MOD_UTF8"),
@@ -51,6 +54,32 @@ public class NetConst extends BaseLibrary {
         private final boolean writeConstant;
         private final String extraInfo;
         private final String[] aliases;
+
+        @Nullable
+        public static NetConst.Values fromString(String s) {
+            s = s.toLowerCase();
+            for (NetConst.Values v : NetConst.Values.values()) {
+                String name = v.name().toLowerCase();
+                if (name.equalsIgnoreCase(s))
+                    return v;
+
+                if (s.contains("net_r")) {
+                    if (!v.readConstant) continue;
+                    if (s.contains("net_ru") && v != U_BYTES) continue;
+                }
+
+                if (s.contains("net_w"))
+                    if (!v.writeConstant) continue;
+
+                if (s.endsWith(name))
+                    return v;
+
+                for (String alias : v.getAliases()) {
+                    if (s.endsWith(alias.toLowerCase())) return v;
+                }
+            }
+            return null;
+        }
 
         Values(boolean both) {
             this.readConstant = both;

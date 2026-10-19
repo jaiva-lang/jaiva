@@ -109,10 +109,8 @@ public class FileBytes extends BaseLibrary {
                     (callProps) -> {
                         ArrayList<Object> pars = callProps.params();
                         // the writer from continous function takes the first argument as what to write.
-                        ThrowableConsumer<Object, IOException> doNothing
-                                = (o) -> {
-                            return;
-                        };
+                        ThrowableConsumer<ArrayList<Object>, IOException> doNothing
+                                = (o) -> {};
 
                         if (pars.size() < 2) return doNothing;
 
@@ -123,31 +121,31 @@ public class FileBytes extends BaseLibrary {
 
                         return switch (type) {
                             case "int", "integer" -> (i) -> {
-                                if (!(i instanceof Integer i2)) return;
+                                if (!(i.get(1) instanceof Integer i2)) return;
                                 dos.writeInt(i2);
                             };
                             case "boolean", "bool" -> (i) -> {
-                                if  (!(i instanceof Boolean b)) return;
+                                if  (!(i.get(1)  instanceof Boolean b)) return;
                                 dos.writeBoolean(b);
                             };
                             case "long" -> (i) -> {
-                                if (!(i instanceof Long l)) return ;
+                                if (!(i.get(1)  instanceof Long l)) return ;
                                 dos.writeLong(l);
                             };
                             case "double" -> (i) -> {
-                                if (!(i instanceof Double d)) return ;
+                                if (!(i.get(1)  instanceof Double d)) return ;
                                 dos.writeDouble(d);
                             };
                             case "string", "utf8", "utf_8" -> (i) -> {
-                                if (!(i instanceof String str)) return ;
+                                if (!(i.get(1)  instanceof String str)) return ;
                                 dos.write(str.getBytes(StandardCharsets.UTF_8));
                             };
                             case "mod_utf8", "java_utf8" -> (i) -> {
-                                if (!(i instanceof String str)) return ;
+                                if (!(i.get(1)  instanceof String str)) return ;
                                 dos.writeUTF(str);
                             };
                             case "byte" -> (i) -> {
-                                if (!(i instanceof Integer i2)) return;
+                                if (!(i.get(1)  instanceof Integer i2)) return;
                                 byte val = TypeConverter.toByte(i2);
                                 dos.writeByte(val);
                             };
