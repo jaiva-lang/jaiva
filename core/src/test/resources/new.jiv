@@ -56,10 +56,10 @@ kwenza connectionHandler(con, conId, conAddress) ->
 <~
 
 kwenza server(acceptConn) ->
-nikhil (true;) -> @ accept clients forever lol
-	maak c <- acceptConn()! @ [con, conId, conAddress] blocking call.
-	thread(f~() : connectionHandler(c:::))!
-<~
+ nikhil (true;) -> @ accept clients forever lol
+	 maak c <- acceptConn()! @ [con, conId, conAddress] blocking call.
+	 thread(f~() : connectionHandler(c:::))!
+ <~
 <~
 
 tcp_start(5050, server)!
