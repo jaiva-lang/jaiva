@@ -84,18 +84,7 @@ public class BaseFunction extends Symbol {
         return this.toString();
     }
 
-    /**
-     * Calls the function with the given call properties.
-     * It's generally required that libraries override this method to enable function functionality.
-     *
-     * @param callProperties The call properties
-     * @return The return value of the function, if not overridden it will return
-     *      {@link TVoidValue} (idk)
-     * @throws Exception If an error occurs during the function call.
-     */
-    public Object call(CallProperties callProperties) throws Exception {
-        return Token.voidValue(callProperties.getLineNumber());
-    }
+
 
     /**
      * Original method
@@ -110,6 +99,19 @@ public class BaseFunction extends Symbol {
     @Deprecated(since = "6.2.0")
     public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
         return call(new CallProperties(tFuncCall, params, config, scope));
+    }
+
+    /**
+     * Calls the function with the given call properties.
+     * It's generally required that libraries override this method to enable function functionality.
+     *
+     * @param callProperties The call properties
+     * @return The return value of the function, if not overridden it will return
+     *      {@link TVoidValue} (idk)
+     * @throws Exception If an error occurs during the function call.
+     */
+    public Object call(CallProperties callProperties) throws Exception {
+        return Token.voidValue(callProperties.getLineNumber());
     }
 
     public final Object call(@NotNull ArrayList<Object> params,

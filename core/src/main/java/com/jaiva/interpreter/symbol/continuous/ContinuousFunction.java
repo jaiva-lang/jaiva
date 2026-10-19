@@ -101,14 +101,14 @@ import java.io.OutputStream;
  * @see Closeable
  * @see ContinuousConst
  * @author Lehlogonolo Poole
- * @param <T> The type of the closeable.
+ * @param <I> The type of the closeable.
  */
-public class ContinuousFunction<T extends Closeable, R extends Closeable> extends BaseFunction {
+public class ContinuousFunction<I extends Closeable, O extends Closeable> extends BaseFunction {
 
 
     public enum ContinuousFunctionType {INPUT, OUTPUT, BOTH}
-    T inputCloseable;
-    R outputCloseable;
+    I inputCloseable;
+    O outputCloseable;
     ContinuousFunctionType continuousFunctionType;
 
     CFClosures.Input inputStreamClosure;
@@ -120,8 +120,8 @@ public class ContinuousFunction<T extends Closeable, R extends Closeable> extend
 
     private ContinuousFunction(
             @NotNull IConfig<Object> config,
-            T inputCloseable,
-            R outputCloseable,
+            I inputCloseable,
+            O outputCloseable,
             ContinuousFunctionType continuousFunctionType,
             BFMethodToSupplier<?> readStreamSupplier,
             BFMethodToConsumer<Object> writeStreamConsumer,

@@ -1,0 +1,58 @@
+
+@ server.jiv
+
+tsea "jaiva/continuous"!
+tsea "jaiva/net/tcp"!
+tsea "jaiva/threads"!
+tsea "./shared.jiv"!
+
+kwenza connectionHandler(con, conId, conAddress) ->
+
+    kwenza closedHandler(_, _2, type) ->
+        @ we have conId and conAddress already.
+        sif (type = "CONNECTION") ?> khutla khuluma(conId + " on "  conAddress + " closed gravefully.")!
+
+        khuluma(conId + " closed it's " + type + " stream!")!
+    <~
+
+	@ In an actual implementation you would check if
+	@ type is "CONNECTION" "INPUT" or "OUTPUT"
+	con(C_CLOSED)(closedHandler, true)!
+		@ Calls the con(C_CLOSE)() for us after our function has ran.
+
+	@ probably make better EOF handling. (by using an actual function and not a lambda to log lol.)
+	con(C_EOF)()!
+		|> f~(conId2, conAddre) : khuluma(conId2 + " encountered EOF wile reading!")!
+		|> true! @ similar to above.
+
+	zama zama ->
+		sendPacket(con, "What's up bro")!
+
+		nikhil (true;) ->
+			khuluma(readPacket(con))!
+		<~
+
+	<~ chaai ->
+
+		@ client exited due to err
+		khuluma(conId + " disconnected weirdly..... " + error)!
+
+	<~
+
+	con(C_CLOSE)()! @ Default implementaiton will close both streams if no constant input is given.
+
+<~
+
+kwenza server(acceptConn, close) ->
+    zama zama ->
+        nikhil (true;) ->
+            maak c <- acceptConn()! @ [con, conId, conAddress]
+            thread(f~() : connectionHandler(c:::))!
+        <~
+	<~ chaai ->
+	    khuluma("Server experienced an error")!
+	    close(); @ close for good measure
+	<~
+<~
+
+tcp_start(5050, server)!

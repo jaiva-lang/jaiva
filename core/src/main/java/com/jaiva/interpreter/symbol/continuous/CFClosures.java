@@ -1,14 +1,19 @@
 package com.jaiva.interpreter.symbol.continuous;
 
+import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libs.types.TypeConverter;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.inf.BFMethod;
+import com.jaiva.interpreter.symbol.inf.BFMethodComposition;
 import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
 import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
 import com.jaiva.tokenizer.tokens.Token;
 import com.yetnt.utils.functional.consumer.ThrowableConsumer;
+import com.yetnt.utils.functional.function.ThrowableBiFunction;
+import com.yetnt.utils.functional.function.ThrowableTriFunction;
 import com.yetnt.utils.functional.generic.ThrowableSupplier;
 
 import java.io.Closeable;
@@ -20,11 +25,33 @@ import java.util.UUID;
 
 public class CFClosures {
 
+    public interface BFMethodWithExtras<T extends BaseFunction> extends ThrowableTriFunction<
+                    CallProperties,
+                    ThrowableConsumer<BaseFunction.CheckParams, InterpreterException>,
+                    T,
+                BFMethodComposition,
+                    Exception> {}
+
     public static class EOF extends BaseFunction {
         private boolean eof = false;
+        private BFMethodWithExtras<EOF> callbackInitializer = null;
+        private BFMethodComposition callback = null;
 
         public EOF() {
             super(FunctionBuilder.start());
+        }
+
+        public EOF(BFMethodWithExtras<EOF> callbackInitializer) {
+            super(FunctionBuilder.start());
+            this.callbackInitializer = callbackInitializer;
+        }
+
+        public BFMethodWithExtras<EOF> getCallbackInitializer() {
+            return callbackInitializer;
+        }
+
+        public BFMethodComposition getCallback() {
+            return callback;
         }
 
         public void set() {
@@ -33,7 +60,12 @@ public class CFClosures {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            return eof;
+            if (callbackInitializer != null) {
+                callback = callbackInitializer.apply(callProperties, this::checkParams, this);
+                return Token.voidValue(callProperties.getLineNumber());
+            } else {
+                return eof;
+            }
         }
     }
 
@@ -142,21 +174,39 @@ public class CFClosures {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            // dont care about args again
+            // TODO: Handle specific stream input. Currently assumes only one stream was given
             callProperties.config().getGlobalResources().ofCurrentThread().releaseResource(resourceId);
             return Token.voidValue(callProperties.getLineNumber());
         }
     }
 
+
     public static class Closed extends BaseFunction {
+        private BFMethodWithExtras<Closed> callbackInitializer = null;
+        private BFMethodComposition callback = null;
 
         public Closed() {
             super(FunctionBuilder.start());
         }
 
+        public Closed(BFMethodWithExtras<Closed> callbackInitializer) {
+            super(FunctionBuilder.start());
+            this.callbackInitializer = callbackInitializer;
+        }
+
+        public BFMethodWithExtras<Closed> getCallbackInitializer() {
+            return callbackInitializer;
+        }
+
+        public BFMethodComposition getCallback() {
+            return callback;
+        }
+
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            // dont care about args again--
+            if (callbackInitializer != null)
+                callback = callbackInitializer.apply(callProperties, this::checkParams, this);
+
             return Token.voidValue(callProperties.getLineNumber());
         }
     }

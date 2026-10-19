@@ -1,0 +1,32 @@
+
+@ client.jiv
+
+tsea "jaiva/continuous"!
+tsea "jaiva/net/tcp"!
+tsea "./shared.jiv"!
+
+kwenza client(con) ->
+	@ read first packet
+	maak greet <- readPacket(con)!
+
+	@ and ig do oter stuff. Maybe listen to the console's systme in so we can
+	@ send to server
+
+	nikhil (true;) ->
+		khuluma("Send to server:", true)!
+		maak out <- mamela()! @ blocking.
+
+		sif (out = "exit") ?> voetsek!
+
+		sendPacket(con, out)!
+	<~
+
+	khuluma("client is exiting")!
+	con(C_CLOSE)()!
+<~
+
+zama zama ->
+	tcp_handshake("localhost", 5050, client)!
+<~ chaai ->
+	khuluma("Couldn't connect to server or some other error. " + error)!
+<~
