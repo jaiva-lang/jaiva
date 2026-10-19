@@ -10,7 +10,7 @@ Literlaly just plumbing
 - Fix stupid vscode related problems that jaiva introduced into it (JSOn output)
 - Use ytils 1.3.0 SimpleJSON and refactor all tokens to use it
 - Start adding IntelliJ Annotation
-- Deprecate intenral APIs
+- Deprecate internal APIs
 - Remove `-jg/--json-with-globals`, and make `-j/--json` identical to streamer json output.
 - Revamp all JSON output to be map based (Via ytils SimpleJSON)
 - Encapsulate some fields and make a lot of classes final

@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 
 /**
- * These fuctions are also available in {@link GlobalFunctions} which aren't really that safe to use.
+ * These functions are also available in {@link GlobalFunctions} which aren't really that safe to use.
  */
 public class UnsafeGlobals extends BaseLibrary {
     public UnsafeGlobals() {
@@ -44,15 +44,13 @@ public class UnsafeGlobals extends BaseLibrary {
                             .docs(
                                     JDoc.builder()
                                             .addDesc("Links the MapValue instance of 'a' into 'b' such that they hold the same value and if one is edited the other will also have that edit.")
-                                            .sinceVersion("5.0.4")
+                                            .sinceVersion("5.0.4") // yes this was added in 6.2.0, but it existed before in jaiva/debug as d_link so its not new.
                                             .addReturns("idk")
                                             .addNote("""
                                             A usual (b <- a) syntax would suffice if you'd like to copy the value of a into b.
                                             However when a is changed, b will stay the value you set earlier. This function fixes that where it will
                                             link the exact MapValue from a into b, discarding b's old MapValue. such that editing any one of the symbols
-                                            via the reassignment syntax will update the linked variable.
-                                            
-                                            In the case that the "b" parameter does not actually exist in the symbol table, d_link will try to make it, itself.
+                                            via the reassignment syntax will update the linked variable. In the case that the "b" parameter does not actually exist in the symbol table, d_link will try to make it, itself.
                                             """)
                                             .addExample("""
                                             maak a <- f~() : 10! @ Lambda that returns 10
@@ -224,14 +222,19 @@ public class UnsafeGlobals extends BaseLibrary {
             );
 
             if (vfs == null)
-                throw new InterpreterException.WtfAreYouDoingException(
+                throw new InterpreterException.TseaException(
                         callProperties.scope(),
-                        "Vfs returned null...?",
-                        callProperties.getLineNumber()
+                        callProperties.getLineNumber(),
+                        "The provided file does not expose any symbols."
                 );
 
-            MapValue first1 = vfs.values().stream().toList()
+            List<MapValue> list = vfs.values().stream().toList();
+            if (list.isEmpty())
+                return Token.voidValue(callProperties.getLineNumber());
+            MapValue first1 = list
                     .getFirst();
+            // there should only ever be a single entry since we provided to the handleImprot
+            // a single thing to fetch.
             if (first1 == null)
                 // No such thing exists.
                 return Token.voidValue(callProperties.getLineNumber());

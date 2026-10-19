@@ -103,10 +103,12 @@ import java.io.OutputStream;
  * @author Lehlogonolo Poole
  * @param <T> The type of the closeable.
  */
-public class ContinuousFunction<T extends Closeable> extends BaseFunction {
+public class ContinuousFunction<T extends Closeable, R extends Closeable> extends BaseFunction {
 
-    public enum ContinuousFunctionType {INPUT, OUTPUT}
-    T closeable;
+
+    public enum ContinuousFunctionType {INPUT, OUTPUT, BOTH}
+    T inputCloseable;
+    R outputCloseable;
     ContinuousFunctionType continuousFunctionType;
 
     CFClosures.Input inputStreamClosure;
@@ -114,26 +116,17 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
     CFClosures.Close closeClosure;
     CFClosures.Flush flushClosure;
     CFClosures.EOF eofClosure;
-
-    // TODO: Refactor a tiny bit to add another method which can take both input and output, specifically for sockets
-    /*
-    On the above comment the idea is,
-    input and output will be allowed
-    flush cna be used for output
-    eof can be used for input
-    close, can now have a parameter to its input function, where it might
-    take in the specific resource to close, otherwise no parameters may
-    close both, but again like ay other continuous function depends on
-    the callee
-     */
+    CFClosures.Closed closedClosure;
 
     private ContinuousFunction(
             @NotNull IConfig<Object> config,
-            T closeable,
+            T inputCloseable,
+            R outputCloseable,
             ContinuousFunctionType continuousFunctionType,
             BFMethodToSupplier<?> readStreamSupplier,
             BFMethodToConsumer<Object> writeStreamConsumer,
-            CFClosures.EOF eofClosure
+            CFClosures.EOF eofClosure,
+            CFClosures.Closed closedClosure
     ) {
         super(
                 // docs wont matter here, all the stuff here is purely to create
@@ -149,36 +142,66 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
                                 )
                         ))
         );
-        this.closeable = closeable;
+        this.inputCloseable = inputCloseable;
+        this.outputCloseable = outputCloseable;
         this.continuousFunctionType = continuousFunctionType;
 
         inputStreamClosure = new CFClosures.Input(readStreamSupplier);
         outputStreamClosure = new CFClosures.Output(writeStreamConsumer);
-        closeClosure = new CFClosures.Close(
-                config.getGlobalResources().ofCurrentThread().addResource(closeable)
-        );
-        flushClosure = new CFClosures.Flush(closeable);
+        closeClosure =
+                continuousFunctionType != ContinuousFunctionType.BOTH ?
+        new CFClosures.Close(
+                config.getGlobalResources().ofCurrentThread().addResource(
+                        continuousFunctionType == ContinuousFunctionType.INPUT ?
+                                inputCloseable : outputCloseable
+                )
+        ) : new CFClosures.Close(
+                        config.getGlobalResources().ofCurrentThread().addResource(inputCloseable),
+                        config.getGlobalResources().ofCurrentThread().addResource(outputCloseable)
+                );
+        flushClosure = new CFClosures.Flush(outputCloseable);
         this.eofClosure = eofClosure;
+        this.closedClosure = closedClosure;
     }
 
     @NotNull
     @Contract("_, _, _, _ -> new")
-    public static <T extends InputStream> ContinuousFunction<T> from(
+    public static <T extends InputStream, R extends Closeable> ContinuousFunction<T, R> from(
             IConfig<Object> config, T inputStream,
             BFMethodToSupplier<?> inputStreamConsumer,
             CFClosures.EOF eofClosure
     ) {
-        return new ContinuousFunction<T>(config, inputStream, ContinuousFunctionType.INPUT, inputStreamConsumer, null, eofClosure);
+        return new ContinuousFunction<T, R>(config, inputStream, null, ContinuousFunctionType.INPUT, inputStreamConsumer, null, eofClosure, new CFClosures.Closed());
     }
 
     @NotNull
     @Contract("_, _, _ -> new")
-    public static <T extends OutputStream> ContinuousFunction<T> from(
+    public static <T extends OutputStream, R extends Closeable> ContinuousFunction<R, T> from(
             IConfig<Object> config, T outputStream,
             BFMethodToConsumer<Object> outputStreamConsumer
     ) {
-        return new ContinuousFunction<T>(config, outputStream, ContinuousFunctionType.OUTPUT, null, outputStreamConsumer, new CFClosures.EOF());
+        return new ContinuousFunction<>(config, null, outputStream, ContinuousFunctionType.OUTPUT, null, outputStreamConsumer, new CFClosures.EOF(), new CFClosures.Closed());
     }
+
+    @NotNull
+    @Contract("_,_,_,_,_,_,_ -> new")
+    public static <T extends InputStream, R extends OutputStream> ContinuousFunction<T, R> from(
+            IConfig<Object> config, T inputStream, R outputStream,
+            BFMethodToSupplier<?> inputStreamSupplier,
+            BFMethodToConsumer<Object> outputStreamConsumer,
+            CFClosures.EOF eofClosure,
+            CFClosures.Closed closedClosure
+    ) {
+        return new ContinuousFunction<>(
+                config, inputStream, outputStream,
+                ContinuousFunctionType.BOTH,
+                inputStreamSupplier,
+                outputStreamConsumer,
+                eofClosure,
+                closedClosure
+        );
+    }
+
 
     @Override
     public Object call(@NotNull CallProperties callProperties) throws Exception {
@@ -195,7 +218,7 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
             if (!CFuncInput.isValid(protocol))
                 throw new InterpreterException.WtfAreYouDoingException(
                         callProperties.scope(), "A continuous function can only take string inputs of: " +
-                        " \"read\", \"write\", \"flush\" or \"close\"!", callProperties.getLineNumber()
+                        " \"read\", \"write\", \"flush\", \"closed\" or \"close\"!", callProperties.getLineNumber()
                 );
 
             // isValid allows this to pass.
@@ -208,6 +231,7 @@ public class ContinuousFunction<T extends Closeable> extends BaseFunction {
                 case CLOSE -> closeClosure;
                 case FLUSH -> flushClosure;
                 case EOF -> eofClosure;
+                case CLOSED -> closedClosure;
             };
         }
         return Token.voidValue(callProperties.getLineNumber());

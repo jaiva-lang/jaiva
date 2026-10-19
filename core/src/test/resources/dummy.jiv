@@ -1,11 +1,3 @@
 
 
-khuluma(tseaf("jaiva/arrays", "a_from")("dksd,sdfods, sdfno", ","))!
-
-maak k <- tseaf("jaiva/math/trig", m_atan2)!
-
-khuluma(k(1, 1))!
-
-maak r <- tseaf("jaiva/file", f_dir)!
-
-khuluma(r)!
+khuluma(tseaf("jaiva/arrays", a_fro)("dksd,sdfods, sdfno", ","))!

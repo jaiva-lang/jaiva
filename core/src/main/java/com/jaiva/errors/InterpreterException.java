@@ -523,9 +523,12 @@ public class InterpreterException extends JaivaException {
      */
     public static class TseaException extends InterpreterException {
         public TseaException(Scope ct, int lineNumber, Exception exception) {
-            super(ct, lineNumber, "Couldn't import symbols! " +
+            this(ct, lineNumber, "Couldn't import symbols! " +
                     AnsiColour.print("(" + AnsiColour.remove(exception.getMessage()) + ")", AnsiColour.FONT.UNDERLINE)
             );
+        }
+        public TseaException(Scope ct, int lineNumber, String msg) {
+            super(ct, lineNumber, msg);
         }
     }
 }

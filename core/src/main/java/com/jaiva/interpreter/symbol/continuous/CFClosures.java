@@ -128,16 +128,35 @@ public class CFClosures {
     }
 
     public static class Close extends BaseFunction {
-        UUID resourceId;
+        UUID resourceId, secondResource;
         public Close(UUID resourceId) {
             super(FunctionBuilder.start());
             this.resourceId = resourceId;
+            this.secondResource = null;
+        }
+        public Close(UUID inputId, UUID outputId) {
+            super(FunctionBuilder.start());
+            this.resourceId = inputId;
+            this.secondResource = outputId;
         }
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             // dont care about args again
             callProperties.config().getGlobalResources().ofCurrentThread().releaseResource(resourceId);
+            return Token.voidValue(callProperties.getLineNumber());
+        }
+    }
+
+    public static class Closed extends BaseFunction {
+
+        public Closed() {
+            super(FunctionBuilder.start());
+        }
+
+        @Override
+        public Object call(CallProperties callProperties) throws Exception {
+            // dont care about args again--
             return Token.voidValue(callProperties.getLineNumber());
         }
     }

@@ -68,6 +68,10 @@ Since Version: _4.1.0_
 
 This symbol can be reached by the following aliases: _`d_link`_
 
+> [!WARNING]
+> This symbol has been marked as deprecated! This function has moved to the global scope and is now named "linker". Use that instead as this may be removed
+
+
 _**Links the MapValue instance of 'a' into 'b' such that they hold the same value and if one is edited the other will also have that edit.**_
 
 

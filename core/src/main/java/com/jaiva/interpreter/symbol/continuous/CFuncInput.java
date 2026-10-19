@@ -28,6 +28,11 @@ public enum CFuncInput {
             "Key of the function which closes the continuous function, effectively ending it and " +
                     "freeing resources. This always needs to be called to avoid resource leaks.",
             "C_END", "C_FINISH"
+    ),
+    CLOSED(
+            "closed",
+            "Key of the function which sets a specific operation to happen for when a given \"something\" is closed.",
+            "C_ENDED", "C_FINISHED"
     );
 
     private final String key;

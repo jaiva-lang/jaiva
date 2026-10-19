@@ -1,0 +1,116 @@
+@ shared.jiv
+
+tsea "jaiva/continuous"!
+tsea "jaiva/net/const"!
+
+kwenza *readPacket(con) ->
+	maak msgLen <- con(C_READ)(NET_R_INT)!
+	maak pl <- con(C_READ)(NET_RU_BYTEBUFF, msgLen)!
+	@ NET_RU_BYTEBUFF corresponds to DataInputStream.readFully. ("R"ead "U"ntil)
+	khutla t_strFromByteArr(pl)!
+<~
+
+kwenza *sendPacket(con, msg) ->
+	maak bArr <- t_strToByteArr(msg)!
+	con(C_WRITE)(NET_W_INT, bArr~)!
+	con(C_WRITE)(NET_W_BYTEBUFF, bArr)!
+	con(C_FLUSH)()!
+<~
+
+@ server.jiv
+
+tsea "jaiva/continuous"!
+tsea "jaiva/net/tcp"!
+tsea "jaiva/threads"!
+tsea "./shared.jiv"!
+
+kwenza connectionHandler(con, conId, conAddress) ->
+
+	@ In an actual implementation you would check if
+	@ type is "CONNECTION" "INPUT" or "OUTPUT"
+	con(C_CLOSED)()!
+		|> f~(conId2, conAddre, type) : khuluma(conId2 + " closed something or itself closed.")!
+		|> true! @ Calls the con(C_CLOSE)() for us after our function has ran.
+
+	@ probably make better EOF handling. (by using an actual function and not a lambda to log lol.)
+	con(C_EOF)()!
+		|> f~(conId2, conAddre) : khuluma(conId2 + " encountered the end of input.")!
+		|> true! @ similar to above.
+
+	zama zama ->
+		sendPacket(con, "What's up bro")!
+
+		nikhil (true;) ->
+			khuluma(readPacket(con))!
+		<~
+
+	<~ chaai ->
+
+		@ client exited due to err
+		khuluma(conId + " disconnected weirdly..... " + error)!
+
+	<~
+
+	con(C_CLOSE)()! @ Default implementaiton will close both streams if no constant input is given.
+
+<~
+
+kwenza server(acceptConn) ->
+	maak c <- acceptConn()! @ [con, conId, conAddress]
+	thread(f~() : connectionHandler(c:::))!
+<~
+
+tcp_start(5050, server)!
+
+@ client.jiv
+
+tsea "jaiva/continuous"!
+tsea "jaiva/net/tcp"!
+tsea "./shared.jiv"!
+
+kwenza client(con) ->
+	@ read first packet
+	maak greet <- readPacket(con)!
+
+	@ and ig do oter stuff. Maybe listen to the console's systme in so we can
+	@ send to server
+
+	nikhil (true;) ->
+		khuluma("Send to server:", true)!
+		maak out <- mamela()! @ blocking.
+
+		sif (out = "exit") ?> voetsek!
+
+		sendPacket(con, out)!
+	<~
+
+	khuluma("client is exiting")!
+	con(C_CLOSE)()!
+<~
+
+zama zama ->
+	tcp_handshake("localhost", 5050, client)!
+<~ chaai ->
+	khuluma("Couldn't connect to server or some other error. " + error)!
+<~
+
+{
+    PushbackInputStream pbis = new PushbackInputStream(socket.getInputStream());
+
+    // Inside the thread's evaluation loop:
+    int peekByte = pbis.read();
+    if (peekByte == -1)
+            // This is a clean closure. The remote peer closed the socket between evaluation cycles.
+            triggerClosedEvent();
+    else
+            // Data is present. Push it back so the generic reader can consume it seamlessly.
+            pbis.unread(peekByte);
+
+            try
+                    evaluateNextFunctionalExpression(pbis);
+            catch (EOFException e)
+                    // If an EOF happens now, it IS a premature failure because we verified data existed.
+                    triggerPrematureEOFError();
+
+
+}
