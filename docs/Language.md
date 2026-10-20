@@ -853,7 +853,7 @@ id document more but come on man go test urself
 
 These are special types of functions which provide a closure over resources.
 
-They are so special, they get their own documentation in [Continuous Functions](./Continuous-Functions.md)
+They are so special, they get their own documentation in [Continuous Functions](Continuous-Functions.md)
 
 However here is an example reading some input file.
 

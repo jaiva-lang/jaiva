@@ -1,6 +1,6 @@
 # Continuous Functions
 
-This won't make sense if you don't have the basic understanding of [Jaiva Functions](./Language.md#functions)
+This won't make sense if you don't have the basic understanding of [Jaiva Functions](Language.md#functions)
 
 Unlike normal functions, a _**continuous**_ function provides a persistent closure over a resource (A resource being
 streamed file input, a network connection (soon), etc)
@@ -17,7 +17,7 @@ cont("close")()! @ Close and free resources
 ```
 
 > [!NOTE]
-> Instead of passing magic strings, you can se the constants defined in [jaiva/continuous](./libs/continuous.md) library
+> Instead of passing magic strings, you can se the constants defined in [jaiva/continuous](libs/continuous.md) library
 
 They specifically, return smaller closures over specific "tasks" relevant to the resource, but are ultimately still
 responsible for managing said resource.
@@ -62,7 +62,7 @@ The provider of the Continuous Function is responsible for what certain function
 made by one continuous provider may not have the exact same semantics as another `write` continuous provider.
 
 
-e.g. Take the [f_cwriter](./libs/file-bytes.md#f_cwriter) from [jaiva/file/bytes](./libs/file-bytes.md):
+e.g. Take the [f_cwriter](libs/file-bytes.md#f_cwriter) from [jaiva/file/bytes](libs/file-bytes.md):
 
 ```jaiva
 tsea "jaiva/file/bytes"!
@@ -84,7 +84,7 @@ In this case `f_cwriter` returns a continuous function which:
 - Enforces that the returned `write` closure, takes at least 2 arguments. The type to write, and the actual input.
 - Provides an implementation of `flush` as this is an output resource (that is buffered+)
 
-Whereas it's opposite in the same library [f_creader](./libs/file-bytes.md#f_creader) uses the reader version:
+Whereas it's opposite in the same library [f_creader](libs/file-bytes.md#f_creader) uses the reader version:
 
 ```jaiva
 tsea "jaiva/file/bytes"!

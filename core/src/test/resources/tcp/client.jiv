@@ -5,7 +5,7 @@ tsea "jaiva/continuous"!
 tsea "jaiva/net"!
 tsea "./shared.jiv"!
 
-kwenza client(con, conId, conAddr, F~close) ->
+kwenza client(F~con, conId, conAddr, F~close) ->
 
     @ Handle errs
     kwenza erHandler(_, _2, type) ->

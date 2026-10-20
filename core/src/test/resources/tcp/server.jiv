@@ -6,7 +6,7 @@ tsea "jaiva/net"!
 tsea "jaiva/threads"!
 tsea "./shared"!
 
-kwenza connectionHandler(con, conId, conAddress) ->
+kwenza connectionHandler(F~con, conId, conAddress) ->
 
     kwenza closedHandler(_, _2, type) ->
         khuluma("Socket was closed suddenly! Next message is more specific")!

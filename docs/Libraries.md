@@ -8,7 +8,7 @@ Because why not, in this file, the symbols will contain a link to where exactly 
 
 These are any symbols that are available in any Jaiva program. (Typically called globals)
 
-These can be found in [globals](./libs/globals.md) documentation.
+These can be found in [globals](libs/globals.md) documentation.
 
 ## Libraries
 

@@ -10,8 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Locale;
 import java.util.function.BiFunction;
 
 @JaivaLibrary(
@@ -20,7 +18,7 @@ import java.util.function.BiFunction;
 )
 public class NetConst extends BaseLibrary {
 
-    public enum Values {
+    public enum TCPValues {
 
         INTEGER(true, true, "", "INT"),
         JAVA_UTF8(true, true, "", "MOD_UTF8"),
@@ -41,7 +39,7 @@ public class NetConst extends BaseLibrary {
                 true,
                 true,
                 "Attempts to read at most the amount of bytes currently available and returns that. this" +
-                        " is tcp bro rather use NET_RU_BYTES", "BYTEARR", "BYTEBUFF"
+                        " is tcp bro rather use TCP_RU_BYTES", "BYTEARR", "BYTEBUFF"
         ),
         U_BYTES(
                 true,
@@ -56,9 +54,9 @@ public class NetConst extends BaseLibrary {
         private final String[] aliases;
 
         @Nullable
-        public static NetConst.Values fromString(String s) {
+        public static TCPValues fromString(String s) {
             s = s.toLowerCase();
-            for (NetConst.Values v : NetConst.Values.values()) {
+            for (TCPValues v : TCPValues.values()) {
                 String name = v.name().toLowerCase();
                 if (name.equalsIgnoreCase(s))
                     return v;
@@ -81,7 +79,7 @@ public class NetConst extends BaseLibrary {
             return null;
         }
 
-        Values(boolean both) {
+        TCPValues(boolean both) {
             this.readConstant = both;
             this.writeConstant = both;
             extraInfo = "";
@@ -92,7 +90,7 @@ public class NetConst extends BaseLibrary {
             return aliases;
         }
 
-        Values(boolean readConstant, boolean writeConstant, String extraInfo, String ...aliases) {
+        TCPValues(boolean readConstant, boolean writeConstant, String extraInfo, String ...aliases) {
             this.readConstant = readConstant;
             this.writeConstant = writeConstant;
             this.extraInfo = extraInfo;
@@ -100,9 +98,9 @@ public class NetConst extends BaseLibrary {
         }
 
         @NotNull
-        public static ArrayList<Pair<NetConst.Values, BaseVariable>> toVars() {
-            ArrayList<Pair<NetConst.Values, BaseVariable>> vars = new ArrayList<>();
-            BiFunction<String, NetConst.Values, BaseVariable> vMaker =
+        public static ArrayList<Pair<TCPValues, BaseVariable>> toVars() {
+            ArrayList<Pair<TCPValues, BaseVariable>> vars = new ArrayList<>();
+            BiFunction<String, TCPValues, BaseVariable> vMaker =
                     (prefix, value) -> new BaseVariable(
                             VariableBuilder.start()
                                     .name(prefix + "_" +
@@ -121,9 +119,9 @@ public class NetConst extends BaseLibrary {
                                     .value((prefix + "_" + value.name()).toLowerCase())
                     );
 
-            for (NetConst.Values v : NetConst.Values.values()) {
+            for (TCPValues v : TCPValues.values()) {
                 if (v.readConstant) {
-                    if (v != NetConst.Values.U_BYTES)
+                    if (v != TCPValues.U_BYTES)
                         vars.add(new Pair<>(v, vMaker.apply("NET_R", v)));
                     else {
                         vars.add(new Pair<>(v, vMaker.apply("NET_RU", v)));
@@ -138,10 +136,10 @@ public class NetConst extends BaseLibrary {
     }
 
     public NetConst() {
-        ArrayList<Pair<NetConst.Values, BaseVariable>> vars = NetConst.Values.toVars();
+        ArrayList<Pair<TCPValues, BaseVariable>> vars = TCPValues.toVars();
 
         vars.forEach(pair -> {
-            NetConst.Values v = pair.getFirst();
+            TCPValues v = pair.getFirst();
             BaseVariable var = pair.getSecond();
 
             if (v.getAliases().length == 0) {

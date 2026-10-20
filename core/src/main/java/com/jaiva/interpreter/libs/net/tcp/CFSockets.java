@@ -50,7 +50,7 @@ final class CFSockets {
                         callProperties.scope(), "The input must be a string", callProperties.getLineNumber()
                 );
 
-            NetConst.Values type = NetConst.Values.fromString(typeStr);
+            NetConst.TCPValues type = NetConst.TCPValues.fromString(typeStr);
 
             if (type == null)
                 throw new InterpreterException.WtfAreYouDoingException(
@@ -125,7 +125,7 @@ final class CFSockets {
                         callProperties.scope(), "The input must be a string", callProperties.getLineNumber()
                 );
 
-            NetConst.Values type = NetConst.Values.fromString(typeStr);
+            NetConst.TCPValues type = NetConst.TCPValues.fromString(typeStr);
 
             if (type == null)
                 throw new InterpreterException.WtfAreYouDoingException(
@@ -202,7 +202,7 @@ final class CFSockets {
                                 return () -> b;
                             }
                             default -> {
-                                if (type == NetConst.Values.UTF8)
+                                if (type == NetConst.TCPValues.UTF8)
                                     throw new InterpreterException.WtfAreYouDoingException(
                                             callProperties.scope(), "You cant read a UTF8 value directly, read bytes instead.",
                                             callProperties.getLineNumber()

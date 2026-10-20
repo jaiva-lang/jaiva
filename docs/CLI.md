@@ -4,7 +4,7 @@
 
 This simply runs the actual `jaiva.jar`
 
-See [Install](./Install.md) for install instructions
+See [Install](Install.md) for install instructions
 
 Simple CLI Ngl.
 
