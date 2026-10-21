@@ -8,8 +8,13 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
 import com.jaiva.tokenizer.tokens.Token;
+import com.yetnt.utils.tuple.Pair;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.Inet6Address;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -31,20 +36,26 @@ public class ServSocketContainerLib extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             Socket s = serverSocket.accept();
+            Pair<
+                    CFSockets.WrappedCloseFunction,
+                    ContinuousFunction<DataInputStream, DataOutputStream>
+                    > pair = CFSockets.newContinuousFunc(
+                    callProperties.config(),
+                    s,
+                    new ArrayList<>(List.of(s.getLocalAddress().toString(), s.getRemoteSocketAddress().toString()))
+            );
             return new ArrayList<>(List.of(
-                    CFSockets.newContinuousFunc(
-                            callProperties.config(), s,
-                            new ArrayList<>(List.of(s.getLocalAddress().toString(), s.getRemoteSocketAddress().toString()))
-                    ),
+                    pair.getSecond(),
                     s.getLocalAddress().toString(),  // this should be a connection id but idk what exactly lmao.
-                    s.getRemoteSocketAddress().toString()
+                    s.getRemoteSocketAddress().toString(),
+                    pair.getFirst()
             ));
         }
     }
 
-    static class WrappedCloseFunction extends BaseFunction {
+    static class ServerWrappedCloseFunction extends BaseFunction {
         private final ServerSocket serverSocket;
-        public WrappedCloseFunction(ServerSocket serverSocket) {
+        public ServerWrappedCloseFunction(ServerSocket serverSocket) {
             super(FunctionBuilder.start());
             freeze();
             this.serverSocket = serverSocket;
@@ -96,7 +107,7 @@ public class ServSocketContainerLib extends BaseLibrary {
             // the usr's responsible.
             ServerSocket serverSocket = new ServerSocket(port);
 
-            WrappedCloseFunction wcf = new WrappedCloseFunction(serverSocket);
+            ServerWrappedCloseFunction wcf = new ServerWrappedCloseFunction(serverSocket);
             WrappedAcceptFunction waf = new WrappedAcceptFunction(serverSocket);
 
             try {

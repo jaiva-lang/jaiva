@@ -1,27 +1,56 @@
 package com.jaiva.interpreter.libs.net.tcp;
 
 import com.jaiva.errors.InterpreterException;
+import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libs.net.NetConst;
 import com.jaiva.interpreter.libs.types.TypeConverter;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.interpreter.symbol.continuous.CFClosures;
 import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
 import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
 import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
 import com.jaiva.tokenizer.tokens.Token;
+import com.yetnt.utils.tuple.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 
 final class CFSockets {
+
+    public static class WrappedCloseFunction extends BaseFunction {
+        private final Socket socket;
+        private final CFClosures.Closed closed;
+        public WrappedCloseFunction(Socket socket, CFClosures.Closed closed) {
+            super(FunctionBuilder.start());
+            freeze();
+            this.socket = socket;
+            this.closed = closed;
+        }
+
+        @Override
+        public Object call(CallProperties callProperties) throws Exception {
+            closed.handleCallback(
+                    new ArrayList<>(List.of(
+                            socket.getLocalAddress().toString(),
+                            socket.getRemoteSocketAddress().toString(),
+                            DoneStatus.SELF.name()
+                    ))
+                    , callProperties);
+            socket.close();
+            return Token.voidValue(callProperties.getLineNumber());
+        }
+    }
     @NotNull
     @Contract(pure = true, value = "_,_,_->new")
-    static ContinuousFunction<DataInputStream, DataOutputStream> newContinuousFunc(
+    static Pair<WrappedCloseFunction, ContinuousFunction<DataInputStream, DataOutputStream>> newContinuousFunc(
             IConfig<Object> config, @NotNull Socket socket, ArrayList<Object> clientInfo
     ) throws IOException {
         CFClosures.EOF eofClosure = getEofClosure();
@@ -37,7 +66,7 @@ final class CFSockets {
                 closedClosure
         );
         cf.getCloseClosure().addSocket(socket);
-        return cf;
+        return new Pair<>(new WrappedCloseFunction(socket, closedClosure), cf);
     }
 
     @NotNull
@@ -105,12 +134,15 @@ final class CFSockets {
                     }
                     default -> (o) -> {};
                 };
-            } catch (IOException i) {
+            } catch (EOFException i) {
                 // The connection dropped weirdly/abruptly mid-peek or mid-stream
+
                 ArrayList<Object> props = new ArrayList<>(socketInfo);
                 props.add(DoneStatus.ERR.name());
                 closedClosure.handleCallback(props, callProperties);
                 return (o) -> {};
+            } catch (IOException i) {
+                throw new InterpreterException.NetException(callProperties.scope(), callProperties.getLineNumber(), i);
             }
         };
     }
@@ -215,11 +247,13 @@ final class CFSockets {
                         eofClosure.handleCallback(clientInfo, callProperties);
                     }
                 }
-            } catch (IOException e) {
+            } catch (EOFException e) {
                 // The connection dropped weirdly/abruptly mid-peek or mid-stream
                 ArrayList<Object> props = new ArrayList<>(clientInfo);
                 props.add(DoneStatus.ERR.name());
                 closedClosure.handleCallback(props, callProperties);
+            } catch (IOException t) {
+                throw new InterpreterException.NetException(callProperties.scope(), callProperties.getLineNumber(), t);
             }
 
             return () -> Token.voidValue(callProperties.getLineNumber());

@@ -16,6 +16,10 @@ This library exports the following libraries:
 | C_CLOSE | [C_CLOSE](#C_CLOSE) |
 | C_END | [C_END](#C_CLOSE) |
 | C_FINISH | [C_FINISH](#C_CLOSE) |
+| C_DONE | [C_DONE](#C_DONE) |
+| C_ENDED | [C_ENDED](#C_DONE) |
+| C_FINISHED | [C_FINISHED](#C_DONE) |
+| C_CLOSED | [C_CLOSED](#C_DONE) |
 ## Functions
 ## Variables
 
@@ -183,6 +187,40 @@ tsea "jaiva/continuous"!
 
 maak cont <- func()!
 cont(C_CLOSE)()! @ Calls the returned function.
+```
+
+
+---
+
+
+### C_DONE
+
+This symbol can be reached by the following aliases: _`C_DONE`_, _`C_ENDED`_, _`C_FINISHED`_, _`C_CLOSED`_
+
+_**Key of the function which sets a specific operation to happen for when a given "something" is closed.**_
+
+
+#### Definition
+```jaiva
+maak C_DONE <- (string)
+```
+
+> [!NOTE]
+> _[Continuous Function](../Continuous-Functions.md)_
+
+
+Since Version: _6.1.0_
+
+
+#### Example: 
+
+```jaiva
+tsea "jaiva/continuous"!
+
+@ Provided "func" returns a continuous function.
+
+maak cont <- func()!
+cont(C_DONE)()! @ Calls the returned function.
 ```
 
 

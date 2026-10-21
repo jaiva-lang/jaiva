@@ -5,7 +5,7 @@ _Converting between types and stuff_
 This library exports the following libraries: 
 - types/numbers
 
-Exported Symbols Include: `t_dToIEEE754Long`, `t_lToIEEE754Double`, `t_strFromByteArr`
+Exported Symbols Include: `t_dToIEEE754Long`, `t_lToIEEE754Double`, `t_strFromByteArr`, `t_strToByteArr`
 
 ## Table of Contents
 | Alias | Link |

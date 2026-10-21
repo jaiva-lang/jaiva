@@ -442,8 +442,7 @@ _**Returns:**_ **idk**
 > _A usual (b <- a) syntax would suffice if you'd like to copy the value of a into b.
 However when a is changed, b will stay the value you set earlier. This function fixes that where it will
 link the exact MapValue from a into b, discarding b's old MapValue. such that editing any one of the symbols
-via the reassignment syntax will update the linked variable.
-In the case that the "b" parameter does not actually exist in the symbol table, d_link will try to make it, itself.
+via the reassignment syntax will update the linked variable. In the case that the "b" parameter does not actually exist in the symbol table, d_link will try to make it, itself.
 _
 
 

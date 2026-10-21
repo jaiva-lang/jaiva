@@ -11,6 +11,8 @@ import com.jaiva.tokenizer.tokens.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
 import com.yetnt.utils.builders.AnsiColour;
 
+import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -529,6 +531,15 @@ public class InterpreterException extends JaivaException {
         }
         public TseaException(Scope ct, int lineNumber, String msg) {
             super(ct, lineNumber, msg);
+        }
+    }
+
+    /**
+     * Net related
+     */
+    public static class NetException extends InterpreterException {
+        public NetException(Scope ct, int lineNumber, IOException socketException) {
+            super(ct, lineNumber, socketException.getMessage());
         }
     }
 }

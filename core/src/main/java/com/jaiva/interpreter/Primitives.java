@@ -327,9 +327,6 @@ public final class Primitives {
                 }
                 function = function != null ? function : (BaseFunction) v.getValue();
 
-                if (function instanceof CFClosures.Close)
-                    System.out.println("Dsf");
-
                 checkSymbolAnnotation(function, tFuncCall.lineNumber, scope, config);
 
                 ArrayList<Object> args = BaseFunction.resolveSpreadOperator(function, tFuncCall, config, scope);

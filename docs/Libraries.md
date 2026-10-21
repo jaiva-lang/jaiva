@@ -50,3 +50,8 @@ The following are the libraries that are available:
   - [time/api](libs/time-api.md)
   - [time/zone](libs/time-zone.md)
 - [debug](libs/debug.md)
+- [net](libs/net.md)
+  - [net/const](libs/net-const.md)
+  - [net/tcp](libs/net-tcp.md)
+  - [net/interf](libs/net-interf.md)
+    - [net/interf/query](libs/net-interf-query.md)

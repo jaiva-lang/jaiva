@@ -123,13 +123,13 @@ public class IOFunctions extends BaseLibrary {
                 return Token.voidValue(callProperties.getLineNumber());
             if (v instanceof Boolean && (Boolean) v) {
                 System.out.print(
-                        isJustStr + EscapeSequence.fromEscape(output, callProperties.getLineNumber()) + isJustStr);
+                        /*isJustStr + */EscapeSequence.fromEscape(output, callProperties.getLineNumber())/* + isJustStr*/);
             } else if (newO instanceof ArrayList<?> arr)
             {
                 System.out.println(arrToString(arr));
             }else{
                 System.out.println(
-                        isJustStr + EscapeSequence.fromEscape(output, callProperties.getLineNumber()) + isJustStr);
+                        /*isJustStr +*/ EscapeSequence.fromEscape(output, callProperties.getLineNumber())/* + isJustStr*/);
             }
             return Token.voidValue(callProperties.getLineNumber());
         }

@@ -26,13 +26,14 @@ responsible for managing said resource.
 
 This is the list of smaller closures which a Continuous Function _may_ provide.
 
-| `id`     | Description                                                                                           | Closure Return Type          |
-|----------|-------------------------------------------------------------------------------------------------------|------------------------------|
-| `read`   | Returns the closure associated with reading input                                                     | Any. Depends on the provider |
-| `write`  | Returns the closure associated with writing output                                                    | `idk`                        |
-| `flush`* | Returns the closure which flushes buffered output resources                                           | `idk`                        |
-| `eof`*   | Returns the closure which signifies the end of a file or data                                         | `boolean`                    |
-| `close`  | Returns the closure which ends the data stream and relinquishes the resources to avoid resource leaks | `idk`                        |
+| `id`     | Description                                                                                                                 | Closure Return Type          |
+|----------|-----------------------------------------------------------------------------------------------------------------------------|------------------------------|
+| `read`   | Returns the closure associated with reading input                                                                           | Any. Depends on the provider |
+| `write`  | Returns the closure associated with writing output                                                                          | `idk`                        |
+| `flush`* | Returns the closure which flushes buffered output resources                                                                 | `idk`                        |
+| `eof`*   | Returns the closure which signifies the end of data or a stream. In some cases given input will allow you to set a callback | `boolean` or `idk`           |
+| `close`  | Returns the closure which ends the data stream and relinquishes the resources to avoid resource leaks                       | `idk`                        |
+| `closed` | Returns the closure which signifies the end of some thing* In some cases given input will allow you to set a callback       | `boolean` or `idk`           |
 
 > [!NOTE]
 > `flush` is only relevant if the continuous function is of an output related resource, and similar to `eof` for an input
@@ -119,4 +120,4 @@ types of functions for input which may or mat not.
 
 So far, they've been integrated with reading and writing file data. Maybe one day they'll also coe for
 - networking
-= some other io stream based shi
+- some other io stream based shi

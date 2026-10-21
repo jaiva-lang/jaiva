@@ -9,6 +9,7 @@ This library exports the following libraries:
 | t_dToIEEE754Long | [t_dToIEEE754Long](#t_dToIEEE754Long) |
 | t_lToIEEE754Double | [t_lToIEEE754Double](#t_lToIEEE754Double) |
 | t_strFromByteArr | [t_strFromByteArr](#t_strFromByteArr) |
+| t_strToByteArr | [t_strToByteArr](#t_strToByteArr) |
 ## Functions
 
 ### t_dToIEEE754Long
@@ -86,6 +87,29 @@ maak byteArr <-| 72, 101, 108, 108, 111!
 
 khuluma(t_strFromByteArr(byteArr:::))! @ Prints "Hello"
 ```
+
+
+---
+
+
+### t_strToByteArr
+
+This symbol can be reached by the following aliases: _`t_strToByteArr`_
+
+_**Converts the given string into UTF-8 byte values (0–255)**_
+
+
+#### Definition
+
+```jaiva
+F~t_strToByteArr(string)
+```
+- **_string_**  **`<-`** _**string**_
+	 - _The string to convert into UTF-8 bytes_
+
+_**Returns:**_ **The UTF-8 bytes as integer values**
+
+Since Version: _6.2.0_
 
 
 ---

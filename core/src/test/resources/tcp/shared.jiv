@@ -1,12 +1,14 @@
 @ shared.jiv
 
+@ cuz both sides will use the saem
+
 tsea "jaiva/continuous"!
 tsea "jaiva/net"!
 
 kwenza *readPacket(con) ->
 	maak msgLen <- con(C_READ)(NET_R_INT)!
 	maak pl <- con(C_READ)(NET_RU_BYTEBUFF, msgLen)!
-	@ NET_RU_BYTEBUFF corresponds to DataInputStream.readFully. ("R"ead "U"ntil)
+	@ Using NET_R_BYTEBUFF will only read whats available!
 	khutla tseaf("jaiva/types/numbers", t_strFromByteArr)(pl:::)!
 <~
 

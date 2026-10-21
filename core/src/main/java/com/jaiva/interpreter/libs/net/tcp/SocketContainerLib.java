@@ -8,8 +8,12 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
 import com.jaiva.tokenizer.tokens.Token;
+import com.yetnt.utils.tuple.Pair;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,21 +21,6 @@ import java.util.List;
 public class SocketContainerLib extends BaseLibrary {
     public SocketContainerLib() {
         add(new FTcpHandshake());
-    }
-
-    static class WrappedCloseFunction extends BaseFunction {
-        private final Socket socket;
-        public WrappedCloseFunction(Socket socket) {
-            super(FunctionBuilder.start());
-            freeze();
-            this.socket = socket;
-        }
-
-        @Override
-        public Object call(CallProperties callProperties) throws Exception {
-            socket.close();
-            return Token.voidValue(callProperties.getLineNumber());
-        }
     }
 
     static class FTcpHandshake extends BaseFunction {
@@ -78,19 +67,22 @@ public class SocketContainerLib extends BaseLibrary {
             // the usr's responsible.
             Socket socket = new Socket(host, port);
 
-            WrappedCloseFunction wcf = new WrappedCloseFunction(socket);
+            Pair<
+                    CFSockets.WrappedCloseFunction,
+                    ContinuousFunction<DataInputStream, DataOutputStream>
+                    > pair = CFSockets.newContinuousFunc(
+                    callProperties.config(),
+                    socket,
+                    new ArrayList<>(List.of(socket.getLocalAddress().toString(), socket.getRemoteSocketAddress().toString()))
+            );
 
             try {
                 function.call(
                         new ArrayList<>(List.of(
-                                CFSockets.newContinuousFunc(
-                                        callProperties.config(),
-                                        socket,
-                                        new ArrayList<>(List.of(socket.getLocalAddress().toString(), socket.getRemoteSocketAddress().toString()))
-                                ),
+                                pair.getSecond(),
                                 socket.getLocalAddress().toString(),
                                 socket.getRemoteSocketAddress().toString(),
-                                wcf
+                                pair.getFirst()
                         )),
                         callProperties.config(),
                         callProperties.scope(),

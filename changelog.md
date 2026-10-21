@@ -8,7 +8,7 @@ Literlaly just plumbing
   - [jaiva-lang/syntax](https://github.com/jaiva-lang/syntax)
   - [jaiva-lang/highlightjs](https://github.com/jaiva-lang/highlightjs)
 - Fix stupid vscode related problems that jaiva introduced into it (JSOn output)
-- Use ytils 1.3.0 SimpleJSON and refactor all tokens to use it
+- Use ytils 1.3.1 SimpleJSON and refactor all tokens to use it
 - Start adding IntelliJ Annotation
 - Deprecate internal APIs
 - Remove `-jg/--json-with-globals`, and make `-j/--json` identical to streamer json output.
@@ -21,8 +21,10 @@ Literlaly just plumbing
   what.
 - Fix file md output formatting (didn't call .trim())
 - Fix some runtime exceptions (some)
-- Added `linker` to global scope and in turn deprecated its old version `d_link`
+- Added `linker` to global scope and in turn deprecated its old version `d_link` in `jaiva/debug`
 - Added `tseaf` to import stuff via function
 - New `net` library
-  - New `net/tcp`
-  - New `net/const`
+  - New `net/tcp` (TCP connections)
+  - New `net/const` (Constants for tcp and future net libs)
+  - New `net/interf` (Network interfaces)
+  - New `net/interf/query` (Querying properties of network interface array)

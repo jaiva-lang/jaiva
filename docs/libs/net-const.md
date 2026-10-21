@@ -6,9 +6,6 @@ This library exports the following libraries:
 ## Table of Contents
 | Alias | Link |
 | --- | --- |
-| NET_RU_BYTES | [NET_RU_BYTES](#NET_RU_BYTES) |
-| NET_RU_BYTEARR | [NET_RU_BYTEARR](#NET_RU_BYTES) |
-| NET_RU_BYTEBUFF | [NET_RU_BYTEBUFF](#NET_RU_BYTES) |
 | NET_R_INTEGER | [NET_R_INTEGER](#NET_R_INTEGER) |
 | NET_R_INT | [NET_R_INT](#NET_R_INTEGER) |
 | NET_W_INTEGER | [NET_W_INTEGER](#NET_W_INTEGER) |
@@ -36,30 +33,11 @@ This library exports the following libraries:
 | NET_W_BYTES | [NET_W_BYTES](#NET_W_BYTES) |
 | NET_W_BYTEARR | [NET_W_BYTEARR](#NET_W_BYTES) |
 | NET_W_BYTEBUFF | [NET_W_BYTEBUFF](#NET_W_BYTES) |
+| NET_RU_BYTES | [NET_RU_BYTES](#NET_RU_BYTES) |
+| NET_RU_BYTEARR | [NET_RU_BYTEARR](#NET_RU_BYTES) |
+| NET_RU_BYTEBUFF | [NET_RU_BYTEBUFF](#NET_RU_BYTES) |
 ## Functions
 ## Variables
-
-### NET_RU_BYTES
-
-This symbol can be reached by the following aliases: _`NET_RU_BYTES`_, _`NET_RU_BYTEARR`_, _`NET_RU_BYTEBUFF`_
-
-_**Continuous Function Input constant over tcp client/server streams. This one's special since it'll wait and keep collecting bytes until the buffer has reached N bytes.**_
-
-
-#### Definition
-```jaiva
-maak NET_RU_BYTES <- (string)
-```
-
-> [!NOTE]
-> _This is for the read function._
-
-
-Since Version: _6.2.0_
-
-
----
-
 
 ### NET_R_INTEGER
 
@@ -351,7 +329,7 @@ Since Version: _6.2.0_
 
 This symbol can be reached by the following aliases: _`NET_R_BYTES`_, _`NET_R_BYTEARR`_, _`NET_R_BYTEBUFF`_
 
-_**Continuous Function Input constant over tcp client/server streams. Attempts to read at most the amount of bytes currently available and returns that. this is tcp bro rather use NET_RU_BYTES**_
+_**Continuous Function Input constant over tcp client/server streams. Attempts to read at most the amount of bytes currently available and returns that. this is tcp bro rather use TCP_RU_BYTES**_
 
 
 #### Definition
@@ -373,12 +351,34 @@ Since Version: _6.2.0_
 
 This symbol can be reached by the following aliases: _`NET_W_BYTES`_, _`NET_W_BYTEARR`_, _`NET_W_BYTEBUFF`_
 
-_**Continuous Function Input constant over tcp client/server streams. Attempts to read at most the amount of bytes currently available and returns that. this is tcp bro rather use NET_RU_BYTES**_
+_**Continuous Function Input constant over tcp client/server streams. Attempts to read at most the amount of bytes currently available and returns that. this is tcp bro rather use TCP_RU_BYTES**_
 
 
 #### Definition
 ```jaiva
 maak NET_W_BYTES <- (string)
+```
+
+> [!NOTE]
+> _This is for the read function._
+
+
+Since Version: _6.2.0_
+
+
+---
+
+
+### NET_RU_BYTES
+
+This symbol can be reached by the following aliases: _`NET_RU_BYTES`_, _`NET_RU_BYTEARR`_, _`NET_RU_BYTEBUFF`_
+
+_**Continuous Function Input constant over tcp client/server streams. This one's special since it'll wait and keep collecting bytes until the buffer has reached N bytes.**_
+
+
+#### Definition
+```jaiva
+maak NET_RU_BYTES <- (string)
 ```
 
 > [!NOTE]

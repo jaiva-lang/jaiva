@@ -241,7 +241,8 @@ public class BaseFunction extends Symbol {
 
     public record CheckParams(
             TFuncCall tFuncCall,
-            Scope scope
+            Scope scope,
+            ArrayList<Object> params
     ) {}
 
     /**
@@ -253,6 +254,7 @@ public class BaseFunction extends Symbol {
      */
     protected void checkParams(@NotNull CheckParams checkParams) throws InterpreterException {
         TFuncCall tFuncCall = checkParams.tFuncCall;
+        ArrayList<Object> params =  checkParams.params;
         Scope scope = checkParams.scope;
         TFunction tFunc = (TFunction) this.token;
 
@@ -260,6 +262,9 @@ public class BaseFunction extends Symbol {
         // null, we remove it so we have clear args.
         if (tFuncCall.args.size() == 1 && tFuncCall.args.getFirst() == null) {
             tFuncCall.args.clear();
+            // if it happened to params too, clear it.
+            if (params.size() == 1 && params.getFirst() == null)
+                params.clear();
         }
 
         // Check if this case
@@ -268,9 +273,9 @@ public class BaseFunction extends Symbol {
         }
 
         // first check if we jsut dont have args.
-        if (Collections.frequency(tFunc.isArgOptional, true) == tFunc.isArgOptional.size() && tFuncCall.args.isEmpty())
+        if (Collections.frequency(tFunc.isArgOptional, true) == tFunc.isArgOptional.size() && params.isEmpty())
             return;
-        if (tFuncCall.args.isEmpty()) {
+        if (params.isEmpty()) {
             throw new InterpreterException.FunctionParametersException(scope, this,
                     Integer.toString(1),
                     tFuncCall.lineNumber);
@@ -280,20 +285,21 @@ public class BaseFunction extends Symbol {
             // check if the current param was given an input of TVoidValue
             // if so, error as we dont want them to pass in idk to a paramter thats not
             // optional
-            if (tFuncCall.args.size() != i) {
-                if (tFuncCall.args.get(i) instanceof TVoidValue && !isOptional)
+            if (params.size() != i) {
+                if (params.get(i) instanceof TVoidValue && !isOptional)
                     throw new InterpreterException.FunctionParametersException(scope, this, Integer.toString(i + 1),
                             tFuncCall.lineNumber);
             } else {
                 // the function call has less arguments than required by the function.
                 // check if all the remaining arguments are defined as optional.
-                for (int j = i; j < tFunc.isArgOptional.size(); j++) {
-                    if (!(boolean) tFunc.isArgOptional.get(j)) {
-                        throw new InterpreterException.FunctionParametersException(scope, this,
-                                Integer.toString(j + 1),
-                                tFuncCall.lineNumber);
+
+                    for (int j = i; j < tFunc.isArgOptional.size(); j++) {
+                        if (!(boolean) tFunc.isArgOptional.get(j)) {
+                            throw new InterpreterException.FunctionParametersException(scope, this,
+                                    Integer.toString(j + 1),
+                                    tFuncCall.lineNumber);
+                        }
                     }
-                }
 
                 // if we made it here, we've checked everything, so we can break out the outer
                 // loop
@@ -312,8 +318,8 @@ public class BaseFunction extends Symbol {
      * @throws InterpreterException If there's a mismatch in parameters (e.g., missing required arguments).
      */
     @Deprecated(since = "6.2.0")
-    protected final void checkParams(@NotNull TFuncCall tFuncCall, Scope scope) throws InterpreterException {
-        checkParams(new CheckParams(tFuncCall, scope));
+    protected final void checkParams(@NotNull TFuncCall tFuncCall, Scope scope, ArrayList<Object> params) throws InterpreterException {
+        checkParams(new CheckParams(tFuncCall, scope, params));
     }
 
     @Override

@@ -23,6 +23,6 @@ public record CallProperties(
     @NotNull
     @Contract(pure = true, value = "->new")
     public BaseFunction.CheckParams toCheckParams() {
-        return new BaseFunction.CheckParams(tFuncCall, scope);
+        return new BaseFunction.CheckParams(tFuncCall, scope, params);
     }
 }

@@ -2,50 +2,66 @@
 @ client.jiv
 
 tsea "jaiva/continuous"!
+tsea "jaiva/file"!
 tsea "jaiva/net"!
-tsea "./shared.jiv"!
+tsea "./shared"!
+
+
 
 kwenza client(F~con, conId, conAddr, F~close) ->
+
+    maak conn_eof <- con(C_EOF)! @ EOF function to set calback and check
+    maak conn_closed <- con(C_CLOSED)! @ Same thing as EOF
 
     @ Handle errs
     kwenza erHandler(_, _2, type) ->
         @ we have conId and conAddress already.
         maak identifier <- "Server on " + conAddr!
 
-        @ if i ever introduce a switch, itd naturally replace this.
-        sif (type = "CONNECTION") ?> khutla khuluma(identifier + " was closed.")!
-        sif (type = "ERR") ?> khutla khuluma(identifier + " crashed suddenly!")!
-        sif (type = "INPUT") ?> khutla khuluma(identifier + " closed it's input stream!")!
-        sif (type = "OUTPUT") ?> khutla khuluma(identifier + " closed it's output stream!")!
-
+        @ If its SELF, then this side was the one that closed via invoking the close() function
+        if (type != "SELF") ->
+            @ if i ever introduce a switch, itd naturally replace this.
+            sif (type = "CONNECTION") ?> khuluma(identifier + " was closed.")!
+            sif (type = "ERR") ?> khuluma(identifier + " crashed suddenly!")!
+            sif (type = "INPUT") ?> khuluma(identifier + " closed it's input stream!")!
+            sif (type = "OUTPUT") ?> khuluma(identifier + " closed it's output stream!")!
+        <~
 
 	    close()! @ might as well close if this was invoked.
     <~
 
-    con(C_CLOSED)(erHandler, true)!
-    con(C_EOF)()!
+    conn_closed(erHandler)!
+    conn_eof()! @ Rather use argument extensions here since its a long lambda.
         |> f~(_, _2) : khuluma("EOF was reached while reading.... oh no.")!
-        |> true!
 
-	@ read first packet
-	maak greet <- readPacket(con)!
+    zama zama ->
+        @ read first packet
+        maak greet <- readPacket(con)!
 
-	khuluma("Received from server " + greet)!
-	khuluma()!
+        khuluma("Received from server " + greet)!
+        khuluma()!
 
-	@ and ig do other stuff. Maybe listen to the console's systme in so we can
-	@ send to server
+        @ and ig do other stuff. Maybe listen to the console's systme in so we can
+        @ send to server
 
-	nikhil ((con(C_EOF)()') && (con(C_CLOSED)()')) ->
+        nikhil ((con(C_EOF)()') && (con(C_CLOSED)()')) ->
 
-		khuluma("Send to server:", true)!
-		maak out <- mamela()! @ blocking.
+            khuluma("Send to server: ", true)!
+            maak out <- mamela()! @ listen to da input blocking.
 
-		sif (out = "exit" || out~ = 0) ?> voetsek!
+            sif (out = "exit" || out~ = 0) ?> voetsek!
 
-		sendPacket(con, out)!
+            sendPacket(con, out)!
 
-		khuluma()!
+            khuluma()!
+        <~
+	<~ chaai ->
+
+        @ if the connection closed, then this is a false alarm.
+        @ EOF is supposed to
+        sif (conn_closed() || conn_eof()) ?> khutla idk!
+	    khuluma("Connection to " + conAddr + " fucking died...: " + error)!
+
 	<~
 
 
@@ -58,7 +74,8 @@ kwenza client(F~con, conId, conAddr, F~close) ->
 <~
 
 zama zama ->
-	tcp_handshake("localhost", 5050, client)!
+    @ could use "localhost" but im testing whether this does return 10.0.0.17
+	tcp_handshake(net_localIpv4(), 5050, client)!
 <~ chaai ->
 	khuluma("Couldn't connect to server or some other error. " + error)!
 <~

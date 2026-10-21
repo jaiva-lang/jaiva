@@ -1,5 +1,6 @@
 package com.jaiva.interpreter.libs.types;
 
+import com.jaiva.errors.InterpreterException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,6 +80,23 @@ public final class TypeConverter {
             }
         }
 
+        return list;
+    }
+
+    @NotNull
+    public static ArrayList<Integer> validate(@NotNull ArrayList<Object> arr2) throws IllegalArgumentException {
+        ArrayList<Integer> list = new ArrayList<>();
+        for (Object o : arr2) {
+            if (!(o instanceof Integer i))
+                throw new IllegalArgumentException("One or more values is not an integer value!");
+
+            if (i < 0 || i > 255)
+                throw new IllegalArgumentException(
+                        "Expected a byte value between 0 and 255, got: " + i
+                );
+
+            list.add(i);
+        }
         return list;
     }
 }
