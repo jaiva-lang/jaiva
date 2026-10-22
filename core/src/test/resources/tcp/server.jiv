@@ -10,6 +10,13 @@ kwenza onEnd(status, msg) ->
     khuluma("Client thread ended. " + status)!
 <~
 
+@* Client function but server side.
+@* p        $> con <- F~any The connection function
+@* p        $> conId <- string connection id, usually just
+@*          $> address + port number
+@* p        $> conAddr <- string The connection address
+@* p        $> close <- F~any close function which closes
+@*          $> this side of the socket when called.
 kwenza connectionHandler(F~con, conId, conAddress, F~close) ->
 
     maak conn_eof <- con(C_EOF)! @ EOF function to set calback and check

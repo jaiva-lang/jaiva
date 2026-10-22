@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.DatagramPacket;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -578,13 +579,12 @@ public final class Interpreter {
         if (scope.getGlobals().builtInGlobals.containsKey(fileName) && isLib)
             vfsFromFile = scope.getGlobals().builtInGlobals.get(fileName).load(config, scope.getGlobals());
         else {
-
             // Check if the path is not absolute
-            if (!importPath.isAbsolute()) {
+            if (!importPath.isAbsolute())
                 // Resolve it relative to the current file's directory,
                 // then normalise to tidy up any relative path elements.
                 importPath = config.getFileDirectory().resolve(importPath).normalize();
-            }
+
 
             importPath = importPath.toAbsolutePath();
 
@@ -610,18 +610,19 @@ public final class Interpreter {
                 throw new TseaException(scope,  lineNumber, e);
             }
 
-            if ((vfsFromFile == null)) {
+            if ((vfsFromFile == null))
                 // error? maybe not yet but throw.
                 throw new CatchAllException(scope,
                         importPath
                                 + " either had nothing to export or something went horribly wrong.",
                         lineNumber);
                 // continue;
-            }
+
         }
-        if (!symbols.isEmpty()) {
+
+        if (!symbols.isEmpty())
             vfsFromFile.entrySet().removeIf(e -> !symbols.contains(e.getKey()));
-        }
+
         return vfsFromFile;
     }
 

@@ -64,12 +64,6 @@ kwenza shop() ->
 
         earnings <- earnings + (carLvl * 2)!
 
-        @ if (SLEEP_TIME > 20) ->
-        @     SLEEP_TIME <- SLEEP_TIME / 2!
-        @ <~ mara ->
-        @     SLEEP_TIME <- 20!
-        @ <~
-        @ Replaced with new ternary notation below,
         SLEEP_TIME <- SLEEP_TIME > 20 => SLEEP_TIME / 2 however SLEEP_TIME!
 
     <~ mara if (option = "2" && (money >= monPerFuel)) ->
@@ -79,9 +73,7 @@ kwenza shop() ->
             fuelAmt <- maxFuel!
         <~
     <~  mara if (option = "3") ->
-        if (money >= WIN) ->
-            khutla yebo!
-        <~
+        sif (money >= WIN) ?> khutla yebo!
     <~ mara if (option = "4") ->
         khutla idk!
     <~
@@ -91,10 +83,10 @@ kwenza shop() ->
 kwenza loan() ->
     clear()!
     khuluma("R" + money + " +" + loanAmt)!
-    kwenza isEligable(monetryValue) ->
+    kwenza isEligible(monetryValue) ->
         if ((money - monetryValue < 0) || (monetryValue > loanAmt)) ->
             clear()!
-            khuluma("You are not eligable to make a loan. Enter to go bacl.")!
+            khuluma("You are not eligible to make a loan. Enter to go back.")!
             mamela()!
             khutla false!
         <~
@@ -108,17 +100,14 @@ kwenza loan() ->
     khuluma("3:$tMY WHOLE LOAN")!
     khuluma("4:$tLEAVE THE ESTABISHMENT.")!
     maak option <- mamela()!
-    maak is!
     if (option = "1") ->
-        is <- isEligable(100)!
-        if (is = true) ->
+        if (isEligible(100);) ->
             loanAmt <- loanAmt - 110!
             money <- money + 100!
         <~
     <~ mara if (option = "2") ->
         khuluma("HELP")!
-        is <- isEligable(200)!
-        if (is = true) ->
+        if (isEligible(200);) ->
             loanAmt <- loanAmt - 210!
             money <- money + 200!
         <~
@@ -167,15 +156,14 @@ kwenza main() ->
             clear()!
         <~ mara if (input = "EXIT") ->
             khuluma("Awe")!
-            khuluma("Total Kilomtres driven:" + totalKm)!
+            khuluma("Total Kilometres driven:" + totalKm)!
             khutla idk!
         <~ mara if (input = "LOAN") ->
             loan()!
         <~ mara if (input = "SHOP") ->
-            maak s <- shop()!
-            if (s;) ->
+            if (shop();) ->
                 khuluma("wow. you won. crazy work.")!
-                khuluma("Total Kilomtres driven:" + totalKm)!
+                khuluma("Total Kilometres driven:" + totalKm)!
                 khutla idk!
             <~
         <~
