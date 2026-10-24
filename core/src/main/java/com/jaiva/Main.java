@@ -62,7 +62,7 @@ public class Main {
      * .<build number>"
      * (SemVar).
      */
-    public static String version = "6.2.0";
+    public static String version = "6.2.0-beta.0";
     /**
      * Author, it's just me.
      */
@@ -166,6 +166,10 @@ public class Main {
 //                    System.out.println(ASCII);
                     System.out.println(AnsiColour.print("Jaiva! " + version, AnsiColour.FONT.BOLD, AnsiColour.FONT.ITALIC));
                     System.out.println("Made with love by: " + author);
+                    if (version.contains("beta") || version.contains("alpha"))
+                        System.out.println(
+                                AnsiColour.print("You are on an unstable version of Jaiva! You insane bro", AnsiColour.FONT.BOLD)
+                        );
                     System.out.println();
                     System.exit(0);
                 }
