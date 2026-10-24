@@ -58,9 +58,9 @@ public class BaseFunction extends Symbol {
         super(name, SymbolType.FUNCTION, token);
     }
 
-    BaseFunction(String name, TFunction token, String lib) {
-        super(name, SymbolType.FUNCTION, token);
+    BaseFunction(String name, @NotNull TFunction token, String lib) {
         token.setFileOrigin(lib);
+        super(name, SymbolType.FUNCTION, token);
     }
 
     /**

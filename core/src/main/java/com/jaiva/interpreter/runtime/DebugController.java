@@ -20,7 +20,7 @@ import java.util.concurrent.Semaphore;
  * It comes as part of {@link IConfig} and is expected to be used by
  * {@link Debugger} to manage the debugging environment.
  */
-public class DebugController {
+public final class DebugController {
     /**
      * The current line number being interpreted.
      * This variable is used to track the current line number during interpretation

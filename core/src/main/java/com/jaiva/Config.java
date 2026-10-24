@@ -7,7 +7,7 @@ import com.jaiva.tokenizer.TConfig;
  * Configuration class that both the tokenizer and interpreter extend off to
  * have {@link IConfig} and {@link TConfig}
  */
-public class Config {
+public abstract class Config {
 
     /**
      * Constructs a new {@code Config} instance with the specified JAIVA source

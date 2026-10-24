@@ -62,7 +62,7 @@ import java.util.List;
  * @author Lehlogonolo Poole
  */
 @GlobalsLib
-public class Globals extends BaseLibrary {
+public final class Globals extends BaseLibrary {
 
     private final ArrayList<LibraryLike> allClassLibraries = new ArrayList<>();
     private final ArrayList<LibraryLike> externalLibraries = new ArrayList<>();

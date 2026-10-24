@@ -19,8 +19,8 @@ import java.util.List;
  * up to run. Meaning they won't share the classes given to them unless you specifically make
  * them.
  */
-public class JBundler {
-    protected static int instances = 0;
+public final class JBundler {
+    private static int instances = 0;
     public final int instanceNum;
 
     private final String filePath;
@@ -57,14 +57,13 @@ public class JBundler {
     /**
      * Tokenizes and interprets the given filePath
      * @param filePath THe file path
-     * @param <T> The type of the interpreter object
      * @throws Exception If anything occurs
      */
-    public <T, V> void execute(String filePath, V jaivaValue) throws Exception {
+    public <V> void execute(String filePath, V jaivaValue) throws Exception {
         ArrayList<Token<?>> tokens = Main.parseTokens(filePath, false);
-        IConfig<T> config = new IConfig<>(new ArrayList<>(List.of("jaiva")), filePath);
+        IConfig<Object> config = new IConfig<>(new ArrayList<>(List.of("jaiva")), filePath);
         config.add(jaivaValue);
-        Scope sc = new Scope((IConfig<Object>) config, classes);
+        Scope sc = new Scope(config, classes);
         Interpreter.interpret(tokens, sc, (IConfig<Object>) config);
     }
 

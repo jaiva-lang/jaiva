@@ -25,4 +25,10 @@ public record CallProperties(
     public BaseFunction.CheckParams toCheckParams() {
         return new BaseFunction.CheckParams(tFuncCall, scope, params);
     }
+
+    @NotNull
+    @Contract("_ -> new")
+    public CallProperties using(@NotNull ArrayList<Object> parsedParams) {
+        return new CallProperties(tFuncCall, parsedParams, config, scope);
+    }
 }

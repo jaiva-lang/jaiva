@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * This class is called when the user runs the interpreter with the debug flag
  * enabled.
  */
-public class Debugger {
+public final class Debugger {
     public static final String PROMPT = "jaiva-debug> ";
     /**
      * Flag indicating whether the debugger is running in CLI mode. This means it

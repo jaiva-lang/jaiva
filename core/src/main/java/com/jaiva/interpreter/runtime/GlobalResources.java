@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-public class GlobalResources  {
+public final class GlobalResources  {
 
     public record ResValue(
             Thread thread,

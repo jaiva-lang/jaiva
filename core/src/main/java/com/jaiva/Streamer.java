@@ -12,7 +12,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class Streamer {
+public final class Streamer {
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private boolean run = true;
 

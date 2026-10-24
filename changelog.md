@@ -1,5 +1,7 @@
 # v7.0.0
 
+breaking change : Switch from Java 21 to Java 25
+
 Literlaly just plumbing
 
 - All Jaiva repositories have been moved to the [Jaiva-Lang](https://github.com/jaiva-lang) org.

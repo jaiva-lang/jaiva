@@ -37,7 +37,7 @@ import static com.jaiva.tokenizer.Tokenizer.consumeExtension;
  * The Main class serves as the entry point for the Jaiva. Sorta if ur cli
  */
 @SuppressWarnings("JavaPrintToLogpoint") // its a bloody CLI stfu.
-public class Main {
+public final class Main {
     /**
      * List of command-line arguments that are used to start the REPL mode.
      * These arguments include options for printing tokens, displaying help,
@@ -62,7 +62,7 @@ public class Main {
      * .<build number>"
      * (SemVar).
      */
-    public static String version = "7.0.0";
+    public static String version = "7.0.0-beta.0";
     /**
      * Author, it's just me.
      */

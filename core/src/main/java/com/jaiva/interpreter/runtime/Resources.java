@@ -1,5 +1,7 @@
 package com.jaiva.interpreter.runtime;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import java.util.UUID;
  * The {@code Resources} class provides a centralised container for
  * a single thread to manage its own resources used throughout its life cycle.
  */
-public class Resources {
+public final class Resources {
 
     public enum Common {
         CONSOLE_IN(UUID.randomUUID());
@@ -33,12 +35,14 @@ public class Resources {
         closeables.put(Common.CONSOLE_IN.getUuid(), new Scanner(System.in));
     }
 
+    @NotNull
     public UUID addResource(Closeable closeable) {
         UUID uuid = UUID.randomUUID();
         closeables.put(uuid, closeable);
         return uuid;
     }
 
+    @NotNull
     public <T extends Closeable> T getResource(UUID uuid, Class<T> tClass) throws IllegalArgumentException {
         Closeable closeable = closeables.get(uuid);
         if (closeable == null || closeable.getClass() != tClass) {

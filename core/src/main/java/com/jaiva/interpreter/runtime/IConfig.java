@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * It allows customization of interpreter behavior through various flags and
  * options.
  */
-public class IConfig<T> extends Config {
+public final class IConfig<T> extends Config {
     /**
      * The debug controller instance used to manage debugging features.
      */

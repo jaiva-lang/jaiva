@@ -104,7 +104,8 @@ import java.util.ArrayList;
  * @author Lehlogonolo Poole
  * @param <I> The type of the closeable.
  */
-public class ContinuousFunction<I extends Closeable, O extends Closeable> extends BaseFunction {
+public final class ContinuousFunction<I extends Closeable, O extends Closeable>
+        extends BaseFunction {
 
 
     public enum ContinuousFunctionType {INPUT, OUTPUT, BOTH}

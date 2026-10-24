@@ -2,7 +2,7 @@ package com.jaiva.interpreter.runtime;
 
 import java.util.List;
 
-public class ImportVfs {
+public final class ImportVfs {
     public boolean active;               // true if import mode is on
     public List<String> symbolsToImport; // null or empty = import all
 

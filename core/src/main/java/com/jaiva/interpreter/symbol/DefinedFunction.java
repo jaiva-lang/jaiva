@@ -15,7 +15,7 @@ import java.util.Collections;
 /**
  * A Function that is defined by the user at runtime.
  */
-public class DefinedFunction extends BaseFunction {
+public sealed class DefinedFunction extends BaseFunction permits Lambda {
 
     DefinedFunction(String name, TFunction token) {
         super(name, token);

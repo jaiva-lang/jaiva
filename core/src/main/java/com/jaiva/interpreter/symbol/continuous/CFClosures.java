@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CFClosures {
+public final class CFClosures {
 
     public interface BFMethodWithExtras<T extends BaseFunction> extends ThrowableTriFunction<
                     CallProperties,
@@ -31,13 +31,15 @@ public class CFClosures {
                 BFMethodComposition,
                     Exception> {}
 
-    abstract static class CFClosure<T extends CFClosure<T>> extends BaseFunction {
+    abstract static sealed class CFClosure<T extends CFClosure<T>> extends BaseFunction
+        permits EOF, Input, Output, Flush, Close, Closed
+    {
         CFClosure(String lib) {
             super(FunctionBuilder.start().setLib(lib));
         }
     }
 
-    public static class EOF extends CFClosure<EOF> {
+    public static final class EOF extends CFClosure<EOF> {
         private boolean eof = false;
         private BFMethodWithExtras<EOF> callbackInitializer = null;
         private BFMethodComposition callback = null;
@@ -87,7 +89,7 @@ public class CFClosures {
         }
     }
 
-    public static class Input extends CFClosure<Input> {
+    public static final class Input extends CFClosure<Input> {
         BFMethodToSupplier<?> readStreamSupplier;
 
         public Input(BFMethodToSupplier<?> rss, String lib) {
@@ -107,7 +109,7 @@ public class CFClosures {
             }
 
             ThrowableSupplier<?, IOException> method
-                    = readStreamSupplier.apply(callProperties);
+                    = readStreamSupplier.apply(callProperties.using(parsedParams));
 
             Object out = method.get();
 
@@ -126,7 +128,7 @@ public class CFClosures {
         }
     }
 
-    public static class Output extends CFClosure<Output> {
+    public static final class Output extends CFClosure<Output> {
         BFMethodToConsumer<ArrayList<Object>> writeStreamConsumer;
 
         public Output(BFMethodToConsumer<ArrayList<Object>> wsc, String lib) {
@@ -151,7 +153,7 @@ public class CFClosures {
         }
     }
 
-    public static class Flush extends CFClosure<Flush> {
+    public static final class Flush extends CFClosure<Flush> {
         Closeable cls;
         public Flush(Closeable cls, String lib) {
             super(lib);
@@ -167,7 +169,7 @@ public class CFClosures {
         }
     }
 
-    public static class Close extends CFClosure<Close> {
+    public static final class Close extends CFClosure<Close> {
         UUID resourceId, secondResource;
         Socket socket = null;
         public Close(UUID resourceId, String lib) {
@@ -232,8 +234,7 @@ public class CFClosures {
         }
     }
 
-
-    public static class Closed extends CFClosure<Closed> {
+    public static final class Closed extends CFClosure<Closed> {
         private BFMethodWithExtras<Closed> callbackInitializer = null;
         private BFMethodComposition callback = null;
         boolean closed = false;
