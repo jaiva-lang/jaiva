@@ -107,7 +107,7 @@ public class NetConst extends BaseLibrary {
                                             (value == U_BYTES
                                             ? value.name().substring(2)
                                             : value.name()))
-                                    .docs(JDoc.builder().sinceVersion("6.2.0")
+                                    .docs(JDoc.builder().sinceVersion("7.0.0")
                                             .addDesc(
                                                     "Continuous Function Input constant over tcp client/server streams. "
                                                             + value.extraInfo

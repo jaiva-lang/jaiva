@@ -113,7 +113,7 @@ public class NetInterfsQuery extends BaseLibrary {
                                     .setLib("net/interf/query")
                                     .arguments(args)
                                     .docs(JDoc.builder()
-                                            .sinceVersion("6.2.0")
+                                            .sinceVersion("7.0.0")
                                             .addDesc(value.desc)
                                             .addExample("""
                                                     tsea "jaiva/net/interf"!

@@ -31,7 +31,7 @@ F~net_iName(array)
 - **_array_**  **`<-`** _**[]**_
 	 - _The array which to index into and get information of. Represents a network interface_
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 #### Example: 
@@ -63,7 +63,7 @@ F~net_iDisplayName(array)
 - **_array_**  **`<-`** _**[]**_
 	 - _The array which to index into and get information of. Represents a network interface_
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 #### Example: 
@@ -98,7 +98,7 @@ F~net_iAddrIpv4List(array, format?)
 - **_format_** **`?`** **`<-`** _**boolean**_
 	 - _Whether to format each byte array into the human readable IPv4 format_
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 #### Example: 
@@ -133,7 +133,7 @@ F~net_iAddrIpv6List(array, format?)
 - **_format_** **`?`** **`<-`** _**boolean**_
 	 - _Whether to format each byte array into the human readable IPv6 format_
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 #### Example: 
@@ -165,7 +165,7 @@ F~net_iActive(array)
 - **_array_**  **`<-`** _**[]**_
 	 - _The array which to index into and get information of. Represents a network interface_
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 #### Example: 
@@ -197,7 +197,7 @@ F~net_iLoopback(array)
 - **_array_**  **`<-`** _**[]**_
 	 - _The array which to index into and get information of. Represents a network interface_
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 #### Example: 
@@ -229,7 +229,7 @@ F~net_iVirtual(array)
 - **_array_**  **`<-`** _**[]**_
 	 - _The array which to index into and get information of. Represents a network interface_
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 #### Example: 
@@ -261,7 +261,7 @@ F~net_iAddrMac(array)
 - **_array_**  **`<-`** _**[]**_
 	 - _The array which to index into and get information of. Represents a network interface_
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 #### Example: 

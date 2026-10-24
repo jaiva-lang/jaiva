@@ -192,7 +192,7 @@ public class Numbers extends BaseLibrary {
                                                     "Converts the given string into UTF-8 byte values (0–255)"
                                             )
                                             .addReturns("The UTF-8 bytes as integer values")
-                                            .sinceVersion("6.2.0")
+                                            .sinceVersion("7.0.0")
                             )
             );
             freeze();

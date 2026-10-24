@@ -496,7 +496,7 @@ _**Returns:**_ **The value, if the requested symbol is of a variable, the functi
 > _This isn't special, the "jaiva/" prefix for libraries like normal tsea syntax is still requried to differentiate a file from a library import._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 #### Example: 

@@ -45,7 +45,7 @@ public class UnsafeGlobals extends BaseLibrary {
                             .docs(
                                     JDoc.builder()
                                             .addDesc("Links the MapValue instance of 'a' into 'b' such that they hold the same value and if one is edited the other will also have that edit.")
-                                            .sinceVersion("5.0.4") // yes this was added in 6.2.0, but it existed before in jaiva/debug as d_link so its not new.
+                                            .sinceVersion("5.0.4") // yes this was added in 7.0.0, but it existed before in jaiva/debug as d_link so its not new.
                                             .addReturns("idk")
                                             .addNote("""
                                             A usual (b <- a) syntax would suffice if you'd like to copy the value of a into b.
@@ -119,7 +119,7 @@ public class UnsafeGlobals extends BaseLibrary {
                             .docs(
                                     JDoc.builder()
                                             .addDesc("Imports and immediately returns the imported symbol from the given file or library")
-                                            .sinceVersion("6.2.0")
+                                            .sinceVersion("7.0.0")
                                             .addReturns("The value, if the requested symbol is of a variable, the function if the requested symbol is a function, but otherwise idk if the library/file doesnt expose such a symbol.")
                                             .addExample("""
                                                     @ Normally, you have to go via import syntax just to import a single variable

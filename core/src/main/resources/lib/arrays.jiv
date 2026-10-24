@@ -14,7 +14,7 @@ scope("strict")! @ This freezes all the functions, and elevates all warnings to 
         <| Separator for colonize loops
         "description" and "path" variables that the markdown output cares about
     v6.1.0: shorthand ifs
-    v6.2.0: tseaf global function for importing a single symbol
+    v7.0.0: tseaf global function for importing a single symbol
 }
 
 @* arrays
@@ -424,7 +424,7 @@ kwenza *a_apply(<-params) ->
 @*          $> The function can then further take in an index as parameter 2, and the original array at parameter 3
 @*          $> and should return a boolean.
 @*          $> Throws if the first argument is not an array or if the second argument is not a function.
-@* since    $> 6.2.0
+@* since    $> 7.0.0
 @* example  $> maak filt <- f~(el, index, arr) : el ? "e" !
 @*          $> khuluma(a_findFirst(reservedKeywords, filt))!
 @*          $> { (At the time of writing this) the output should be
@@ -448,7 +448,7 @@ kwenza *a_findFirst(arr, F~predicate) ->
 @*          $> The function can then further take in an index as parameter 2, and the original array at parameter 3
 @*          $> and should return a boolean.
 @*          $> Throws if the first argument is not an array or if the second argument is not a function.
-@* since    $> 6.2.0
+@* since    $> 7.0.0
 @* example  $> maak filt <- f~(el, index, arr) : el ? "e" !
 @*          $> khuluma(a_findLast(reservedKeywords, filt))!
 @*          $> { (At the time of writing this) the output should be
@@ -473,7 +473,7 @@ kwenza *a_findLast(arr, F~predicate) ->
 @*          $> The function can then further take in an index as parameter 2, and the original array at parameter 3
 @*          $> and should return a boolean.
 @*          $> Throws if the first argument is not an array or if the second argument is not a function.
-@* since    $> 6.2.0
+@* since    $> 7.0.0
 @* example  $> maak filt <- f~(el, index, arr) : el ? "e" !
 @*          $> khuluma(a_find(reservedKeywords, filt))!
 @*          $> { (At the time of writing this) the output should be

@@ -55,7 +55,7 @@ maak NET_R_INTEGER <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -77,7 +77,7 @@ maak NET_W_INTEGER <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -99,7 +99,7 @@ maak NET_R_JAVA_UTF8 <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -121,7 +121,7 @@ maak NET_W_JAVA_UTF8 <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -143,7 +143,7 @@ maak NET_W_UTF8 <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -165,7 +165,7 @@ maak NET_R_DOUBLE <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -187,7 +187,7 @@ maak NET_W_DOUBLE <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -209,7 +209,7 @@ maak NET_R_LONG <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -231,7 +231,7 @@ maak NET_W_LONG <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -253,7 +253,7 @@ maak NET_R_BOOLEAN <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -275,7 +275,7 @@ maak NET_W_BOOLEAN <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -297,7 +297,7 @@ maak NET_R_BYTE <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -319,7 +319,7 @@ maak NET_W_BYTE <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -341,7 +341,7 @@ maak NET_R_BYTES <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -363,7 +363,7 @@ maak NET_W_BYTES <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -385,7 +385,7 @@ maak NET_RU_BYTES <- (string)
 > _This is for the read function._
 
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---

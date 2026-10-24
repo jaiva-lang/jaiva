@@ -109,7 +109,7 @@ F~t_strToByteArr(string)
 
 _**Returns:**_ **The UTF-8 bytes as integer values**
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---

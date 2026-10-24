@@ -43,7 +43,7 @@ public class NetInterfaces extends BaseLibrary {
                             .setLib("net/interf")
                             .docs(JDoc.builder()
                                     .addDesc("Returns your local " + name + " address")
-                                    .sinceVersion("6.2.0")
+                                    .sinceVersion("7.0.0")
                                     .addReturns("Your local IP Address formatted as a string.")
 
                             )

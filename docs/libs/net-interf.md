@@ -44,7 +44,7 @@ F~net_localIpv4()
 
 _**Returns:**_ **Your local IP Address formatted as a string.**
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---
@@ -65,7 +65,7 @@ F~net_localIpv6()
 
 _**Returns:**_ **Your local IP Address formatted as a string.**
 
-Since Version: _6.2.0_
+Since Version: _7.0.0_
 
 
 ---

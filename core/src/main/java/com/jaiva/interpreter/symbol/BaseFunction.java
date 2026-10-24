@@ -101,7 +101,7 @@ public class BaseFunction extends Symbol {
      * @return something
      * @throws Exception if anthing wrong lol
      */
-    @Deprecated(since = "6.2.0")
+    @Deprecated(since = "7.0.0")
     public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
         return call(new CallProperties(tFuncCall, params, config, scope));
     }
@@ -322,7 +322,7 @@ public class BaseFunction extends Symbol {
      * @param scope     The current scope for error reporting.
      * @throws InterpreterException If there's a mismatch in parameters (e.g., missing required arguments).
      */
-    @Deprecated(since = "6.2.0")
+    @Deprecated(since = "7.0.0")
     protected final void checkParams(@NotNull TFuncCall tFuncCall, Scope scope, ArrayList<Object> params) throws InterpreterException {
         checkParams(new CheckParams(tFuncCall, scope, params));
     }
