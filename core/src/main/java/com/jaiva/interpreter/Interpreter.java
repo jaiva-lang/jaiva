@@ -300,6 +300,8 @@ public final class Interpreter {
                         : scope.getVfs()
         );
 
+        scope.setFilePath(config.getFilePath());
+
 //        vfs = vfs != null ? vfs.clone() : vfs;
 
         // Step 2: go throguh eahc token
@@ -577,7 +579,8 @@ public final class Interpreter {
     public static Vfs importHandle(@NotNull Scope scope, @NotNull IConfig<Object> config, String fileName, boolean isLib, Path importPath, int lineNumber, ArrayList<String> symbols, TokenDefault<?> token) throws Exception {
         Vfs vfsFromFile;
         if (scope.getGlobals().builtInGlobals.containsKey(fileName) && isLib)
-            vfsFromFile = scope.getGlobals().builtInGlobals.get(fileName).load(config, scope.getGlobals());
+            vfsFromFile = scope.getGlobals().builtInGlobals.get(fileName)
+                    .load(config, scope.getGlobals());
         else {
             // Check if the path is not absolute
             if (!importPath.isAbsolute())

@@ -14,6 +14,7 @@ import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TFuncCall;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -34,7 +35,7 @@ public class MathBase extends BaseLibrary {
         add(new MathContainer());
     }
 
-    public static Object ifNan(TFuncCall tFuncCall, Number doubleValue) {
+    public static Object ifNan(@NotNull TFuncCall tFuncCall, @NotNull Number doubleValue) {
         int lineNumber = tFuncCall.lineNumber;
         return Double.isNaN(doubleValue.doubleValue()) ? Token.voidValue(lineNumber) : doubleValue;
     }
@@ -47,6 +48,7 @@ public class MathBase extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_abs")
+                            .setLib("math/base")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(new AArgument("value",
@@ -92,6 +94,7 @@ public class MathBase extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_random")
+                            .setLib("math/base")
                             .arguments(Arguments.getInstance()
                                     .add(new AArgument(
                                             "a",
@@ -172,6 +175,7 @@ public class MathBase extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_round")
+                            .setLib("math/base")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("value", "The input to round", false, Argument.Type.NUMBER)
                             ))
@@ -214,6 +218,7 @@ public class MathBase extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_sqrt")
+                            .setLib("math/base")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("value", "The input to sqrt", false, Argument.Type.NUMBER)
                             ))
@@ -259,6 +264,7 @@ public class MathBase extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_floor")
+                            .setLib("math/base")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("value", "The input to round", false, Argument.Type.NUMBER)
                             ))
@@ -304,6 +310,7 @@ public class MathBase extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_ceil")
+                            .setLib("math/base")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("value", "The input to ceil", false, Argument.Type.NUMBER)
                             ))
@@ -337,6 +344,7 @@ public class MathBase extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_log")
+                            .setLib("math/base")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("value", "The value to calculate the logarithm of.",
                                             false, Argument.Type.NUMBER)

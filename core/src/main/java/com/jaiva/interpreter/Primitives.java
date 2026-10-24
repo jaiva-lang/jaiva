@@ -335,7 +335,10 @@ public final class Primitives {
                 if (function.isEvaluateParamsEarly()) {
                     if (args.size() != 1 || args.getFirst() != null) {
                         for (Object arg : args) {
-                            newArgs.add(toPrimitive(arg, false, config, scope));
+                            if (arg == null)
+                                newArgs.add(Token.voidValue(tFuncCall.lineNumber));
+                            else
+                                newArgs.add(toPrimitive(arg, false, config, scope));
                         }
                     }
                 } else {

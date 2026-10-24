@@ -103,7 +103,7 @@ kwenza loan() ->
     if (option = "1") ->
         if (isEligible(100);) ->
             loanAmt <- loanAmt - 110!
-            money <- money + 100!
+            moey <- money + 100!
         <~
     <~ mara if (option = "2") ->
         khuluma("HELP")!

@@ -60,10 +60,11 @@ public final class ExternalLibraryLoader {
     private Vfs loadLibrary(String content, String name, String path, IConfig<Object> config) throws Exception {
 //        System.out.println("Loading " + name + " (" + content.length() + " chars)");
 
-        ArrayList<Token<?>> tks = (ArrayList<Token<?>>) Tokenizer.readLine(content, "", null, null, -1, new TConfig());
-
         IConfig<Object> newConfig = new IConfig<Object>(config.getSanitisedArgs(), path
         );
+
+        ArrayList<Token<?>> tks = (ArrayList<Token<?>>) Tokenizer.readLine(content, "", null, null, -1, new TConfig(path));
+
 
         newConfig.setImportVfs(new ImportVfs(true)); // This tells the interpreter to only parse exported symbols. (Functions
         // and variables)

@@ -5,6 +5,8 @@ import com.jaiva.tokenizer.Convertible;
 import com.jaiva.tokenizer.NewJson;
 import com.jaiva.tokenizer.jdoc.JDoc;
 
+import java.nio.file.Path;
+
 /**
  * TokenDefault class is a default implementation of all the other
  * subclasses/tokens defined in {@link Token}
@@ -38,6 +40,7 @@ public class TokenDefault<T extends TokenDefault<T>> implements Convertible {
      */
     public boolean exportSymbol = false;
 
+    private Object fileOrigin;
     /**
      * Constructor for a basic token
      * 
@@ -87,5 +90,13 @@ public class TokenDefault<T extends TokenDefault<T>> implements Convertible {
     @Override
     public NewJson toJson() throws JaivaException {
         return json;
+    }
+
+    public Object getFileOrigin() {
+        return fileOrigin;
+    }
+
+    public void setFileOrigin(Object fileOrigin) {
+        this.fileOrigin = fileOrigin;
     }
 }

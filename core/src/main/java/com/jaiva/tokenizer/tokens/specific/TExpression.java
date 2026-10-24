@@ -2,6 +2,7 @@ package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.errors.JaivaException;
 import com.jaiva.errors.TokenizerException;
+import com.jaiva.tokenizer.TConfig;
 import com.jaiva.tokenizer.tokens.TAtomicValue;
 import com.jaiva.tokenizer.tokens.TParamsExtendable;
 import com.jaiva.tokenizer.tokens.Token;
@@ -111,7 +112,7 @@ public class TExpression extends TokenDefault<TExpression> implements TAtomicVal
      *
      * @param statement The statement to parse.
      */
-    public Object parse(String statement) throws JaivaException {
+    public Object parse(String statement, TConfig config) throws JaivaException {
         statement = statement.trim();
 
         if (statement.isEmpty()) {
@@ -119,19 +120,19 @@ public class TExpression extends TokenDefault<TExpression> implements TAtomicVal
         }
         ContextDispatcher d = new ContextDispatcher(statement);
         if (d.getDeligation() == ContextDispatcher.To.PROCESS_CONTENT) {
-            return Token.processContext(statement, lineNumber);
+            return Token.processContext(statement, lineNumber, config);
         }
         this.statement = statement;
 
         int lastBraceIndex = Find.lastOuterMostBracePairIndex(statement);
         if ((statement.startsWith("(") && statement.endsWith(")")) && lastBraceIndex == 0) {
-            return parse(statement.substring(1, statement.length() - 1).trim());
+            return parse(statement.substring(1, statement.length() - 1).trim(), config);
         }
 
         LeastImportantOperator info = Find.leastImportantOperator(statement);
         if (info.index == -1) {
             // no operator found, so its a single value
-            return Token.processContext(statement, lineNumber);
+            return Token.processContext(statement, lineNumber, config);
         }
         if (info.op.equals("=") && statement.charAt(info.index - 1) == '!') {
             info.index--;
@@ -146,10 +147,10 @@ public class TExpression extends TokenDefault<TExpression> implements TAtomicVal
             info.op = ">=";
         }
 
-        lHandSide = syntaxSugar(new TExpression(lineNumber).parse(statement.substring(0, info.index).trim()));
+        lHandSide = syntaxSugar(new TExpression(lineNumber).parse(statement.substring(0, info.index).trim(), config));
         this.op = info.op.trim();
         rHandSide = syntaxSugar(
-                new TExpression(lineNumber).parse(statement.substring(info.index + info.op.length()).trim()));
+                new TExpression(lineNumber).parse(statement.substring(info.index + info.op.length()).trim(), config));
         statementType = info.tStatementType;
         TExpression expression = ((TExpression) syntaxSugar(this));
         expression.json();

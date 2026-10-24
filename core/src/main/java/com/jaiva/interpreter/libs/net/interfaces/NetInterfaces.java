@@ -40,6 +40,7 @@ public class NetInterfaces extends BaseLibrary {
             add(new BaseFunction(
                     FunctionBuilder.start()
                             .name(canonicalName)
+                            .setLib("net/interf")
                             .docs(JDoc.builder()
                                     .addDesc("Returns your local " + name + " address")
                                     .sinceVersion("6.2.0")
@@ -85,7 +86,8 @@ public class NetInterfaces extends BaseLibrary {
 
     static class FInterfaces extends BaseFunction {
         public FInterfaces() {
-            super(FunctionBuilder.start().name("net_interfs"));
+            super(FunctionBuilder.start().name("net_interfs")
+                    .setLib("net/interf"));
         }
 
         @Override

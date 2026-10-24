@@ -29,7 +29,7 @@ final class CFSockets {
         private final Socket socket;
         private final CFClosures.Closed closed;
         public WrappedCloseFunction(Socket socket, CFClosures.Closed closed) {
-            super(FunctionBuilder.start());
+            super(FunctionBuilder.start().setLib("net/tcp"));
             freeze();
             this.socket = socket;
             this.closed = closed;
@@ -63,7 +63,8 @@ final class CFSockets {
                 getReadSupplier(pbis, dis, clientInfo, eofClosure, closedClosure, socket),
                 getWriteConsumer(dos, clientInfo, closedClosure, socket),
                 eofClosure,
-                closedClosure
+                closedClosure,
+                "net/tcp"
         );
         cf.getCloseClosure().addSocket(socket);
         return new Pair<>(new WrappedCloseFunction(socket, closedClosure), cf);
@@ -277,7 +278,8 @@ final class CFSockets {
                         );
 
                     return function::call;
-                })
+                }),
+                "net/tcp"
         );
     }
 
@@ -298,7 +300,7 @@ final class CFSockets {
                         );
 
                     return function::call;
-                })
+                }), "net/tcp"
         );
     }
 }

@@ -39,6 +39,7 @@ public class FileQuery extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_nameOf")
+                            .setLib("file/api")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument(
                                             "file", "The file array to get the name from.",
@@ -75,6 +76,7 @@ public class FileQuery extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_dirOf")
+                            .setLib("file/api")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument(
                                             "file", "The file array to get the directory path from.",
@@ -111,6 +113,7 @@ public class FileQuery extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_contentOf")
+                            .setLib("file/api")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument(
                                             "file", "The file array to get the content from.",
@@ -147,6 +150,7 @@ public class FileQuery extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_permsOf")
+                            .setLib("file/api")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument(
                                             "file", "The file array to get the permissions from.",
@@ -189,6 +193,7 @@ public class FileQuery extends BaseLibrary {
                 super(
                         FunctionBuilder.start()
                                 .name("perms")
+                                .setLib("file/api")
                                 .arguments(
                                         Arguments.getInstance()
                                                 .add(

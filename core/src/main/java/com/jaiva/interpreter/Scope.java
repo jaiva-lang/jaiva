@@ -7,6 +7,8 @@ import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.tokenizer.tokens.TokenDefault;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -28,6 +30,8 @@ public final class Scope {
 
     private Vfs vfs;
     private final Globals globals;
+
+    private Path filePath;
 
     /**
      * Default constructor for Scope.
@@ -112,6 +116,42 @@ public final class Scope {
         return globals;
     }
 
+    @NotNull
+    public static String trunc(Object obj, boolean tabTwice) {
+        String tab = "\t".repeat(tabTwice ? 2 : 1);
+        if (obj instanceof Path p) {
+            return "(file: " + trunc(p) + ")"+tab;
+        } else if (obj instanceof String s) {
+            return
+                    "(lib: " + (s.contains("global")
+                            ? s
+                            : "jaiva" + FileSystems.getDefault().getSeparator() +
+                            (
+                                    s.contains(".jiv")
+                                            ? s.substring(4, s.length() - 4)
+                                            : s
+                            )) + ")"+tab;
+        }
+
+        throw new RuntimeException("Truncation not implemented for " + obj.getClass());
+    }
+
+    @NotNull
+    public static String trunc(@NotNull Path path) {
+        Path absolute = path.toAbsolutePath();
+        String fullPathStr = absolute.toString();
+
+        if (fullPathStr.length() <= 20) {
+            return fullPathStr;
+        }
+
+        Path root = absolute.getRoot();
+        Path fileName = absolute.getFileName();
+        String rootStr = (root != null) ? root.toString() : "";
+        String fileStr = (fileName != null) ? fileName.toString() : "";
+
+        return rootStr + "..." + absolute.getFileSystem().getSeparator() + fileStr;
+    }
     /**
      * Returns a string representation of the scope.
      * <p>
@@ -123,23 +163,44 @@ public final class Scope {
     @Override
     public String toString() {
         Scope current = this;
+        Path lastUsedPath = null;
         StringBuilder sb = new StringBuilder();
+        boolean single = true;
         while (current != null) {
+            String s = "";
+//            if (lastUsedPath == null) {
+//                lastUsedPath = current.filePath;
+//                s = trunc(lastUsedPath);
+//            } else {
+//                if (lastUsedPath == current.filePath)
+//                    s = "(same file as above)";
+//                else {
+//                    lastUsedPath = current.filePath;
+//                    s = trunc(lastUsedPath);
+//                }
+//            }
             if (current.getCurrent() == Context.GLOBAL) {
-                sb.append("global");
+                sb.append("\n").append(!single ? "\t-> " : "").append("global ").append(s);
                 current = null; // end the loop
             } else {
+                if (current != this)
+                    sb.append("\n\t").append("->");
+                sb.append(" ");
+                sb.append(trunc(current.getToken().getFileOrigin(), current == this));
+                sb.append(" ");
                 sb.append(
                         current.getCurrent() == Context.EOF ? "end of file <- "
                                 : (current.getToken().name.equals(current.getToken().getClass().getSimpleName())
-                                        ? ("[" + current.getToken().getClass().getSimpleName() + " "
-                                                + current.getToken().lineNumber
-                                                + "]")
-                                        : (("[" + current.getToken().getClass().getSimpleName() + " "
-                                                + current.getToken().lineNumber + "]") + " : " + current.getToken().name + "()"))
-                                        + " <- ");
+                                ? ("[" + current.getToken().getClass().getSimpleName() + " "
+                                + current.getToken().lineNumber
+                                + "]")
+                                : (("[" + current.getToken().getClass().getSimpleName() + " "
+                                + current.getToken().lineNumber + "]") + " : " + current.getToken().name + "()"))
+                        /*+ " <- "*/).append(" ").append(s);
                 current = current.getParent();
+                single = false;
             }
+
         }
         return sb.toString();
     }
@@ -182,5 +243,13 @@ public final class Scope {
 
     public void setVfs(Vfs vfs) {
         this.vfs = vfs;
+    }
+
+    public void setFilePath(Path filePath) {
+        this.filePath = filePath;
+    }
+
+    public Path getFilePath() {
+        return filePath;
     }
 }

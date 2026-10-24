@@ -6,9 +6,7 @@ tsea "jaiva/time/zone"!
 @* this fuc should proly go in arrs
 kwenza *a_find(arr, F~func) ->
     colonize (element with arr) ->
-        if (func(element) = yebo) ->
-            khutla element!
-        <~
+        sif (func(element) = yebo) ?> khutla element!
     <~
     khutla idk!
 <~

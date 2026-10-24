@@ -32,6 +32,7 @@ public class TimeApi extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("t_now")
+                            .setLib("time/api")
                             .docs(
                                     JDoc.builder()
                                             .addDesc("Returns the current time in milliseconds since the Unix epoch.")
@@ -54,6 +55,7 @@ public class TimeApi extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("t_msToSec")
+                            .setLib("time/api")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("milliseconds", "The number of milliseconds to convert.", false, Argument.Type.NUMBER)
                             ))
@@ -84,6 +86,7 @@ public class TimeApi extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("t_parseDate")
+                            .setLib("time/api")
                             .arguments(Arguments.getInstance()
                                     .add(
                                             new AArgument(

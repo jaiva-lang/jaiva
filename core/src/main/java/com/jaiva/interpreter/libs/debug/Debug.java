@@ -35,6 +35,7 @@ public class Debug extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("d_link")
+                            .setLib("debug")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(new AArgument("a", "The symbol which holds the MapValue to be linked.", false, Argument.Type.ANY))

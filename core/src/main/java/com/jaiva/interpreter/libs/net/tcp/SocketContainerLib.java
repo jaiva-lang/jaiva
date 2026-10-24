@@ -28,7 +28,7 @@ public class SocketContainerLib extends BaseLibrary {
             super(
                     // TODO: document
                     FunctionBuilder.start()
-                            .name("tcp_handshake")
+                            .name("tcp_handshake").setLib("net/tcp")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(new AArgument("host", "The host address. .e.g \"localhost\"", false, Argument.Type.STRING))

@@ -46,6 +46,7 @@ public class GlobalFunctions extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("scope")
+                            .setLib("global")
                             .arguments(
                                     Arguments.getInstance()
                                             .addVarArg(new AVarArgument("string", "variable amount of strings to input."))
@@ -115,6 +116,7 @@ public class GlobalFunctions extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("getVarClass")
+                            .setLib("global")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(
@@ -192,6 +194,7 @@ public class GlobalFunctions extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("getCallerValue")
+                            .setLib("global")
                             .docs(
                                     JDoc.builder()
                                             .addDesc("Returns the caller value provided to this file if this file was run by another java program.")
@@ -246,6 +249,7 @@ public class GlobalFunctions extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("flat")
+                            .setLib("global")
                             .arguments(
                                     Arguments.getInstance()
                                             .addVarArg(new AVarArgument("arrays", "Variable amount of arrays to input"))
@@ -322,6 +326,7 @@ public class GlobalFunctions extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("sleep")
+                            .setLib("global")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(new AArgument("milliseconds", "The amount of milliseconds to sleep for", false, Argument.Type.NUMBER))
@@ -360,6 +365,7 @@ public class GlobalFunctions extends BaseLibrary {
         FTypeOfNumber() {
             super(FunctionBuilder.start()
                     .name("typeOfNumber")
+                    .setLib("global")
                     .arguments(
                             Arguments.getInstance()
                                     .add(new AArgument(
@@ -413,6 +419,7 @@ public class GlobalFunctions extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("typeOf")
+                            .setLib("global")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument(
                                             "input","The input to check the type against",
@@ -467,6 +474,7 @@ public class GlobalFunctions extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("arrLit")
+                            .setLib("global")
                             .arguments(Arguments.getInstance().addVarArg(
                                     new AVarArgument(
                                             "elements", "Variable amount of elements to take in and turn into a single array."

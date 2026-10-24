@@ -26,6 +26,7 @@ public class TimeZone extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("tz_getAll")
+                            .setLib("time/zone")
                             .docs(
                                     JDoc.builder()
                                             .addDesc("The complete list of IANA format timezone constants.")

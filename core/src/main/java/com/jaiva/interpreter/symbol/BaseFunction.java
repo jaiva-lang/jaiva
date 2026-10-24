@@ -58,12 +58,17 @@ public class BaseFunction extends Symbol {
         super(name, SymbolType.FUNCTION, token);
     }
 
+    BaseFunction(String name, TFunction token, String lib) {
+        super(name, SymbolType.FUNCTION, token);
+        token.setFileOrigin(lib);
+    }
+
     /**
      * Constructs a new BaseFunction instance with da specified function builder
      * @param functionBuilder da builder.
      */
     public BaseFunction(@NotNull FunctionBuilder functionBuilder) {
-        super(functionBuilder.getName(), SymbolType.FUNCTION, functionBuilder.toToken());
+        this(functionBuilder.getName(), functionBuilder.toToken(), functionBuilder.getLib());
     }
 
     /**

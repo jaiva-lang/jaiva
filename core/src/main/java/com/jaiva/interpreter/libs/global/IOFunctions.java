@@ -48,6 +48,7 @@ public class IOFunctions extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("khuluma")
+                            .setLib("global")
                             .arguments(Arguments.getInstance()
                                     .add(
                                             new AArgument(
@@ -157,6 +158,7 @@ public class IOFunctions extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("mamela")
+                            .setLib("global")
                             .docs(
                                     JDoc.builder()
                                             .addDesc("Listens for input from the console.")
@@ -209,6 +211,7 @@ public class IOFunctions extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("clear")
+                            .setLib("global")
                             .docs(
                                     JDoc.builder()
                                             .addDesc("Clears the console.")

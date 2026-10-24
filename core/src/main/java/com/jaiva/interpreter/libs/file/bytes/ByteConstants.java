@@ -74,7 +74,7 @@ public class ByteConstants extends BaseLibrary {
                                                     + value.extraInfo
                                             ).addNote(
                                                     "This is for the " +
-                                                            (prefix.startsWith("W") ? "write" : "read") +
+                                                            (prefix.startsWith("F_W") ? "write" : "read") +
                                                             " function."
                                             ))
                                     .value((prefix + "_" + value.name()).toLowerCase())
@@ -82,9 +82,9 @@ public class ByteConstants extends BaseLibrary {
 
             for (Values v : Values.values()) {
                 if (v.readConstant)
-                    vars.add(new Pair<>(v, vMaker.apply("R", v)));
+                    vars.add(new Pair<>(v, vMaker.apply("F_R", v)));
                 if (v.writeConstant)
-                    vars.add(new Pair<>(v, vMaker.apply("W", v)));
+                    vars.add(new Pair<>(v, vMaker.apply("F_W", v)));
             }
             return vars;
         }
@@ -104,7 +104,7 @@ public class ByteConstants extends BaseLibrary {
                String[] aliases = new String[v.getAliases().length];
                for (int i = 0; i < aliases.length; i++) {
                    String alias = v.getAliases()[i];
-                   aliases[i] = var.name.charAt(0) + "_" + alias;
+                   aliases[i] = var.name.substring(0, 3) + "_" + alias;
                }
                addWithAliases(var, aliases);
            }

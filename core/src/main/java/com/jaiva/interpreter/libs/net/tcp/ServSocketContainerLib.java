@@ -28,7 +28,7 @@ public class ServSocketContainerLib extends BaseLibrary {
     static class WrappedAcceptFunction extends BaseFunction {
         private final ServerSocket serverSocket;
         public WrappedAcceptFunction(ServerSocket serverSocket) {
-            super(FunctionBuilder.start());
+            super(FunctionBuilder.start().setLib("net/tcp"));
             freeze();
             this.serverSocket = serverSocket;
         }
@@ -56,7 +56,7 @@ public class ServSocketContainerLib extends BaseLibrary {
     static class ServerWrappedCloseFunction extends BaseFunction {
         private final ServerSocket serverSocket;
         public ServerWrappedCloseFunction(ServerSocket serverSocket) {
-            super(FunctionBuilder.start());
+            super(FunctionBuilder.start().setLib("net/tcp"));
             freeze();
             this.serverSocket = serverSocket;
         }
@@ -73,7 +73,7 @@ public class ServSocketContainerLib extends BaseLibrary {
             super(
                     // TODO: document
                     FunctionBuilder.start()
-                            .name("tcp_serve")
+                            .name("tcp_serve").setLib("net/tcp")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(new AArgument("port", "The port", false, Argument.Type.NUMBER))

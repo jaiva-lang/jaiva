@@ -261,7 +261,7 @@ public final class Tokenizer {
         assert multipleLinesOutput != null;
         switch (type) {
             case "mara if": {
-                Object obj = new TExpression(finalMOutput.lineNumber).parse(args[0]);
+                Object obj = new TExpression(finalMOutput.lineNumber).parse(args[0], config);
                 if (Validate.isValidBoolInput(obj)) {
                     obj = obj instanceof Token<?> ? ((Token<?>) obj).value() : obj;
                 } else {
@@ -290,7 +290,7 @@ public final class Tokenizer {
                 String cond = args[0].replaceFirst(Pattern.quote(Character.toString(Chars.STATEMENT_OPEN)),
                         Matcher.quoteReplacement(" ")).trim();
                 Object obj = new TExpression(finalMOutput.lineNumber)
-                        .parse(cond);
+                        .parse(cond, config);
                 if (Validate.isValidBoolInput(obj)) {
                     obj = obj instanceof Token<?> ? ((Token<?>) obj).value() : obj;
                 } else {
@@ -327,7 +327,7 @@ public final class Tokenizer {
                             null, finalMOutput.lineNumber, config)))
                             .getFirst().value();
 
-                    Object obj = new TExpression(finalMOutput.lineNumber).parse(args[1]);
+                    Object obj = new TExpression(finalMOutput.lineNumber).parse(args[1], config);
                     if (Validate.isValidBoolInput(obj)) {
                         obj = obj instanceof Token<?> ? ((Token<?>) obj).value() : obj;
                     } else {
@@ -341,7 +341,7 @@ public final class Tokenizer {
                     if (op.equals("+") || op.equals("-")) {
                         finalOp = op;
                     } else {
-                        finalOp = Token.processContext(op, lineNumber);
+                        finalOp = Token.processContext(op, lineNumber, config);
                     }
                     specific = new TForLoop(
                             var, obj,
@@ -359,7 +359,7 @@ public final class Tokenizer {
                     TVarRef arrayVar = (TVarRef) ((Token<?>) Objects.requireNonNull(Token.processContext(args[1]
                                     .replace(Chars.STATEMENT_CLOSE, ' ')
                                     .trim(),
-                            finalMOutput.lineNumber)))
+                            finalMOutput.lineNumber, config)))
                             .value();
                     specific = new TForLoop(variable, arrayVar, codeblock,
                             finalMOutput.lineNumber).toToken();
@@ -379,7 +379,7 @@ public final class Tokenizer {
                 break;
             }
             case "nikhil": {
-                Object obj = new TExpression(finalMOutput.lineNumber).parse(args[0]);
+                Object obj = new TExpression(finalMOutput.lineNumber).parse(args[0], config);
                 if (Validate.isValidBoolInput(obj)) {
                     obj = obj instanceof Token<?> ? ((Token<?>) obj).value() : obj;
                 } else {
@@ -396,6 +396,7 @@ public final class Tokenizer {
             }
         }
         tokens.add(specific);
+        specific.value().setFileOrigin(config.getFileOrigin());
         return tokens;
     }
 
@@ -433,8 +434,8 @@ public final class Tokenizer {
      * @return The token for the given line.
      */
     @NotNull
-    @Contract("_, _ -> new")
-    private static Token<?> processVariable(@NotNull String line, int lineNumber)
+    @Contract("_, _, _ -> new")
+    private static Token<?> processVariable(@NotNull String line, int lineNumber, TConfig config)
             throws JaivaException {
         boolean isString = false;
         if (line.contains(Chars.ARRAY_ASSIGNMENT)) {
@@ -454,7 +455,7 @@ public final class Tokenizer {
 
 
             for (String value : Token.splitByTopLevelComma(parts[1])) {
-                parsedValues.add(Token.processContext(value.trim(), lineNumber));
+                parsedValues.add(Token.processContext(value.trim(), lineNumber, config));
             }
             return new TArrayVar(parts[0], parsedValues, lineNumber).toToken();
 
@@ -513,7 +514,7 @@ public final class Tokenizer {
                         return new TBooleanVar(parts[0], Boolean.parseBoolean(parts[1]),
                                 lineNumber).toToken();
                     } else {
-                        Object object = Token.dispatchContext(parts[1], lineNumber);
+                        Object object = Token.dispatchContext(parts[1], lineNumber, config);
                         if (object instanceof Token<?>(TokenDefault<?> g)) {
                             if (g.name.equals("TStatement")) {
                                 return ((TExpression) g).statementType == 0
@@ -911,7 +912,7 @@ public final class Tokenizer {
 
         if (line.startsWith(Chars.PARAM_EXTENDOR)) {
             line = line.trim();
-            return Token.processContext(line, lineNumber);
+            return Token.processContext(line, lineNumber, config);
         }
 
 
@@ -923,7 +924,7 @@ public final class Tokenizer {
         if (line.startsWith(Keywords.THROW)) {
             // Remove keyword 'cima' and operator '<=='
             line = line.trim();
-            Object errorMessage = Token.processContext(getString(line, lineNumber), lineNumber);
+            Object errorMessage = Token.processContext(getString(line, lineNumber), lineNumber, config);
 
             tokens.add(new TThrowError(errorMessage, lineNumber).toToken());
             return tokens;
@@ -942,7 +943,7 @@ public final class Tokenizer {
         if (line.startsWith(Keywords.RETURN)) {
             tokens.add(
                     new TFuncReturn(Token.processContext(line.replace(Keywords.RETURN, ""),
-                            lineNumber),
+                            lineNumber, config),
                             lineNumber)
                             .toToken());
             return tokens;
@@ -951,7 +952,7 @@ public final class Tokenizer {
         // #STRING# is a line which contains something that needs to be tokenized.
 
         if (line.startsWith(Keywords.D_VAR)) {
-            tokens.add(processVariable(line, lineNumber));
+            tokens.add(processVariable(line, lineNumber, config));
             return tokens;
         }
 
@@ -959,16 +960,16 @@ public final class Tokenizer {
         String[] parts = line.split(Chars.ASSIGNMENT);
         if (parts.length > 1 && !parts[0].endsWith("(")) {
             String varName = parts[0].trim();
-            Object varValue = Token.processContext(parts[1].trim(), lineNumber);
+            Object varValue = Token.processContext(parts[1].trim(), lineNumber, config);
             if (varName.contains("]") || varName.contains("[")) {
                 // This is an array reassignment.
                 tokens.add(new TVarReassign(Token.processContext(varName,
-                        lineNumber), varValue, lineNumber).toToken());
+                        lineNumber, config), varValue, lineNumber).toToken());
                 return tokens;
             } else
                 tokens.add(
                         new TVarReassign(parts[0].trim(), Token.processContext(parts[1].trim(),
-                                lineNumber),
+                                lineNumber,config),
                                 lineNumber)
                                 .toToken());
 
@@ -984,7 +985,7 @@ public final class Tokenizer {
         // TFuncCall
         // (You cant just place a variable out of nowhere with no context around it.)
         // (Therefore i wont parse it.)
-        Object token = Token.processContext(line, lineNumber);
+        Object token = Token.processContext(line, lineNumber,config);
         if (token instanceof Token<?>) {
             tokens.add((Token<?>) token);
             return tokens;

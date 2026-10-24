@@ -31,17 +31,23 @@ public class CFClosures {
                 BFMethodComposition,
                     Exception> {}
 
-    public static class EOF extends BaseFunction {
+    abstract static class CFClosure<T extends CFClosure<T>> extends BaseFunction {
+        CFClosure(String lib) {
+            super(FunctionBuilder.start().setLib(lib));
+        }
+    }
+
+    public static class EOF extends CFClosure<EOF> {
         private boolean eof = false;
         private BFMethodWithExtras<EOF> callbackInitializer = null;
         private BFMethodComposition callback = null;
 
-        public EOF() {
-            super(FunctionBuilder.start());
+        public EOF(String lib) {
+            super(lib);
         }
 
-        public EOF(BFMethodWithExtras<EOF> callbackInitializer) {
-            super(FunctionBuilder.start());
+        public EOF(BFMethodWithExtras<EOF> callbackInitializer, String lib) {
+            super(lib);
             this.callbackInitializer = callbackInitializer;
         }
 
@@ -81,11 +87,11 @@ public class CFClosures {
         }
     }
 
-    public static class Input extends BaseFunction {
+    public static class Input extends CFClosure<Input> {
         BFMethodToSupplier<?> readStreamSupplier;
 
-        public Input(BFMethodToSupplier<?> rss) {
-            super(FunctionBuilder.start());
+        public Input(BFMethodToSupplier<?> rss, String lib) {
+            super(lib);
             this.readStreamSupplier = rss;
         }
 
@@ -120,11 +126,11 @@ public class CFClosures {
         }
     }
 
-    public static class Output extends BaseFunction {
+    public static class Output extends CFClosure<Output> {
         BFMethodToConsumer<ArrayList<Object>> writeStreamConsumer;
 
-        public Output(BFMethodToConsumer<ArrayList<Object>> wsc) {
-            super(FunctionBuilder.start());
+        public Output(BFMethodToConsumer<ArrayList<Object>> wsc, String lib) {
+            super(lib);
             this.writeStreamConsumer = wsc;
         }
 
@@ -145,10 +151,10 @@ public class CFClosures {
         }
     }
 
-    public static class Flush extends BaseFunction {
+    public static class Flush extends CFClosure<Flush> {
         Closeable cls;
-        public Flush(Closeable cls) {
-            super(FunctionBuilder.start());
+        public Flush(Closeable cls, String lib) {
+            super(lib);
             this.cls = cls;
         }
 
@@ -161,16 +167,16 @@ public class CFClosures {
         }
     }
 
-    public static class Close extends BaseFunction {
+    public static class Close extends CFClosure<Close> {
         UUID resourceId, secondResource;
         Socket socket = null;
-        public Close(UUID resourceId) {
-            super(FunctionBuilder.start());
+        public Close(UUID resourceId, String lib) {
+            super(lib);
             this.resourceId = resourceId;
             this.secondResource = null;
         }
-        public Close(UUID inputId, UUID outputId) {
-            super(FunctionBuilder.start());
+        public Close(UUID inputId, UUID outputId, String lib) {
+            super(lib);
             this.resourceId = inputId;
             this.secondResource = outputId;
         }
@@ -227,17 +233,17 @@ public class CFClosures {
     }
 
 
-    public static class Closed extends BaseFunction {
+    public static class Closed extends CFClosure<Closed> {
         private BFMethodWithExtras<Closed> callbackInitializer = null;
         private BFMethodComposition callback = null;
         boolean closed = false;
 
-        public Closed() {
-            super(FunctionBuilder.start());
+        public Closed(String lib) {
+            super(lib);
         }
 
-        public Closed(BFMethodWithExtras<Closed> callbackInitializer) {
-            super(FunctionBuilder.start());
+        public Closed(BFMethodWithExtras<Closed> callbackInitializer, String lib) {
+            super(lib);
             this.callbackInitializer = callbackInitializer;
         }
 

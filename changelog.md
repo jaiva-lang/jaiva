@@ -28,3 +28,4 @@ Literlaly just plumbing
   - New `net/const` (Constants for tcp and future net libs)
   - New `net/interf` (Network interfaces)
   - New `net/interf/query` (Querying properties of network interface array)
+- Refactor scope

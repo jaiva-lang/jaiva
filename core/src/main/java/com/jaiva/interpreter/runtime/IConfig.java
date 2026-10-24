@@ -3,6 +3,7 @@ package com.jaiva.interpreter.runtime;
 import com.jaiva.Config;
 import com.jaiva.Main;
 import com.jaiva.errors.Warnings;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -45,7 +46,7 @@ public class IConfig<T> extends Config {
      * @param currentFilePath The path of the current file being interpreted.
      * @throws NullPointerException if {@code currentFilePath} or {@code jSrc} is
      */
-    public IConfig(String[] args, String currentFilePath) {
+    public IConfig(@NotNull String[] args, String currentFilePath) {
         super();
         this.args = args;
         for (String arg : args) {
@@ -62,7 +63,7 @@ public class IConfig<T> extends Config {
                 sanitisedArgs.add(arg);
             }
         }
-        Path path = Path.of(currentFilePath != null ? currentFilePath : "");
+        Path path = Path.of(currentFilePath != null ? currentFilePath : "").toAbsolutePath();
         filePath = path;
         fileDirectory = path.getParent();
         globalResources = new GlobalResources(
@@ -95,7 +96,7 @@ public class IConfig<T> extends Config {
      *                        command.
      * @param currentFilePath The path of the current file being interpreted.
      */
-    public IConfig(ArrayList<String> args, String currentFilePath) {
+    public IConfig(@NotNull ArrayList<String> args, String currentFilePath) {
         this(args.toArray(new String[0]), currentFilePath);
     }
 

@@ -60,6 +60,7 @@ public class MathContainer extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_gcd")
+                            .setLib("math/base")
                             .arguments(Arguments.getInstance().addVarArg(
                                     new AVarArgument("nums", "Variable amount of numbers to calculate the greatest common divisor of")
                             ))
@@ -103,6 +104,7 @@ public class MathContainer extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_lcm")
+                            .setLib("math/base")
                             .arguments(Arguments.getInstance().addVarArg(
                                     new AVarArgument("nums", "Variable amount of numbers to calculate the lowest common multiple of")
                             ))

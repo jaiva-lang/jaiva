@@ -14,6 +14,7 @@ scope("strict")! @ This freezes all the functions, and elevates all warnings to 
         <| Separator for colonize loops
         "description" and "path" variables that the markdown output cares about
     v6.1.0: shorthand ifs
+    v6.2.0: tseaf global function for importing a single symbol
 }
 
 @* arrays
@@ -36,11 +37,8 @@ maak description!
 @*          $> khuluma(a_remove(arr, 0))! @ Returns [1, 2, 3, 4, 5]
 @*          $> khuluma(a_remove(arr, 5))! @ Returns []
 kwenza *a_remove(arr, n) ->
-    if (typeOf(arr) != "array") ->
-        cima <== "a_remove() only works on arrays"!
-    <~ mara if (typeOf(n) != "number" || n < 0) ->
-        cima <== "a_remove()'s second argument must be a non-negative number"!
-    <~
+    sif (typeOf(arr) != "array") ?> cima <== "a_remove() only works on arrays"!
+    sif (typeOf(n) != "number" || n < 0) ?> cima <== "a_remove()'s second argument must be a non-negative number"!
     maak returnValue <-|!
     colonize (i <- 0 <| i < arr~ - n <| +) ->
         returnValue <- arrLit(returnValue:::, arr[i])!
@@ -62,7 +60,6 @@ kwenza *a_pop(array) ->
     sif (typeOf(array) != "array") ?> cima <== "a_pop() only works on arrays"!
     khutla a_remove(array, 1)!
 <~
-
 
 @* Appends an element to the end of an array and returns the new array.
 @* p        $> arr <- [] The original array
@@ -128,11 +125,8 @@ kwenza *a_unshift(arr, element) ->
 @*          $> khuluma(a_shift(arr, 0))! @ Returns [1, 2, 3, 4, 5]
 @*          $> khuluma(a_shift(arr, 5))! @ Returns []
 kwenza *a_shift(arr, n) ->
-    if (typeOf(arr) != "array") ->
-        cima <== "a_shift() only works on arrays"!
-    <~ mara if (typeOf(n) != "number" || n < 0) ->
-        cima <== "a_shift()'s second argument must be a non-negative number"!
-    <~
+    sif (typeOf(arr) != "array") ?> cima <== "a_shift() only works on arrays"!
+    sif (typeOf(n) != "number" || n < 0) ?> cima <== "a_shift()'s second argument must be a non-negative number"!
     maak returnValue <-|!
     colonize (i <- 0 <| i < arr~ <| +) ->
         sif (n > i) ?> nevermind!
@@ -141,26 +135,27 @@ kwenza *a_shift(arr, n) ->
     khutla returnValue!
 <~
 
-
 @* Filter an array based on a predicate function
 @* p        $> arr <- [] The original array
-@* p        $> predicate <- F~any A function that takes an element and returns true
+@* p        $> predicate <- F~any A function that takes an element and additional parameters and returns a boolean.
 @* returns  $> A new array with elements that satisfy the predicate function.
-@* devn     $> The predicate function must take in 1 parameter, the element and return a boolean.
+@* devn     $> The predicate function must take in at least 1 parameter, which is the input element.
+@*          $> The function can then further take in an index as parameter 2, and the original array at parameter 3
+@*          $> and should return a boolean.
 @*          $> Throws if the first argument is not an array or if the second argument is not a function.
 @* since    $> 1.0.0-beta.3
 @* example  $> maak arr <-| 1, 2, 3, 4, 5, 6!
 @*          $> maak isEven <- f~(num) : num % 2 = 0! @ A lambda function to check if a number is even
 @*          $> khuluma(a_filter(arr, isEven))! @ Returns [2, 4, 6]
+@*          $> @ Filter for elements who's index is even.
+@*          $> khuluma(a_filter(arr, f~(num, index) : index % 2 = 0)!
 kwenza *a_filter(arr, F~predicate) ->
-    if (typeOf(arr) != "array") ->
-        cima <== "a_filter() only works on arrays"!
-    <~ mara if (typeOf(predicate) != "function") ->
-        cima <== "a_filter()'s second argument must be a function"!
-    <~
+    sif (typeOf(arr) != "array") ?> cima <== "a_filter() only works on arrays"!
+    sif (typeOf(predicate) != "function") ?> cima <== "a_filter()'s second argument must be a function"!
     maak empty <-|!
-    colonize (element with arr) ->
-        sif (predicate(element);) ?> empty <- arrLit(empty:::, element)!
+    colonize (i <- 0 <| i < arr~ <| +) ->
+        maak element <- arr[i]!
+        sif (predicate(element, i, arr);) ?> empty <- arrLit(empty:::, element)!
     <~
     khutla empty!
 <~
@@ -168,16 +163,15 @@ kwenza *a_filter(arr, F~predicate) ->
 @* Replace an element at a specific index in an array with a new element
 @* p        $> arr <- [] The original array
 @* p        $> i <- number The index to replace
-@* p        $> el <- any The new element to insert
+@* p        $> el? <- any The new element to insert (Can be idk)
 @* returns  $> A new array with the element at index i replaced with el
 @* devn     $> Throws if the first argument is not an array or if the index is out of bounds.
 @* since    $> 3.0.0
 @* example  $> maak arr <-| 1, 2, 3, 4, 5!
 @*          $> khuluma(a_replace(arr, 2, 99))! @ Returns [1, 2, 99, 4, 5]
-kwenza *a_replace(arr, i, el) ->
-    if (typeOf(arr) != "array") ->
-        cima <== "a_replace() only works on arrays"!
-    <~ mara if (typeOf(i) != "number" || i < 0 || i >= arr~) ->
+kwenza *a_replace(arr, i, el?) ->
+    sif (typeOf(arr) != "array") ?> cima <== "a_replace() only works on arrays"!
+    if (typeOf(i) != "number" || i < 0 || i >= arr~) ->
         maak str <- (typeOf(i) = "number" => ( i >= arr~ => "i >= arr~" however "i < 0" ) however "i != number")!
         cima <== "a_replace()'s second argument must be a valid index " + str!
     <~
@@ -203,9 +197,8 @@ kwenza *a_replace(arr, i, el) ->
 @* example  $> maak arr <-| 1, 2, 3, 4, 5!
 @*          $> khuluma(a_delete(arr, 2))! @ Returns [1, 2, 4, 5]
 kwenza *a_delete(arr, i) ->
-    if (typeOf(arr) != "array") ->
-        cima <== "a_delete() only works on arrays"!
-    <~ mara if (typeOf(i) != "number" || i < 0 || i >= arr~) ->
+    sif (typeOf(arr) != "array") ?> cima <== "a_delete() only works on arrays"!
+    if (typeOf(i) != "number" || i < 0 || i >= arr~) ->
         maak str <- (typeOf(i) = "number" => ( i >= arr~ => "i >= arr~" however "i < 0" ) however "i != number")!
         cima <== "a_delete()'s second argument must be a valid index " + str!
     <~
@@ -222,7 +215,7 @@ kwenza *a_delete(arr, i) ->
 
 @* Finds the first occurrence of an element in an array and returns its index
 @* p        $> arr <- [] The original array
-@* p        $> el <- any The element to find
+@* p        $> el? <- any The element to find
 @* returns  $> The index of the first occurrence of el in arr, or idk if not found
 @* devn     $> This uses the search first approach, it may not be the most efficient way to do this, but it works.
 @*          $> Throws if the input is not an array.
@@ -231,7 +224,7 @@ kwenza *a_delete(arr, i) ->
 @*          $> khuluma(a_indexOf(arr, "banana"))! @ Returns 1
 @*          $> khuluma(a_indexOf(arr, "date"))! @ Returns 3
 @*          $> khuluma(a_indexOf(arr, "fig"))! @ Returns idk
-kwenza *a_indexOf(arr, el) ->
+kwenza *a_indexOf(arr, el?) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_indexOf() only works on arrays"!
     colonize (index <- 0 <| index < arr~ <| +) ->
         sif (arr[index] = el) ?> khutla index!
@@ -275,11 +268,8 @@ kwenza *a_reverse(arr) ->
 @*          $> a_reduce(arr)!
 @*          $> |> sumReducer! @ Returns 10
 kwenza *a_reduce(arr, F~reducer, initial?) ->
-    if (typeOf(arr) != "array") ->
-        cima <== "a_reduce() only works on arrays"!
-    <~ mara if (typeOf(reducer) != "function") ->
-        cima <== "a_reduce()'s second argument must be a function"!
-    <~
+    sif (typeOf(arr) != "array") ?> cima <== "a_reduce() only works on arrays"!
+    sif (typeOf(reducer) != "function") ?> cima <== "a_reduce()'s second argument must be a function"!
     maak accumulator <- initial!
     colonize (element with arr) ->
         if (accumulator?) ->
@@ -294,23 +284,24 @@ kwenza *a_reduce(arr, F~reducer, initial?) ->
 
 @* Transforms every element in an array using a provided function.
 @* p        $> arr <- [] The original array to map over.
-@* p        $> mapperFunction <- F~any A function that takes one element and returns its transformed value.
+@* p        $> mapperFunction <- F~any A function that takes the element and additional parameters
+@*          $> and returns its transformed value.
 @* returns  $> A new array populated with the results of calling the mapperFunction on every element.
 @* since    $> 4.1.1
-@* devn     $> The mapperFunction must take in 1 parameter (the element).
+@* devn     $> The mapper function must take in at least 1 parameter, which is the input element.
+@*          $> The function can then further take in an index as parameter 2, and the original array at parameter 3
+@*          $> and should return a new transformed version.
 @*          $> Throws if the first argument is not an array or if the second argument is not a function.
 @* example  $> maak arr <-| 1, 2, 3, 4!
 @*          $> maak square <- f~(num) : num * num! @ A lambda function to square a number
 @*          $> khuluma(a_map(arr, square))! @ Returns [1, 4, 9, 16]
 kwenza *a_map(arr, F~mapperFunction) ->
-    if (typeOf(arr) != "array") ->
-        cima <== "a_map() only works on arrays"!
-    <~ mara if (typeOf(mapperFunction) != "function") ->
-        cima <== "a_map()'s second argument must be a function"!
-    <~
+    sif (typeOf(arr) != "array") ?> cima <== "a_map() only works on arrays"!
+    sif (typeOf(mapperFunction) != "function") ?> cima <== "a_map()'s second argument must be a function"!
     maak new <-|!
-    colonize (el with arr) ->
-        new <- arrLit(new:::, mapperFunction(el))!
+    colonize (i <- 0 <| i < arr~ <| +) ->
+        maak el <- arr[i]!
+        new <- arrLit(new:::, mapperFunction(el, i, arr))!
     <~
     khutla new!
 <~
@@ -328,8 +319,6 @@ kwenza *a_map(arr, F~mapperFunction) ->
 kwenza *a_from(input, split?) ->
     @ Should probably not do this, but we need type conversions, so import types
     sif (typeOf(input) != "string") ?> cima <== "a_from() only works on strings"!
-
-    tsea "jaiva/types" <- t_str!
 
     @ Spread syntax to convert string to array of characters.
     sif ((split?) || (split = "")) ?> khutla arrLit(input:::)!
@@ -350,7 +339,7 @@ kwenza *a_from(input, split?) ->
         khutla arrLit(arr:::, current)! @ Add the last part
     <~
 
-    split <- t_str(split)! @ Whatever it is, convert to string first.
+    split <- tseaf("jaiva/types", "t_str")(split)! @ Whatever it is, convert to string first.
 
     colonize (part with input) ->
         if (part != split) ->
@@ -367,22 +356,21 @@ kwenza *a_from(input, split?) ->
 
 @* Applies the given function to each element in the array
 @* p        $> arr <- [] The original array to go over.
-@* p        $> function <- F~any A function that takes one element and shouldn't return really.
+@* p        $> function <- F~any A function that takes one element and extra parameters and shouldn't return really.
 @* returns  $> idk
 @* since    $> 5.1.0
-@* devn     $> The function must take in 1 parameter (the element).
+@* devn     $> The function must take in at least 1 parameter (the element).
+@*          $> and can optionally take in at the 2nd parameter an index, and at the third the original array.
 @*          $> Throws if the first argument is not an array or if the second argument is not a function.
 @* example  $> maak arr <-| 1, 2, 3, 4!
 @*          $> maak square <- f~(num) : khuluma(num * num)! @ A lambda function to print the square a number
 @*          $> a_forEach(arr, square)! @ Will print the squares.
 kwenza *a_forEach(arr, F~function) ->
-    if (typeOf(arr) != "array") ->
-        cima <== "a_forEach() only works on arrays"!
-    <~ mara if (typeOf(function) != "function") ->
-        cima <== "a_forEach()'s second argument must be a function"!
-    <~
-    colonize (el with arr) ->
-        function(el)!
+    sif (typeOf(arr) != "array") ?>  cima <== "a_forEach() only works on arrays"!
+    sif (typeOf(function) != "function") ?> cima <== "a_forEach()'s second argument must be a function"!
+    colonize (i <- 0 <| i < arr~ <| +) ->
+        maak el <- arr[i]!
+        function(el, i, arr)!
     <~
     @ No khutla, implicit returns idk anyways.
 <~
@@ -425,4 +413,79 @@ kwenza *a_apply(<-params) ->
     <~
 
     khutla arr!
+<~
+
+
+@* Finds the first element which pass the given predicate.
+@* p        $> arr <- [] The original array
+@* p        $> predicate <- F~any A function that takes an element and additional parameters and returns true
+@* returns  $> The first element which passes the predicate. Otherwise idk.
+@* devn     $> The predicate function must take in at least 1 parameter, which is the input element.
+@*          $> The function can then further take in an index as parameter 2, and the original array at parameter 3
+@*          $> and should return a boolean.
+@*          $> Throws if the first argument is not an array or if the second argument is not a function.
+@* since    $> 6.2.0
+@* example  $> maak filt <- f~(el, index, arr) : el ? "e" !
+@*          $> khuluma(a_findFirst(reservedKeywords, filt))!
+@*          $> { (At the time of writing this) the output should be
+@*          $> "yebo"
+@*          $> }
+kwenza *a_findFirst(arr, F~predicate) ->
+    sif (typeOf(arr) != "array") ?> cima <== "a_findFirst() only works on arrays"!
+    sif (typeOf(predicate) != "function") ?>  cima <== "a_findFirst()'s second argument must be a function"!
+    colonize (i <- 0 <| i < arr~ <| +) ->
+        maak element <- arr[i]!
+        sif (predicate(element, i, arr);) ?> khutla element!
+    <~
+    khutla idk!
+<~
+
+@* Finds the last element which pass the given predicate.
+@* p        $> arr <- [] The original array
+@* p        $> predicate <- F~any A function that takes an element and additional parameters and returns true
+@* returns  $> The last element which passes the predicate. Otherwise idk.
+@* devn     $> The predicate function must take in at least 1 parameter, which is the input element.
+@*          $> The function can then further take in an index as parameter 2, and the original array at parameter 3
+@*          $> and should return a boolean.
+@*          $> Throws if the first argument is not an array or if the second argument is not a function.
+@* since    $> 6.2.0
+@* example  $> maak filt <- f~(el, index, arr) : el ? "e" !
+@*          $> khuluma(a_findLast(reservedKeywords, filt))!
+@*          $> { (At the time of writing this) the output should be
+@*          $> "false"
+@*          $> }
+kwenza *a_findLast(arr, F~predicate) ->
+    sif (typeOf(arr) != "array") ?> cima <== "a_findLast() only works on arrays"!
+    sif (typeOf(predicate) != "function") ?>  cima <== "a_findLast()'s second argument must be a function"!
+    colonize (i <- arr~ - 1 <| i > 0 <| -) ->
+        maak element <- arr[i]!
+        sif (predicate(element, i, arr);) ?> khutla element!
+    <~
+    khutla idk!
+<~
+
+
+@* Finds all the elements which pass the given predicate.
+@* p        $> arr <- [] The original array
+@* p        $> predicate <- F~any A function that takes an element and additional parameters and returns true
+@* returns  $> An array containing all the elements which pass the predicate. Otherwise an empty array
+@* devn     $> The predicate function must take in at least 1 parameter, which is the input element.
+@*          $> The function can then further take in an index as parameter 2, and the original array at parameter 3
+@*          $> and should return a boolean.
+@*          $> Throws if the first argument is not an array or if the second argument is not a function.
+@* since    $> 6.2.0
+@* example  $> maak filt <- f~(el, index, arr) : el ? "e" !
+@*          $> khuluma(a_find(reservedKeywords, filt))!
+@*          $> { (At the time of writing this) the output should be
+@*          $> ["yebo", "kwenza", "colonize", "voetsek", "nevermind", "tsea", "tšea", "however", "true", "false"]
+@*          $> }
+kwenza *a_find(arr, F~predicate) ->
+    sif (typeOf(arr) != "array") ?> cima <== "a_find() only works on arrays"!
+    sif (typeOf(predicate) != "function") ?>  cima <== "a_find()'s second argument must be a function"!
+    maak collect <-|!
+    colonize (i <- 0 <| i < arr~ <| +) ->
+        maak element <- arr[i]!
+        sif (predicate(element, i, arr);) ?> collect <- arrLit(collect:::, element)!
+    <~
+    khutla collect!
 <~

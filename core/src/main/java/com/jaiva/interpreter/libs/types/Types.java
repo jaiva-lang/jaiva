@@ -38,6 +38,7 @@ public class Types extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("t_num")
+                            .setLib("types")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(
@@ -151,6 +152,7 @@ public class Types extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("t_str")
+                            .setLib("types")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(

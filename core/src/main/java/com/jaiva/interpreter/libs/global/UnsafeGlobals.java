@@ -36,6 +36,7 @@ public class UnsafeGlobals extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("linker")
+                            .setLib("global")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(new AArgument("a", "The symbol which holds the MapValue to be linked.", false, Argument.Type.ANY))
@@ -110,6 +111,7 @@ public class UnsafeGlobals extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("tseaf")
+                            .setLib("global")
                             .arguments(Arguments.getInstance()
                                     .add(new AArgument("path", "The path to import from.", false, Argument.Type.STRING))
                                     .add(new AArgument("symbol", "The symbol to import from. This can either be a string, or a non-existing variable reference.", false, Argument.Type.STRING))

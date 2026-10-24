@@ -38,6 +38,7 @@ public class MathTrig extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_sin")
+                            .setLib("math/trig")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("value", "The value in radians", false, Argument.Type.NUMBER)
                             ))
@@ -81,6 +82,7 @@ public class MathTrig extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_cos")
+                            .setLib("math/trig")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("value", "The value in radians", false, Argument.Type.NUMBER)
                             ))
@@ -124,6 +126,7 @@ public class MathTrig extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_tan")
+                            .setLib("math/trig")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("value", "The value in radians", false, Argument.Type.NUMBER)
                             ))
@@ -167,6 +170,7 @@ public class MathTrig extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_asin")
+                            .setLib("math/trig")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("value", "The value in radians", false, Argument.Type.NUMBER)
                             ))
@@ -212,6 +216,7 @@ public class MathTrig extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_acos")
+                            .setLib("math/trig")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("value", "The value in radians", false, Argument.Type.NUMBER)
                             ))
@@ -256,6 +261,7 @@ public class MathTrig extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_atan")
+                            .setLib("math/trig")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("value", "The value in radians", false, Argument.Type.NUMBER)
                             ))
@@ -298,6 +304,7 @@ public class MathTrig extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_toRad")
+                            .setLib("math/trig")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("degrees", "The value in degrees", false, Argument.Type.NUMBER)
                             ))
@@ -345,6 +352,7 @@ public class MathTrig extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_toDeg")
+                            .setLib("math/trig")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("radians", "The value in radians", false, Argument.Type.NUMBER)
                             ))
@@ -383,6 +391,7 @@ public class MathTrig extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("m_atan2")
+                            .setLib("math/trig")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument("y", "The y-coordinate", false, Argument.Type.NUMBER)
                             ).add(

@@ -96,7 +96,7 @@ public class InterpreterException extends JaivaException {
      * @param message    Message to send.
      */
     public InterpreterException(Scope ct, int lineNumber, String message) {
-        super(AnsiColour.print(message, AnsiColour.FORE.RED) + "\n" + AnsiColour.print(ct.toString(), AnsiColour.FORE.YELLOW), lineNumber);
+        super(AnsiColour.print(message, AnsiColour.FORE.RED) + "\n" + AnsiColour.print(ct.toString(), AnsiColour.FORE.BRIGHT_YELLOW), lineNumber);
         scopeTrace = ct;
     }
 

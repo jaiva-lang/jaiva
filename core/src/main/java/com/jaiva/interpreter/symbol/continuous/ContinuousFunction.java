@@ -127,12 +127,14 @@ public class ContinuousFunction<I extends Closeable, O extends Closeable> extend
             BFMethodToSupplier<?> readStreamSupplier,
             BFMethodToConsumer<ArrayList<Object>> writeStreamConsumer,
             CFClosures.EOF eofClosure,
-            CFClosures.Closed closedClosure
+            CFClosures.Closed closedClosure,
+            String lib
     ) {
         super(
                 // docs wont matter here, all the stuff here is purely to create
                 // the TFunction token.
                 FunctionBuilder.start()
+                        .setLib(lib)
                         .name("continuousFunction")
                         .arguments(Arguments.getInstance().add(
                                 new AArgument(
@@ -147,51 +149,55 @@ public class ContinuousFunction<I extends Closeable, O extends Closeable> extend
         this.outputCloseable = outputCloseable;
         this.continuousFunctionType = continuousFunctionType;
 
-        inputStreamClosure = new CFClosures.Input(readStreamSupplier);
-        outputStreamClosure = new CFClosures.Output(writeStreamConsumer);
+        inputStreamClosure = new CFClosures.Input(readStreamSupplier, lib);
+        outputStreamClosure = new CFClosures.Output(writeStreamConsumer, lib);
         closeClosure =
                 continuousFunctionType != ContinuousFunctionType.BOTH ?
         new CFClosures.Close(
                 config.getGlobalResources().ofCurrentThread().addResource(
                         continuousFunctionType == ContinuousFunctionType.INPUT ?
                                 inputCloseable : outputCloseable
-                )
+                ), lib
         ) : new CFClosures.Close(
                         config.getGlobalResources().ofCurrentThread().addResource(inputCloseable),
-                        config.getGlobalResources().ofCurrentThread().addResource(outputCloseable)
+                        config.getGlobalResources().ofCurrentThread().addResource(outputCloseable),
+                        lib
                 );
-        flushClosure = new CFClosures.Flush(outputCloseable);
+        flushClosure = new CFClosures.Flush(outputCloseable, lib);
         this.eofClosure = eofClosure;
         this.closedClosure = closedClosure;
     }
 
     @NotNull
-    @Contract("_, _, _, _ -> new")
+    @Contract("_, _, _, _ , _-> new")
     public static <T extends InputStream, R extends Closeable> ContinuousFunction<T, R> from(
             IConfig<Object> config, T inputStream,
             BFMethodToSupplier<?> inputStreamConsumer,
-            CFClosures.EOF eofClosure
+            CFClosures.EOF eofClosure,
+            String lib
     ) {
-        return new ContinuousFunction<T, R>(config, inputStream, null, ContinuousFunctionType.INPUT, inputStreamConsumer, null, eofClosure, new CFClosures.Closed());
+        return new ContinuousFunction<T, R>(config, inputStream, null, ContinuousFunctionType.INPUT, inputStreamConsumer, null, eofClosure, new CFClosures.Closed(lib), lib);
     }
 
     @NotNull
-    @Contract("_, _, _ -> new")
+    @Contract("_, _, _, _ -> new")
     public static <T extends OutputStream, R extends Closeable> ContinuousFunction<R, T> from(
             IConfig<Object> config, T outputStream,
-            BFMethodToConsumer<ArrayList<Object>> outputStreamConsumer
+            BFMethodToConsumer<ArrayList<Object>> outputStreamConsumer,
+            String lib
     ) {
-        return new ContinuousFunction<>(config, null, outputStream, ContinuousFunctionType.OUTPUT, null, outputStreamConsumer, new CFClosures.EOF(), new CFClosures.Closed());
+        return new ContinuousFunction<>(config, null, outputStream, ContinuousFunctionType.OUTPUT, null, outputStreamConsumer, new CFClosures.EOF(lib), new CFClosures.Closed(lib), lib);
     }
 
     @NotNull
-    @Contract("_,_,_,_,_,_,_ -> new")
+    @Contract("_,_,_,_,_,_,_, _ -> new")
     public static <T extends InputStream, R extends OutputStream> ContinuousFunction<T, R> from(
             IConfig<Object> config, T inputStream, R outputStream,
             BFMethodToSupplier<?> inputStreamSupplier,
             BFMethodToConsumer<ArrayList<Object>> outputStreamConsumer,
             CFClosures.EOF eofClosure,
-            CFClosures.Closed closedClosure
+            CFClosures.Closed closedClosure,
+            String lib
     ) {
         return new ContinuousFunction<>(
                 config, inputStream, outputStream,
@@ -199,7 +205,8 @@ public class ContinuousFunction<I extends Closeable, O extends Closeable> extend
                 inputStreamSupplier,
                 outputStreamConsumer,
                 eofClosure,
-                closedClosure
+                closedClosure,
+                lib
         );
     }
 

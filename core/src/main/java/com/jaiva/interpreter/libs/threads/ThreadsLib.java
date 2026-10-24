@@ -34,6 +34,7 @@ public class ThreadsLib extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("thread")
+                            .setLib("threads")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(

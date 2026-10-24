@@ -36,6 +36,7 @@ public class Numbers extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("t_dToIEEE754Long")
+                            .setLib("types/numbers")
                             .arguments(
                                     Arguments.getInstance().add(
                                             new AArgument(
@@ -76,6 +77,7 @@ public class Numbers extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("t_lToIEEE754Double")
+                            .setLib("types/numbers")
                             .arguments(
                                     Arguments.getInstance().add(
                                             new AArgument(
@@ -116,6 +118,7 @@ public class Numbers extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("t_strFromByteArr")
+                            .setLib("types/numbers")
                             .arguments(
                                     Arguments.getInstance().addVarArg(
                                             new AVarArgument(
@@ -172,6 +175,7 @@ public class Numbers extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("t_strToByteArr")
+                            .setLib("types/numbers")
                             .arguments(
                                     Arguments.getInstance().add(
                                             new AArgument(

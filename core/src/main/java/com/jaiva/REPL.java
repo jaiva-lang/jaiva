@@ -178,7 +178,7 @@ public class REPL {
      * Tokenizer configuration object.
      * It contains the configuration for the tokenizer.
      */
-    private final TConfig tConfig = new TConfig();
+    private final TConfig tConfig = new TConfig("REPL");
     // private Token<?> tokenContainer = new Token<>(null);
 
     /**

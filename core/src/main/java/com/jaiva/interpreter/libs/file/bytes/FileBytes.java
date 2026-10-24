@@ -70,8 +70,8 @@ public class FileBytes extends BaseLibrary {
                                                     maak cont <- f_cwriter("C:\\Users\\Wow\\myFile.jib")!
                                                     maak write <- cont(C_OUTPUT)!
                                                     
-                                                    write(W_UTF8, "What's Up Dawg??")!
-                                                    write(W_BYTE, 255)! @ Write 255 marker so we know where the UTF8 bytes end.
+                                                    write(F_W_UTF8, "What's Up Dawg??")!
+                                                    write(F_W_BYTE, 255)! @ Write 255 marker so we know where the UTF8 bytes end.
                                                     
                                                     cont(C_FLUSH)()!
                                                     cont(C_CLOSE)()!
@@ -151,7 +151,8 @@ public class FileBytes extends BaseLibrary {
                             };
                             default -> doNothing;
                         };
-                    }
+                    },
+                    "file/bytes"
             );
         }
     }
@@ -192,15 +193,11 @@ public class FileBytes extends BaseLibrary {
                                                     maak collect <-|!
                                                 
                                                     nikhil (conf(C_EOF)()') ->
-                                                        maak byte <- read(R_BYTE)!
+                                                        maak byte <- read(F_R_BYTE)!
                                                 
-                                                        if (byte?) ->
-                                                            nevermind!
-                                                        <~
+                                                        sif (byte?) <? nevermind!
                                                 
-                                                        if (byte != 255) ->
-                                                            collect <- arrLit(collect:::, byte)!
-                                                        <~
+                                                        sif (byte != 255) ?> collect <- arrLit(collect:::, byte)!
                                                     <~
                                                 
                                                     conf(C_CLOSE)()!
@@ -230,7 +227,7 @@ public class FileBytes extends BaseLibrary {
 
             DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(f)));
 
-            CFClosures.EOF eof = new CFClosures.EOF();
+            CFClosures.EOF eof = new CFClosures.EOF("file/bytes");
 
             ThrowableSupplier<Object, IOException> unknown
                     = () -> Token.voidValue(callProperties.getLineNumber());
@@ -296,7 +293,8 @@ public class FileBytes extends BaseLibrary {
                             return unknown;
                         }
                     },
-                    eof
+                    eof,
+                    "file/bytes"
             );
         }
     }

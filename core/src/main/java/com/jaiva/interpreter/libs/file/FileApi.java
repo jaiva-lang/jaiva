@@ -234,6 +234,7 @@ public class FileApi extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_file")
+                            .setLib("file/api")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(
@@ -330,6 +331,7 @@ public class FileApi extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_new")
+                            .setLib("file/api")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(new AArgument(

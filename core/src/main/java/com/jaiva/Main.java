@@ -413,7 +413,7 @@ public class Main {
         }
         String previousLine = "";
         String comment = null;
-        TConfig config = new TConfig();
+        TConfig config = new TConfig(myObj.getAbsoluteFile().toPath());
         int lineNum = 1;
         while (scanner.hasNextLine()) {
             String line = (b != null ? b.currentLine() : scanner.nextLine());

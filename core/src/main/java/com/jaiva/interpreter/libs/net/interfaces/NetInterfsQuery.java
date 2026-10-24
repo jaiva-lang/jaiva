@@ -110,6 +110,7 @@ public class NetInterfsQuery extends BaseLibrary {
                     new BaseFunction(
                             FunctionBuilder.start()
                                     .name(name)
+                                    .setLib("net/interf/query")
                                     .arguments(args)
                                     .docs(JDoc.builder()
                                             .sinceVersion("6.2.0")

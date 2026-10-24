@@ -6,6 +6,7 @@ import com.jaiva.errors.TokenizerException.CatchAllException;
 import com.jaiva.errors.TokenizerException.MalformedSyntaxException;
 import com.jaiva.lang.Chars;
 import com.jaiva.lang.Keywords;
+import com.jaiva.tokenizer.TConfig;
 import com.jaiva.tokenizer.tokens.specific.*;
 import com.jaiva.utils.Find;
 import com.jaiva.utils.Validate;
@@ -134,12 +135,12 @@ public record Token<T extends TokenDefault<?>>(T value) {
      * @param line given line.
      * @return an atomic token
      */
-    public static Object processContext(String line, int lineNumber) throws JaivaException {
+    public static Object processContext(String line, int lineNumber, TConfig config) throws JaivaException {
         line = line.trim(); // gotta trim da line fr
 
         ContextDispatcher d = new ContextDispatcher(line);
         if (d.getDeligation() == To.TEXPRESSION) {
-            return new TExpression(lineNumber).parse(line);
+            return new TExpression(lineNumber).parse(line, config);
         }
         int index = Find.lastOuterMostBracePairIndex(line);
 
@@ -147,7 +148,7 @@ public record Token<T extends TokenDefault<?>>(T value) {
             // the outmost pair is just () so its prolly a TStatement, remove the stuff then
             // parse as TStatement, if it isnt a TStatement,TStatement will route back here
             // anyways.
-            return new TExpression(lineNumber).parse(line.substring(1, line.length() - 1));
+            return new TExpression(lineNumber).parse(line.substring(1, line.length() - 1), config);
         }
 
         if (d.bits == ReservedCases.LAMBDA.code()) {
@@ -171,14 +172,15 @@ public record Token<T extends TokenDefault<?>>(T value) {
 
             // "f~  (bleh) : woot - 1" becomes "woot - 1"
             String implementation = line.substring(indexOfCol+1).trim();
-            return new TLambda(
+            TLambda lambda = new TLambda(
                     lambdaName,
                     args,
-                    processContext(implementation, lineNumber),
+                    processContext(implementation, lineNumber, config),
                     lineNumber
             );
+            lambda.setFileOrigin(config.getFileOrigin());
+            return lambda;
         }
-
         if (d.bits == ReservedCases.TERNARY.code()) {
             // 18 corresponds to the Ternary case from ContextDispatcher. See
             // ../utils/ContextDispatcher.md
@@ -188,14 +190,14 @@ public record Token<T extends TokenDefault<?>>(T value) {
             String c = line.substring(0, Find.lastIndexOf(line, Chars.TERNARY)).trim();
             String expressions = line.substring(Find.lastIndexOf(line, Chars.TERNARY) + 2).trim();
 
-            Object condition = new TExpression(lineNumber).parse(c.trim());
+            Object condition = new TExpression(lineNumber).parse(c.trim(), config);
             String expr1 = expressions.substring(0, Find.lastIndexOf(expressions, Keywords.TERNARY)).trim();
             String expr2 = expressions.substring(Find.lastIndexOf(
                             expressions, Keywords.TERNARY) + Keywords.TERNARY.length())
                     .trim();
 
-            return new TTernary(condition, processContext(expr1, lineNumber),
-                    processContext(expr2, lineNumber), lineNumber).toToken();
+            return new TTernary(condition, processContext(expr1, lineNumber, config),
+                    processContext(expr2, lineNumber, config), lineNumber).toToken();
         } else if (d.bits == ReservedCases.PARAMS_EXTENDOR.code()) {
             // remove 2 chars at the start
             line = line.substring(2).trim();
@@ -220,7 +222,7 @@ public record Token<T extends TokenDefault<?>>(T value) {
 
             ArrayList<Object> parsedArgs = new ArrayList<>();
             for (String arg : args) {
-                parsedArgs.add(processContext((String) arg, lineNumber));
+                parsedArgs.add(processContext((String) arg, lineNumber, config));
             }
             return new TExtendParams(parsedArgs, lineNumber).toToken();
         } else {
@@ -232,9 +234,9 @@ public record Token<T extends TokenDefault<?>>(T value) {
                 ArrayList<String> args = new ArrayList<>(Token.splitByTopLevelComma(params));
                 ArrayList<Object> parsedArgs = new ArrayList<>();
                 for (String arg : args) {
-                    parsedArgs.add(processContext((String) arg, lineNumber));
+                    parsedArgs.add(processContext((String) arg, lineNumber, config));
                 }
-                return new TFuncCall(processContext(simplifyIdentifier(name, "F~"), lineNumber), parsedArgs,
+                return new TFuncCall(processContext(simplifyIdentifier(name, "F~"), lineNumber, config), parsedArgs,
                         lineNumber, line.charAt(line.length() - 1) == Chars.LENGTH_CHAR,
                         line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD)).toToken();
             } else if (index != -1 && (line.charAt(index) == '[')) {
@@ -243,8 +245,8 @@ public record Token<T extends TokenDefault<?>>(T value) {
                 String name = line.substring(0, index).trim();
                 String arrayIndex = line.substring(index + 1, line.lastIndexOf("]")).trim();
                 return new TVarRef(
-                        processContext(simplifyIdentifier(name, "V~"), lineNumber),
-                        processContext(arrayIndex, lineNumber),
+                        processContext(simplifyIdentifier(name, "V~"), lineNumber, config),
+                        processContext(arrayIndex, lineNumber, config),
                         lineNumber,
                         line.charAt(line.length() - 1) == Chars.LENGTH_CHAR,
                         line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD)
@@ -298,13 +300,13 @@ public record Token<T extends TokenDefault<?>>(T value) {
      * @throws TokenizerException       If there is a syntax
      *                                  error.
      */
-    public static Object dispatchContext(String line, int lineNumber)
+    public static Object dispatchContext(String line, int lineNumber, TConfig config)
             throws JaivaException {
         line = line.trim();
         ContextDispatcher d = new ContextDispatcher(line);
         return switch (d.getDeligation()) {
-            case TEXPRESSION -> new TExpression(lineNumber).parse(line);
-            case PROCESS_CONTENT -> processContext(line, lineNumber);
+            case TEXPRESSION -> new TExpression(lineNumber).parse(line, config);
+            case PROCESS_CONTENT -> processContext(line, lineNumber, config);
             case SINGLE_BRACE, EMPTY_STRING ->
                     throw new MalformedSyntaxException("Okay so uhm, there's a malformed string somewhere there",
                             lineNumber);

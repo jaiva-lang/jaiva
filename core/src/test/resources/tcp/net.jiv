@@ -1,0 +1,23 @@
+tsea "jaiva/net"!
+tsea "jaiva/arrays"!
+
+khuluma(net_localIpv4())!
+
+maak filt <- a_filter(net_interfs())!
+    @ Ony fetch stuff that have an IPv4 and IPv6 list that are both not empty.
+    |> f~(el) : net_iAddrIpv4List(el)~ > 0 && net_iAddrIpv6List(el)~ > 0!
+
+khuluma(filt)!
+
+maak interf <- filt[2]!
+
+khuluma(net_iName(interf))!
+khuluma(net_iDisplayName(interf))!
+khuluma(net_iAddrMac(interf))!
+khuluma(net_iActive(interf))!
+khuluma(net_iLoopback(interf))!
+khuluma(net_iVirtual(interf))!
+khuluma(net_iAddrIpv4List(interf, true))!
+khuluma(net_iAddrIpv6List(interf, true))!
+khuluma(net_iAddrIpv4List(interf))!
+khuluma(net_iAddrIpv6List(interf))!

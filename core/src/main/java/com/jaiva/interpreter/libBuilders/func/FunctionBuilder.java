@@ -14,6 +14,7 @@ public class FunctionBuilder {
     private String name = "";
     private JDocBuilder builder = JDoc.builder();
     private Arguments arguments = new Arguments();
+    private String lib = "?";
 
     private FunctionBuilder() {
 
@@ -66,5 +67,14 @@ public class FunctionBuilder {
         } catch (JaivaException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public FunctionBuilder setLib(String lib){
+        this.lib = lib;
+        return this;
+    }
+
+    public String getLib() {
+        return lib;
     }
 }
