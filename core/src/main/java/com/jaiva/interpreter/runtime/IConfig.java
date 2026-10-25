@@ -32,6 +32,7 @@ public final class IConfig<T> extends Config {
     private Object callerValue;
     private boolean streamer = false;
     private final ArrayList<Warnings.Warning> warnings = new ArrayList<>();
+    private boolean jBundler = false;
 
     // ...add more interpreter settings.
 
@@ -73,6 +74,7 @@ public final class IConfig<T> extends Config {
     }
 
     public boolean isOutLivedMain() {
+        if (jBundler) return false;
         return outLivedMain;
     }
 
@@ -226,4 +228,7 @@ public final class IConfig<T> extends Config {
         return fileDirectory;
     }
 
+    public void setjBundler(boolean jBundler) {
+        this.jBundler = jBundler;
+    }
 }

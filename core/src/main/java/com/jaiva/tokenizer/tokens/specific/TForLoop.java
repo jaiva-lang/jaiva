@@ -72,9 +72,9 @@ public class TForLoop extends TokenDefault<TForLoop> implements TConstruct, TCon
 
     public void json() throws JaivaException {
         json.set("variable", variable);
-        json.set("arrayVariable", array);
+        json.nullSet("arrayVariable", array);
         json.set("condition", condition);
-        json.set("increment", increment);
+        json.nullSet("increment", increment);
         json.set("body", body);
     }
 

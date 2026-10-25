@@ -268,10 +268,14 @@ public final class Primitives {
                 } else {
                     // normal variable ref, return it
                     try {
-                        if (variable.s_get() instanceof String vs) return tVarRef.getLength() ? vs.length()
-                                : (index instanceof Integer newI) ? vs.charAt(newI) + "" : variable.s_get();
-                        else
-                            return variable.s_get();
+                        if (variable.isPreferArray() && variable.a_getAll() != null) {
+                            return tVarRef.getLength() ? variable.a_size() : index instanceof Integer i ? variable.a_get(i) : variable.a_getAll();
+                        } else {
+                            if (variable.s_get() instanceof String vs) return tVarRef.getLength() ? vs.length()
+                                    : (index instanceof Integer newI) ? vs.charAt(newI) + "" : variable.s_get();
+                            else
+                                return variable.s_get();
+                        }
 
                     } catch (IndexOutOfBoundsException e) {
                         // user gave an invalid index.

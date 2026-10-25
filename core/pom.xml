@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.jaiva</groupId>
         <artifactId>jaiva-parent</artifactId>
-        <version>7.0.0-beta.0</version>
+        <version>7.0.0-beta.1</version>
     </parent>
 
     <artifactId>core</artifactId>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>io.github.yetnt</groupId>
             <artifactId>ytils</artifactId>
-            <version>1.3.1</version>
+            <version>1.4.0</version>
         </dependency>
 
         <!-- Specifically for loading internal jaiva libraries so we don't have to define it everytime -->

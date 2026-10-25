@@ -2,7 +2,7 @@ package com.jaiva.full.painfile;
 
 import com.jaiva.test.Jaiva;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.jdoc.tags.Tag;
+import com.jaiva.tokenizer.jdoc.tags.DParameter;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.*;
 import org.junit.jupiter.api.Assertions;
@@ -97,16 +97,16 @@ public class PainFileTokenizerTests{
                 "My lovely function which replaces the odd character",
                 doc.getDescription().trim()
         );
-        ArrayList<Tag.DParameter> parameterDocs = doc.getParameters();
+        ArrayList<DParameter> parameterDocs = doc.getParameters();
         Assertions.assertEquals(2,  parameterDocs.size());
         // first param's doc
-        Tag.DParameter originalDoc = parameterDocs.getFirst();
+        DParameter originalDoc = parameterDocs.getFirst();
         Assertions.assertEquals("original", originalDoc.varName);
         Assertions.assertEquals("string", originalDoc.type);
         Assertions.assertFalse(originalDoc.optional);
         Assertions.assertEquals("The original text", originalDoc.desc);
         // second param's doc
-        Tag.DParameter cDoc = parameterDocs.getLast();
+        DParameter cDoc = parameterDocs.getLast();
         Assertions.assertEquals("c", cDoc.varName);
         Assertions.assertEquals("string", cDoc.type);
         Assertions.assertFalse(cDoc.optional);

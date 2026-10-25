@@ -74,8 +74,8 @@ public class TIfStatement extends TokenDefault<TIfStatement> implements TConstru
     public void json() throws JaivaException {
         json.set("condition", condition);
         json.set("body", body);
-        json.set("elseIfs", elseIfs != null && !elseIfs.isEmpty() ? elseIfs : null);
-        json.set("elseBody", elseBody !=  null ? elseBody.toJson() : null);
+        json.nullSet("elseIfs", elseIfs);
+        json.nullSet("elseBody", elseBody);
     }
 
     /**

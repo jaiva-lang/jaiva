@@ -2,7 +2,7 @@ package com.jaiva.tokenizer.jdoc;
 
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
-import com.jaiva.tokenizer.jdoc.tags.Tag;
+import com.jaiva.tokenizer.jdoc.tags.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +28,7 @@ public class JDocBuilder {
      * @return This JDocBuilder instance for method chaining.
      */
     public JDocBuilder addDesc(String str) {
-        tags.add(new Tag.DGeneric(str));
+        tags.add(new DGeneric(str));
         return this;
     }
 
@@ -42,7 +42,7 @@ public class JDocBuilder {
      * @return This JDocBuilder instance for method chaining.
      */
     public JDocBuilder addParam(String name, String type, String description, boolean optional) {
-        tags.add(new Tag.DParameter(name, type, description, optional));
+        tags.add(new DParameter(name, type, description, optional));
         return this;
     }
 
@@ -53,7 +53,7 @@ public class JDocBuilder {
      * @return This JDocBuilder instance for method chaining.
      */
     public JDocBuilder addReturns(String description) {
-        tags.add(new Tag.DReturns(description));
+        tags.add(new DReturns(description));
         return this;
     }
 
@@ -64,7 +64,7 @@ public class JDocBuilder {
      * @return This JDocBuilder instance for method chaining.
      */
     public JDocBuilder addNote(String note) {
-        tags.add(new Tag.DDevNote(note));
+        tags.add(new DDevNote(note));
         return this;
     }
 
@@ -75,7 +75,7 @@ public class JDocBuilder {
      * @return This JDocBuilder instance for method chaining.
      */
     public JDocBuilder addDependencies(String... dependencies) {
-        tags.add(new Tag.DDepends(dependencies));
+        tags.add(new DDepends(dependencies));
         return this;
     }
 
@@ -86,7 +86,7 @@ public class JDocBuilder {
      * @return This JDocBuilder instance for method chaining.
      */
     public JDocBuilder sinceVersion(String vers) {
-        tags.add(new Tag.DFrom(vers));
+        tags.add(new DFrom(vers));
         return this;
     }
 
@@ -97,7 +97,7 @@ public class JDocBuilder {
      * @return This JDocBuilder instance for method chaining.
      */
     public JDocBuilder markDeprecated(String reason) {
-        tags.add(new Tag.DDeprecated(reason));
+        tags.add(new DDeprecated(reason));
         return this;
     }
 
@@ -108,7 +108,7 @@ public class JDocBuilder {
      * @return This JDocBuilder instance for method chaining.
      */
     public JDocBuilder addExample(String example) {
-        tags.add(new Tag.DExample(new ArrayList<>(
+        tags.add(new DExample(new ArrayList<>(
                 Arrays.stream(example.split("\n")).toList()
         )));
         return this;
@@ -121,7 +121,7 @@ public class JDocBuilder {
      * @return This JDocBuilder instance for method chaining.
      */
     public JDocBuilder addExample(ArrayList<String> exampleLines) {
-        tags.add(new Tag.DExample(exampleLines));
+        tags.add(new DExample(exampleLines));
         return this;
     }
 

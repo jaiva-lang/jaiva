@@ -34,6 +34,7 @@ public class BaseVariable extends Symbol {
      * This value is used to determine if the variable is a scalar or an array type.
      */
     public VariableType variableType;
+    private boolean preferArray = false;
 
     /**
      * Update the variable type.
@@ -112,6 +113,14 @@ public class BaseVariable extends Symbol {
     public BaseVariable(String name) {
         super(name, SymbolType.VARIABLE);
         variableType = VariableType.UNKNOWN;
+    }
+
+    public void setPreferArray(boolean preferArray) {
+        this.preferArray = preferArray;
+    }
+
+    public boolean isPreferArray() {
+        return preferArray;
     }
 
     /**

@@ -6,6 +6,7 @@ import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.TVariable;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.TokenDefault;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -27,7 +28,7 @@ public class TArrayVar extends TokenDefault<TArrayVar> implements TVariable {
      * @param contents The contents of the variable.
      * @param ln       The line number.
      */
-    public TArrayVar(String name, ArrayList<Object> contents, int ln) {
+    public TArrayVar(@NotNull String name, ArrayList<Object> contents, int ln) {
         super(name.startsWith(Character.toString(Chars.EXPORT_SYMBOL)),
                 (name.startsWith(Character.toString(Chars.EXPORT_SYMBOL))
                         ? name.replaceFirst(Pattern.quote(Character.toString(Chars.EXPORT_SYMBOL)),

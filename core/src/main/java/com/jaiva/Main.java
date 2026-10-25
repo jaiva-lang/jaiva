@@ -62,7 +62,7 @@ public final class Main {
      * .<build number>"
      * (SemVar).
      */
-    public static String version = "7.0.0-beta.0";
+    public static String version = "7.0.0-beta.1";
     /**
      * Author, it's just me.
      */
@@ -444,7 +444,7 @@ public final class Main {
                             JDoc doc = new JDoc(lineNum, comment.trim());
                             l.tooltip = doc;
                             l.json.removeKey("toolTip");
-                            l.json.setJdoc("toolTip", doc);
+                            l.json.set("toolTip", doc);
                         }
                     }
                     comment = null;
@@ -478,7 +478,7 @@ public final class Main {
                         JDoc doc = new JDoc(t.lineNumber, comment.trim());
                         t.tooltip = doc;
                         t.json.removeKey("toolTip");
-                        t.json.setJdoc("toolTip", doc);
+                        t.json.set("toolTip", doc);
                         tokens.add(token);
                     } else {
                         tokens.add(token);

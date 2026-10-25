@@ -6,6 +6,8 @@ import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.tokenizer.tokens.Token;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,30 +64,33 @@ public final class JBundler {
     public <V> void execute(String filePath, V jaivaValue) throws Exception {
         ArrayList<Token<?>> tokens = Main.parseTokens(filePath, false);
         IConfig<Object> config = new IConfig<>(new ArrayList<>(List.of("jaiva")), filePath);
+        config.setjBundler(true);
         config.add(jaivaValue);
         Scope sc = new Scope(config, classes);
         Interpreter.interpret(tokens, sc, (IConfig<Object>) config);
     }
 
+    @NotNull
+    @Contract(value = " -> new", pure = true)
     public ArrayList<Token<?>> getTokens() {
         return new ArrayList<>(tokens);
     }
 
-    public ArrayList<Token<?>> tokenize() throws Exception {
+    public void tokenize() throws Exception {
         tokens = Main.parseTokens(filePath, false);
-        return getTokens();
     }
 
-    public <T> void  interpret(T obj) throws Exception {
-        IConfig<T> config = new IConfig<>(new ArrayList<>(List.of("jaiva")), filePath);
-        Scope scope = new Scope((IConfig<Object>) config, classes);
+    public void  interpret() throws Exception {
+        IConfig<Object> config = new IConfig<>(new ArrayList<>(List.of("jaiva")), filePath);
+        config.setjBundler(true);
+        Scope scope = new Scope(config, classes);
 
-        Interpreter.interpret(tokens, scope, (IConfig<Object>) config);
+        Interpreter.interpret(tokens, scope, config);
     }
 
-    public <T> void run(T obj) throws Exception {
+    public void run() throws Exception {
         tokenize();
-        interpret(obj);
+        interpret();
     }
 
     public static int getInstances() {

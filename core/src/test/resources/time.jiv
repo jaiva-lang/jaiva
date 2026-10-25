@@ -1,0 +1,102 @@
+maak now <- tseaf("jaiva/time", t_now)! @ When called returns System.currentTimeMillis()
+maak print <- f~(msg, k?) : khuluma(msg + (k? => ", " however " "), true)! @ small function to not add new line after output.
+
+kwenza infinity() ->
+    khutla infinity!
+<~
+
+colonize (i <- 1 <| i <= 20 <| i+1 ) ->
+    khuluma("depth " + i + (i != 20 => ", " however " "), true)!
+<~
+
+khuluma()!
+
+kwenza do() ->
+    maak then <- now()!
+    infinity()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()()()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()()()()()()()()()()()!
+    print(now() - then)!
+
+    then <- now()!
+    infinity()()()()()()()()()()()()()()()()()()()()!
+    print(now() - then, true)!
+
+    khuluma()!
+<~
+
+maak dataAmt <- 20!
+
+colonize (i <- 0 <| i < dataAmt <| +) ->
+    do()!
+<~

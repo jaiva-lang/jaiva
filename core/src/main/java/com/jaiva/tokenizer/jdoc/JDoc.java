@@ -1,17 +1,21 @@
 package com.jaiva.tokenizer.jdoc;
 
+import com.jaiva.errors.JaivaException;
 import com.jaiva.errors.TokenizerException;
 import com.jaiva.errors.TokenizerException.MalformedJDocException;
 import com.jaiva.lang.Chars;
+import com.jaiva.tokenizer.NewJson;
+import com.jaiva.tokenizer.jdoc.tags.DGeneric;
+import com.jaiva.tokenizer.jdoc.tags.DParameter;
 import com.jaiva.tokenizer.jdoc.tags.Tag;
 import com.jaiva.tokenizer.jdoc.tags.TagType;
-import com.yetnt.utils.builders.SimpleJSON;
+import com.yetnt.utils.builders.ToJSONList;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class JDoc {
+public class JDoc implements ToJSONList<NewJson, JaivaException> {
 
     public ArrayList<Tag> tags = new ArrayList<>();
 
@@ -94,11 +98,11 @@ public class JDoc {
         return new ArrayList<>();
     }
 
-    public ArrayList<Tag.DParameter> getParameters() {
-        ArrayList<Tag.DParameter> params = new ArrayList<>();
+    public ArrayList<DParameter> getParameters() {
+        ArrayList<DParameter> params = new ArrayList<>();
         for (Tag tag : tags) {
             if (tag.tagType == TagType.PARAMETER) {
-                params.add((Tag.DParameter) tag);
+                params.add((DParameter) tag);
             }
         }
         return params;
@@ -126,7 +130,7 @@ public class JDoc {
 
     public JDoc(int lineNumber, String input) throws TokenizerException {
         Scanner s = new Scanner(input);
-        Tag.DGeneric generics = new Tag.DGeneric("");
+        DGeneric generics = new DGeneric("");
         tags.add(generics);
 //        String previousLine = "";
         while (s.hasNextLine()) {
@@ -158,15 +162,16 @@ public class JDoc {
 //        return this;
     }
 
-    public ArrayList<Object> simpleJsonList() {
-        ArrayList<Object> json = new ArrayList<>();
-        tags.forEach(t -> json.add(new SimpleJSON(t.attributes)));
+    @Override
+    public ArrayList<NewJson> toJson() {
+        ArrayList<NewJson> json = new ArrayList<>();
+        tags.forEach(t -> json.add(t.toJson()));
         return json;
     }
 
     @Override
     public String toString() {
-        return tags.size() == 1 && tags.getFirst() instanceof Tag.DGeneric ?
+        return tags.size() == 1 && tags.getFirst() instanceof DGeneric ?
                 ("\"" + tags.getFirst().attributes.get("description") + "\"")
                 : tags.toString();
     }

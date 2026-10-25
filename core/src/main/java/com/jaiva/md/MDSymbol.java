@@ -5,7 +5,7 @@ import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.jdoc.tags.Tag;
+import com.jaiva.tokenizer.jdoc.tags.DParameter;
 import com.jaiva.tokenizer.tokens.specific.TBooleanVar;
 import com.jaiva.tokenizer.tokens.specific.TFunction;
 import com.jaiva.tokenizer.tokens.specific.TNumberVar;
@@ -195,7 +195,7 @@ public class MDSymbol {
 
         // write parameters
         if (doc.getParameters().size() > 1) lines.add("");
-        for (Tag.DParameter docParameter : doc.getParameters()) {
+        for (DParameter docParameter : doc.getParameters()) {
             lines.add(
                     "- " +
                             new MarkDownLiteral(docParameter.varName)

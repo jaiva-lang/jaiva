@@ -774,7 +774,7 @@ public final class Tokenizer {
                                 JDoc doc = new JDoc(lineNumber, comment.trim());
                                 g.tooltip = doc;
                                 g.json.removeKey("toolTip");
-                                g.json.setJdoc("toolTip", doc);
+                                g.json.set("toolTip", doc);
                             }
 
                         }
@@ -809,7 +809,7 @@ public final class Tokenizer {
                             JDoc doc = new JDoc(t.lineNumber, comment.trim());
                             t.tooltip = doc;
                             t.json.removeKey("toolTip");
-                            t.json.setJdoc("toolTip", doc);
+                            t.json.set("toolTip", doc);
                         }
                         tokens.add(token);
                         m = null;

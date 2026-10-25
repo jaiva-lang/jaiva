@@ -3,8 +3,12 @@ package com.jaiva.tokenizer;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
+import com.jaiva.tokenizer.tokens.specific.TCodeblock;
 import com.yetnt.utils.builders.SimpleJSON;
 import org.jetbrains.annotations.NotNull;
+
+import javax.crypto.Mac;
+import java.util.Map;
 
 public class NewJson extends SimpleJSON {
 
@@ -13,7 +17,7 @@ public class NewJson extends SimpleJSON {
         set("type", type);
         set("name", name);
         set("exportSymbol", exportSymbol);
-        setJdoc("toolTip", tooltip); // usually a string or JDoc object.
+        set("toolTip", tooltip); // usually a string or JDoc object.
         set("lineNumber", ln);
     }
 
@@ -28,6 +32,10 @@ public class NewJson extends SimpleJSON {
         });
     }
 
+    public NewJson(Map<String, Object> map) {
+        super(map);
+    }
+
     public boolean keyExists(String key) {
         return map.containsKey(key);
     }
@@ -36,14 +44,10 @@ public class NewJson extends SimpleJSON {
         map.remove(key);
     }
 
-    // When Maven publishing limit has been freed, update SimpleJSON to also allow converting
-    // via ToJSON to an ArrayList and not a SimpleJSON object only. (So JDoc can be supported)
-
-    public void setJdoc(String name, @NotNull Object value) {
-        if (value instanceof JDoc v)
-            set(name, v.simpleJsonList());
-        else if (value instanceof String s)
-            set(name, s);
-        else throw new UnsupportedOperationException();
+    public void nullSet(String name, Object body1) {
+        if (body1 == null)
+            set(name);
+        else
+            set(name, body1);
     }
 }

@@ -55,7 +55,7 @@ public class BundlerTest {
         ArrayList<Token<?>> tokens = new ArrayList<>();
         try {
             JBundler jb = new JBundler(BUNDLER_JIV.toString(), CustomLib.class);
-            jb.run(null);
+            jb.run();
 
             // DebugException was not thrown. Test failure.
             Assertions.fail("Expected DebugException, but no exception was thrown.");

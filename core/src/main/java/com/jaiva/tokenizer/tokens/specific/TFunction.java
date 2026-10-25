@@ -113,7 +113,7 @@ public class TFunction extends TokenDefault<TFunction> implements TSymbol, TCons
         json.set("args", args);
         json.set("isArgOptional", isArgOptional);
         json.set("varArgs", varArgs);
-        json.set("body", body != null ? body : null);
+        json.nullSet("body", body);
     }
 
     /**
