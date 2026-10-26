@@ -41,6 +41,7 @@ public class TBooleanVar extends TUnknownScalar<Object, TBooleanVar> {
         json();
     }
 
+    @Override
     public void json() {
         json.set("value", value);
     }

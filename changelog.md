@@ -26,8 +26,10 @@ Literlaly just plumbing
 - Added `linker` to global scope and in turn deprecated its old version `d_link` in `jaiva/debug`
 - Added `tseaf` to import stuff via function
 - New `net` library
-  - New `net/tcp` (TCP connections)
+  - New `net/tcp` (tcp connections)
   - New `net/const` (Constants for tcp and future net libs)
   - New `net/interf` (Network interfaces)
   - New `net/interf/query` (Querying properties of network interface array)
 - Refactor scope
+- Added parameter extending group repetition
+- Made a JDoc comment who was given to a variable set to a lambda, also apply to that same lambda. (Tokenizer side)

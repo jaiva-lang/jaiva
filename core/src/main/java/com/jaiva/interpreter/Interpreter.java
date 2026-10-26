@@ -6,14 +6,12 @@ import com.jaiva.errors.InterpreterException.*;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.errors.JaivaException.DebugException;
 import com.jaiva.errors.Warnings;
-import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.runtime.ImportVfs;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.BaseVariable.VariableType;
 import com.jaiva.interpreter.symbol.Symbol;
-import com.jaiva.lang.EscapeSequence;
 import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.tokens.TAtomicValue;
 import com.jaiva.tokenizer.tokens.TSymbol;
@@ -27,7 +25,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.DatagramPacket;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -179,9 +176,12 @@ public final class Interpreter {
                 if (something instanceof TThrowError) {
                     throwIfGlobalContext(scope, something, tUnknownScalar.lineNumber);
                 }
-                if (something instanceof BaseFunction)
+                if (something instanceof BaseFunction function) {
                     // this assigns
-                    var = (Symbol) something;
+                    function.token.tooltip = tUnknownScalar.tooltip;
+                    function.token.json();
+                    var = function;
+                }
                 else
                     var = BaseVariable.create(((TokenDefault<?>) t).name, (TokenDefault<?>) t,
                             something instanceof ArrayList ? (ArrayList) something

@@ -37,6 +37,7 @@ public class TStringVar extends TUnknownScalar<String, TStringVar> {
         json();
     }
 
+    @Override
     public void json() throws TokenizerException {
         // fromEscape converts jaiva escape sequences to standrd escape sequences
         json.set("value", EscapeSequence.fromEscape(value, lineNumber));

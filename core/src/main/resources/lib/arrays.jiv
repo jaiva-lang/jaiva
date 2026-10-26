@@ -18,7 +18,7 @@ scope("strict")! @ This freezes all the functions, and elevates all warnings to 
 }
 
 @* arrays
-maak *path!
+maak path!
 
 @* Jaiva's arrays standard library which is itself, made in Jaiva.
 @* It really just contains convenience methods such that you don't
@@ -285,7 +285,7 @@ kwenza *a_reduce(arr, F~reducer, initial?) ->
 @* Transforms every element in an array using a provided function.
 @* p        $> arr <- [] The original array to map over.
 @* p        $> mapperFunction <- F~any A function that takes the element and additional parameters
-@*          $> and returns its transformed value.
+@*          $> returns its transformed value.
 @* returns  $> A new array populated with the results of calling the mapperFunction on every element.
 @* since    $> 4.1.1
 @* devn     $> The mapper function must take in at least 1 parameter, which is the input element.
@@ -352,7 +352,6 @@ kwenza *a_from(input, split?) ->
 
     khutla arrLit(arr:::, current)! @ Add the last part
 <~
-
 
 @* Applies the given function to each element in the array
 @* p        $> arr <- [] The original array to go over.

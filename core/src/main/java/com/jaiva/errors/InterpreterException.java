@@ -12,7 +12,7 @@ import com.jaiva.tokenizer.tokens.specific.*;
 import com.yetnt.utils.builders.AnsiColour;
 
 import java.io.IOException;
-import java.net.SocketException;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,6 +21,7 @@ import java.util.HashMap;
  */
 public class InterpreterException extends JaivaException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     public Scope scopeTrace;
 
@@ -100,11 +101,12 @@ public class InterpreterException extends JaivaException {
         scopeTrace = ct;
     }
 
-    public Scope getScopeTrace() {
+    public Scope getScope() {
         return scopeTrace;
     }
 
     public static class StreamerSuccess extends InterpreterException {
+        @Serial
         private static final long serialVersionUID = 1L;
         public StreamerSuccess(String message, int lineNumber, Scope scope) {
             super(scope, lineNumber, message);
@@ -115,6 +117,7 @@ public class InterpreterException extends JaivaException {
      * Exception to throw whenever a user tries to modify a symbol.
      */
     public static class FrozenSymbolException extends InterpreterException {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         /**
@@ -165,6 +168,7 @@ public class InterpreterException extends JaivaException {
      * match the amount we receive.
      */
     public static class FunctionParametersException extends InterpreterException {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         /**
@@ -247,6 +251,7 @@ public class InterpreterException extends JaivaException {
      * the array and scalar value of a variable.
      */
     public static class DualVariableReassignWarning extends InterpreterException {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         /**
@@ -268,6 +273,7 @@ public class InterpreterException extends JaivaException {
      * meaningful value.
      */
     public static class TExpressionResolutionException extends InterpreterException {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         /**
@@ -298,7 +304,7 @@ public class InterpreterException extends JaivaException {
          * @param expected What it expected (in string form)
          * @param received What it received (in string form)
          */
-        public TExpressionResolutionException(Scope ct, TokenDefault outer, TExpression s,
+        public TExpressionResolutionException(Scope ct, TokenDefault<?> outer, TExpression s,
                                               String expected, String received) {
             super(ct, s.lineNumber,
                     "i expected (" + s.statement + ") to resolve to a " + expected
@@ -312,6 +318,7 @@ public class InterpreterException extends JaivaException {
      * the current context.
      */
     public static class UnknownVariableException extends InterpreterException {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         /**
@@ -365,6 +372,7 @@ public class InterpreterException extends JaivaException {
      * their own class.
      */
     public static class WtfAreYouDoingException extends InterpreterException {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         /**
@@ -399,6 +407,7 @@ public class InterpreterException extends JaivaException {
      * something related to that.
      */
     public static class WeirdAhhFunctionException extends InterpreterException {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         /**
@@ -423,6 +432,7 @@ public class InterpreterException extends JaivaException {
      * Exception to throw when something goes wrong during a string calculation
      */
     public static class StringCalcException extends InterpreterException {
+        @Serial
         private static final long serialVersionUID = 1L;
 
         /**
@@ -456,6 +466,7 @@ public class InterpreterException extends JaivaException {
      */
     public static class CimaException extends InterpreterException {
 
+        @Serial
         private static final long serialVersionUID = 1L;
 
         /**
@@ -479,6 +490,7 @@ public class InterpreterException extends JaivaException {
      */
     public static class CatchAllException extends InterpreterException {
 
+        @Serial
         private static final long serialVersionUID = 1L;
 
         /**
@@ -498,6 +510,7 @@ public class InterpreterException extends JaivaException {
      */
     public static class LibImportException extends InterpreterException {
 
+        @Serial
         private static final long serialVersionUID = 1L;
 
         public LibImportException(Scope ct, String lib) {
@@ -511,6 +524,7 @@ public class InterpreterException extends JaivaException {
      */
     public static class NoWarningsException extends InterpreterException {
 
+        @Serial
         private static final long serialVersionUID = 1L;
 
         public NoWarningsException(Scope ct, int linNumber, String err) {

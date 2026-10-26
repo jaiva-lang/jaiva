@@ -3,10 +3,7 @@ package com.jaiva.tokenizer.tokens.specific;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.lang.Chars;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.TParamsExtendable;
-import com.jaiva.tokenizer.tokens.TVariable;
-import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
+import com.jaiva.tokenizer.tokens.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,6 +64,7 @@ public class TUnknownScalar<Type, K extends TokenDefault<K>> extends TokenDefaul
         json();
     }
 
+    @Override
     public void json() throws JaivaException {
         if (!json.keyExists("value"))
             json.set("value", value);
@@ -77,8 +75,9 @@ public class TUnknownScalar<Type, K extends TokenDefault<K>> extends TokenDefaul
      *
      * @return {@link Token} with a T value of {@link TUnknownScalar}
      */
+    @Override
     public Token<K> toToken() {
-        return new Token(this);
+        return new Token<K>((K) this);
     }
 
     @Override

@@ -441,10 +441,7 @@ public final class Main {
                             }
                             if (comment == null || !(l instanceof TSymbol))
                                 continue;
-                            JDoc doc = new JDoc(lineNum, comment.trim());
-                            l.tooltip = doc;
-                            l.json.removeKey("toolTip");
-                            l.json.set("toolTip", doc);
+                            Tokenizer.jdoc(l, comment);
                         }
                     }
                     comment = null;
@@ -475,10 +472,7 @@ public final class Main {
                     } else if (comment != null
                             && t instanceof TSymbol) {
 
-                        JDoc doc = new JDoc(t.lineNumber, comment.trim());
-                        t.tooltip = doc;
-                        t.json.removeKey("toolTip");
-                        t.json.set("toolTip", doc);
+                        Tokenizer.jdoc(t, comment);
                         tokens.add(token);
                     } else {
                         tokens.add(token);
@@ -502,4 +496,5 @@ public final class Main {
 
         return tokens;
     }
+
 }

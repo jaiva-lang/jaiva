@@ -771,10 +771,7 @@ public final class Tokenizer {
                                 if (comment == null || (!(g instanceof TArrayVar) && !(g instanceof TUnknownScalar)
                                         && !(g instanceof TFunction)))
                                     continue;
-                                JDoc doc = new JDoc(lineNumber, comment.trim());
-                                g.tooltip = doc;
-                                g.json.removeKey("toolTip");
-                                g.json.set("toolTip", doc);
+                                Tokenizer.jdoc(g, comment);
                             }
 
                         }
@@ -806,10 +803,11 @@ public final class Tokenizer {
                                 && ((t instanceof TArrayVar) || (t instanceof TUnknownScalar)
                                 || (t instanceof TFunction))) {
 
-                            JDoc doc = new JDoc(t.lineNumber, comment.trim());
-                            t.tooltip = doc;
-                            t.json.removeKey("toolTip");
-                            t.json.set("toolTip", doc);
+                            jdoc(t, comment);
+//                            JDoc doc = new JDoc(t.lineNumber, comment.trim());
+//                            t.tooltip = doc;
+//                            t.json.removeKey("toolTip");
+//                            t.json.set("toolTip", doc);
                         }
                         tokens.add(token);
                         m = null;
@@ -1057,7 +1055,7 @@ public final class Tokenizer {
             throw new MalformedSyntaxException("How do you extend the start of a scope bro?", lineNumber);
         if (previousToken instanceof TParamsExtendable tpe) {
             if (tpe.endsWithFuncCall())
-                tpe.addArguments(tExtendParams.args);
+                tpe.addArguments(tExtendParams);
             else throw new MalformedSyntaxException(
                     "Cannot extend the value on line " + (lineNumber - 1) + " as it is not a function call.",
                     lineNumber
@@ -1069,5 +1067,19 @@ public final class Tokenizer {
             );
         }
         // TExtendParams effectively goes to hell.
+    }
+
+    public static void jdoc(@NotNull TokenDefault<?> t, @NotNull String comment) throws JaivaException {
+        JDoc doc = new JDoc(t.lineNumber, comment.trim());
+        t.tooltip = doc;
+        t.json.removeKey("toolTip");
+        t.json.set("toolTip", doc);
+        if (t instanceof TUnknownScalar<?,?> unks) {
+            Object value = unks.value;
+            if (value instanceof TLambda lam) {
+                lam.tooltip = doc;
+                lam.json.set("toolTip", doc);
+            }
+        }
     }
 }

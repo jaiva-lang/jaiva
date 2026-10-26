@@ -1,5 +1,37 @@
-maak a <- 10!
+@* sduidhfiopsdf
+maak d <- f~(a, b) : a + b!
 
-a <- arrLit(10, 3)!
-
-khuluma(a)!
+@ tšea "jaiva/arrays"!
+@
+@ maak 2a <- arrLit(reservedKeywords:::, reservedKeywords:::, reservedKeywords:::, reservedKeywords:::)!
+@
+@ @ identical to
+@
+@ maak 4b <- arrLit()!
+@ |> (reservedKeywords:::, reservedKeywords:::, reservedKeywords:::, reservedKeywords:::)!
+@
+@ @ identical to
+@
+@ maak 3c <- arrLit()!
+@ |> (reservedKeywords:::)!
+@ |> (reservedKeywords:::)!
+@ |> (reservedKeywords:::)!
+@ |> (reservedKeywords:::)!
+@
+@ @ identical to
+@
+@ maak d <- arrLit()!
+@ |> [4] (reservedKeywords:::)!
+@
+@ khuluma(2a)!
+@ khuluma(4b)!
+@ khuluma(3c)!
+@ khuluma(d)!
+@
+@ maak another <- arrLit()!
+@ |> "ksfjdkf"!
+@ |> [2] ("sdf", "cx", 10)!
+@ |>[19] (arrLit("hi"), 200)!
+@ |> 230!
+@
+@ khuluma(another)!

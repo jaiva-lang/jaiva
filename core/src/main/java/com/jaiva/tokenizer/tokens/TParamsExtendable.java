@@ -1,6 +1,7 @@
 package com.jaiva.tokenizer.tokens;
 
 import com.jaiva.tokenizer.tokens.specific.TExpression;
+import com.jaiva.tokenizer.tokens.specific.TExtendParams;
 import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 
 import java.util.ArrayList;
@@ -15,10 +16,12 @@ public interface TParamsExtendable {
         return get() != null;
     }
     TFuncCall get();
-    default void addArguments(ArrayList<Object> moreArgs) {
+    default void addArguments(TExtendParams tExtendParams) {
         if (get().args.size() == 1 && get().args.getFirst() == null)
             get().args.removeFirst();
-        get().args.addAll(moreArgs);
+        for (int i = 0; i < tExtendParams.repeat; i++) {
+            get().args.addAll(tExtendParams.args);
+        }
     }
     default TFuncCall checkObject(Object t) {
         if (t instanceof TFuncCall f) return f;

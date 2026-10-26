@@ -99,4 +99,6 @@ public class TokenDefault<T extends TokenDefault<T>> implements Convertible {
     public void setFileOrigin(Object fileOrigin) {
         this.fileOrigin = fileOrigin;
     }
+
+    public void json() throws JaivaException {}
 }

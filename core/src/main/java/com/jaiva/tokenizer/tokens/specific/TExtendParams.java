@@ -21,14 +21,17 @@ public class TExtendParams extends TokenDefault<TExtendParams> implements TState
      */
     public ArrayList<Object> args; // can be a TStatement, TFuncCall, TVarRef, or a primitive type
 
+    public long repeat = 1;
+
     /**
      * Constructor for TExtendParams
      * @param args The arguments of the extension
      * @param ln   The line number.
      */
-    public TExtendParams(ArrayList<Object> args, int ln) {
+    public TExtendParams(ArrayList<Object> args, int ln, long repeat) {
         super("TExtendParams", ln);
         this.args = args;
+        this.repeat = repeat;
     }
 
     /**

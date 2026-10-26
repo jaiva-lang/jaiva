@@ -7,40 +7,16 @@ import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.tokenizer.tokens.Token;
 import com.yetnt.utils.builders.AnsiColour;
+import com.yetnt.utils.builders.SimpleJSON;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public final class Streamer {
-    private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    private boolean run = true;
 
-//    public static String removeAnsiColour(String rawMessage) {
-//        StringBuilder result = new StringBuilder();
-//
-//        for (int i = 0; i < rawMessage.length(); i++) {
-//            if (rawMessage.charAt(i) == '\u001B'
-//                    && i + 1 < rawMessage.length()
-//                    && rawMessage.charAt(i + 1) == '[') {
-//
-//                i += 2;
-//
-//                // Skip until the terminating 'm'
-//                while (i < rawMessage.length() && rawMessage.charAt(i) != 'm') {
-//                    i++;
-//                }
-//
-//                continue;
-//            }
-//
-//            result.append(rawMessage.charAt(i));
-//        }
-//
-//        return result.toString();
-//    }
-
-    private void printTokens(ArrayList<Token<?>> tokens) throws JaivaException {
+    private void printTokens(@NotNull ArrayList<Token<?>> tokens) throws JaivaException {
         System.out.print("[");
         for (int i = 0; i < tokens.size(); i++) {
             Token<?> token = tokens.get(i);
@@ -66,7 +42,9 @@ public final class Streamer {
                     return;
                 }
             }
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
+            boolean run = true;
             while (run) {
                 String line = reader.readLine();
                 if (line == null || line.equals("EXIT") || line.isEmpty()) {
@@ -123,7 +101,8 @@ public final class Streamer {
         ERR_TOKENS, ERR_STREAMER, ERR_INTERP, ERR_INTERP_DIED, INTERP_SUCCESS
     }
 
-    private static String jsonEscape(String s) {
+    @NotNull
+    private static String jsonEscape(@NotNull String s) {
         return s
                 .replace("\\", "\\\\")
                 .replace("\"", "\\\"")
@@ -132,7 +111,29 @@ public final class Streamer {
                 .replace("\t", "\\t");
     }
 
-    public String toJsonError(IConfig<Object> config, Exception e, Type type) {
+    private String toJsonError(IConfig<Object> config, @NotNull Exception e, @NotNull Type type) {
+        SimpleJSON json = new SimpleJSON();
+        json.set("streamer", true);
+        json.set("message", AnsiColour.remove(e.getMessage()));
+        json.set("lineNumber",((e instanceof JaivaException j) ? j.getLineNumber() : -1));
+        json.set("type", type.toString());
+        if (config != null && e instanceof InterpreterException interpreterException) {
+            ArrayList<SimpleJSON> warnings = new ArrayList<>();
+            config.getWarnings().forEach(w -> {
+                SimpleJSON s = new SimpleJSON();
+                s.set("message", AnsiColour.remove(w.getMessage()));
+                s.set("lineNumber", w.getLineNumber());
+                warnings.add(s);
+            });
+            json.set("warnings", warnings);
+            json.set("scope", interpreterException.getScope().toString());
+        }
+
+        return json.toString();
+    }
+
+    @NotNull
+    private String toJsonErrorOld(IConfig<Object> config, @NotNull Exception e, @NotNull Type type) {
         String str =  "{\"streamer\":true,\"message\":\"" + jsonEscape(AnsiColour.remove(e.getMessage())) +
                 "\",\"lineNumber\":"
                 + ((e instanceof JaivaException j) ? j.getLineNumber() : -1)
@@ -145,7 +146,7 @@ public final class Streamer {
                     ,
                     (s, s2) -> s + s2
             );
-            String scopeStr = interpreterException.getScopeTrace().toString();
+            String scopeStr = interpreterException.getScope().toString();
             str = str.replace("\\n" + scopeStr, "");
             return str + ",\"scope\":\""+scopeStr+"\", \"warnings\":[" + warnings.substring(0, warnings.length()-1) + "]}";
         } else {

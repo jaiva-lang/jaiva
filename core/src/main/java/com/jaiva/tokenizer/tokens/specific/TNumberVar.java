@@ -34,6 +34,7 @@ public class TNumberVar extends TUnknownScalar<Object, TNumberVar> {
         json();
     }
 
+    @Override
     public void json() throws JaivaException {
         json.set("value", value);
     }

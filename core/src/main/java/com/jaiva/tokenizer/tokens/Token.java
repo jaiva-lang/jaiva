@@ -200,7 +200,42 @@ public record Token<T extends TokenDefault<?>>(T value) {
                     processContext(expr2, lineNumber, config), lineNumber).toToken();
         } else if (d.bits == ReservedCases.PARAMS_EXTENDOR.code()) {
             // remove 2 chars at the start
+            long repeat = 1;
             line = line.substring(2).trim();
+            if (line.startsWith("[")) {
+                // repeat syntax
+                String amt = line.substring(1, line.indexOf("]")).trim();
+                Object amtObj = processContext(amt, lineNumber, config);
+                if (amtObj instanceof Token<?> || amtObj instanceof TokenDefault<?>) {
+                    throw new TokenizerException.MalformedSyntaxException(
+                            "Parameter Extension with a repeated group specified cannot"
+                            + " hold values that can only be resolved at runtime. (Use positive number literals)",
+                            lineNumber
+                    );
+                }
+                if (!(amtObj instanceof Number number))
+                    throw new TokenizerException.MalformedSyntaxException(
+                            amt + " is just not a number bro", lineNumber
+                    );
+
+                if (!(number instanceof Long || number instanceof Integer)) {
+                    throw new TokenizerException.MalformedSyntaxException(
+                            "Input value for params extension repetition can only be an integer or long value",
+                            lineNumber
+                    );
+                }
+
+                long l = number.longValue();
+
+                if (l <= 0)
+                    throw new TokenizerException.MalformedSyntaxException(
+                            "Input value for params extension repetion cannot be equal to or lower than 0",
+                            lineNumber
+                    );
+
+                line = line.substring(line.indexOf("]")+1).trim();
+                repeat = l;
+            }
             ArrayList<String> args = new ArrayList<>();
 
             if (Find.lastOuterMostBracePairIndex(line) == 0 && !line.startsWith("[")) {
@@ -214,9 +249,10 @@ public record Token<T extends TokenDefault<?>>(T value) {
 
             if (line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD)) {
                 // user attempts to spread
-                throw new TokenizerException.MalformedJDocException(
-                        lineNumber,
-                        "The spread operator cannot be applied to a function extension."
+                throw new TokenizerException.MalformedSyntaxException(
+                        "The spread operator cannot be applied to a function extension." +
+                                " (Wrap in braces if you intended to spread an input argument)",
+                        lineNumber
                 );
             }
 
@@ -224,7 +260,7 @@ public record Token<T extends TokenDefault<?>>(T value) {
             for (String arg : args) {
                 parsedArgs.add(processContext((String) arg, lineNumber, config));
             }
-            return new TExtendParams(parsedArgs, lineNumber).toToken();
+            return new TExtendParams(parsedArgs, lineNumber, repeat).toToken();
         } else {
             if (index != -1 && (line.charAt(index) == '(')) {
                 // then its a TFuncCall
