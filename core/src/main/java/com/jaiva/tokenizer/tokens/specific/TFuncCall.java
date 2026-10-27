@@ -4,7 +4,6 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.tokens.TParamsExtendable;
 import com.jaiva.tokenizer.tokens.TReference;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 
 import java.util.ArrayList;
 
@@ -13,7 +12,7 @@ import java.util.ArrayList;
  * or {@code func4(10, 20)!}. Any, if not ALL
  * function calls are possible.
  */
-public class TFuncCall extends TokenDefault<TFuncCall> implements TReference, TParamsExtendable {
+public final class TFuncCall extends TokenDefault<TFuncCall> implements TReference, TParamsExtendable {
     /**
      * The name of the function being called.
      * <p>

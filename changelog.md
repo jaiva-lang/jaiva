@@ -35,3 +35,5 @@ Literlaly just plumbing
 - Made a JDoc comment who was given to a variable set to a lambda, also apply to that same lambda. (Tokenizer side)
 - `sif` now supports parameter extending and `TIfStatement` JSON output has a new `isShorthand` field.
 - New `reflect` library.
+- `file/query` has moved to `file/api/query`
+- Renamed `file/api` and sub libraries to `file/text` to better represent that they are text based file-related api

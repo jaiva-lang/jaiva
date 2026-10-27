@@ -1,17 +1,19 @@
-package com.jaiva.tokenizer.tokens;
+package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.Convertible;
 import com.jaiva.tokenizer.NewJson;
 import com.jaiva.tokenizer.jdoc.JDoc;
-
-import java.nio.file.Path;
+import com.jaiva.tokenizer.tokens.Token;
 
 /**
  * TokenDefault class is a default implementation of all the other
  * subclasses/tokens defined in {@link Token}
  */
-public class TokenDefault<T extends TokenDefault<T>> implements Convertible {
+public sealed class TokenDefault<T extends TokenDefault<T>> implements Convertible
+        permits TArrayVar, TCodeblock, TDocsComment, TExpression, TExtendParams,
+        TForLoop, TFuncCall, TFuncReturn, TFunction, TIfStatement, TImport, TLoopControl,
+        TTernary, TThrowError, TTryCatch, TUnknownScalar, TVarReassign, TVarRef, TVoidValue, TWhileLoop {
     public Token<T> toToken() {
         return null;
     }

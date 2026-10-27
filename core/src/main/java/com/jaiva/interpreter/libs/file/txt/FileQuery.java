@@ -1,14 +1,12 @@
-package com.jaiva.interpreter.libs.file;
+package com.jaiva.interpreter.libs.file.txt;
 
 import com.jaiva.errors.InterpreterException;
-import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.libs.file.api.FileType;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
@@ -27,7 +25,7 @@ import java.util.ArrayList;
  * This class simply provides a way to organize these functions within the library system.
  * </p>
  */
-@JaivaLibrary(path = "file/query", description = "Allows querying of file stuff from" +
+@JaivaLibrary(path = "file/text/query", description = "Allows querying of file stuff from" +
         " the structured array instead of manual indexing")
 public class FileQuery extends BaseLibrary {
     public FileQuery() {
@@ -39,7 +37,7 @@ public class FileQuery extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_nameOf")
-                            .setLib("file/api")
+                            .setLib("file/text/query")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument(
                                             "file", "The file array to get the name from.",
@@ -76,7 +74,7 @@ public class FileQuery extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_dirOf")
-                            .setLib("file/api")
+                            .setLib("file/text/query")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument(
                                             "file", "The file array to get the directory path from.",
@@ -113,7 +111,7 @@ public class FileQuery extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_contentOf")
-                            .setLib("file/api")
+                            .setLib("file/text/query")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument(
                                             "file", "The file array to get the content from.",
@@ -150,7 +148,7 @@ public class FileQuery extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_permsOf")
-                            .setLib("file/api")
+                            .setLib("file/text/query")
                             .arguments(Arguments.getInstance().add(
                                     new AArgument(
                                             "file", "The file array to get the permissions from.",
@@ -193,7 +191,7 @@ public class FileQuery extends BaseLibrary {
                 super(
                         FunctionBuilder.start()
                                 .name("perms")
-                                .setLib("file/api")
+                                .setLib("file/text/query")
                                 .arguments(
                                         Arguments.getInstance()
                                                 .add(

@@ -4,7 +4,6 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.tokens.TConditional;
 import com.jaiva.tokenizer.tokens.TConstruct;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
  * {@code colonize i <- 0 | i < 10 | + -> ... <~} and a for each loop which
  * iterates over arrays {@code colonize el with array -> ... <~}
  */
-public class TForLoop extends TokenDefault<TForLoop> implements TConstruct, TConditional {
+public final class TForLoop extends TokenDefault<TForLoop> implements TConstruct, TConditional {
     /**
      * The variable used in the for loop.
      */

@@ -15,7 +15,7 @@ import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.TParamsExtendable;
 import com.jaiva.tokenizer.tokens.TSymbol;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
+import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
 import com.jaiva.utils.Find;
 import com.jaiva.utils.Validate;

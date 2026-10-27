@@ -9,7 +9,7 @@ import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.tokens.TReference;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
+import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 import com.jaiva.tokenizer.tokens.specific.TFunction;
 import com.jaiva.tokenizer.tokens.specific.TVoidValue;

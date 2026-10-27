@@ -41,16 +41,14 @@ kwenza *getClassProperties(class, prop?) ->
 kwenza *get(class, prop) ->
     maak split <- a_from(prop, ".")!
 
-    if (split[0] != getClassProperties(class, "name")]) ->
-        cima <== "wrong class"!
-    <~
+    sif (split[0] != getClassProperties(class, "name")) ?> cima <== "wrong class"!
 
     maak found <- a_find(getFields(class))!
-    |> f~(el) : el[0] = split[1]!
+        |> f~(el) : el[0] = split[1]!
+
     if (typeOf(found) = "array") ->
         if (found[2] = -1) ->
-            khuluma(d_getScope())!
-            cima <== prop + " is inaccesible"!
+            cima <== prop + " is inaccessible"!
         <~
         khutla found[1]!
     <~
@@ -59,12 +57,12 @@ kwenza *get(class, prop) ->
 kwenza *call(class, prop, params) ->
     maak split <- a_from(prop, ".")!
 
-    if (split[0] != getClassProperties(class, "name")) ->
-        cima <== "wrong class"!
-    <~
+    sif (split[0] != getClassProperties(class, "name")) ?> cima <== "wrong class"!
 
-    maak found <- a_find(getMethods(class))!
-    |> f~(el) : el[0] = split[1]!
+    maak found <- a_find()!
+        |> getMethods(class)!
+        |> f~(el) : el[0] = split[1]!
+
     if (typeOf(found) = "array") ->
         maak d <- found[1]!
         khutla d(class, params:::)!
@@ -78,7 +76,7 @@ kwenza *unsafeCast(class1, convertTo) ->
 kwenza *newClass(name, fields, methods, accessor?) ->
     tsea "jaiva/time" <- t_now!
     maak more <- arrLit(methods:::)!
-    |> method("this", f~(<-i) : i[0])!
+        |> method("this", f~(<-i) : i[0])!
     maak props <-| t_now() - 100 << 3, name, accessor!
     khutla arrLit(props, fields, more)!
 <~
@@ -87,21 +85,21 @@ maak name <- field("name", "i am guy")!
 maak id <- field("id", 1001, -1)!
 
 maak getId <- method("getId")!
-|> f~(<-i) : get(i[0], "MyClass.id")!
+    |> f~(<-i) : get(i[0], "MyClass.id")!
 
 maak myMethid <- method("add")!
-|> f~(<-i) : i[1] + i[2]!
+    |> f~(<-i) : i[1] + i[2]!
 
 maak sub <- method("sub")!
-|> f~(<-i) : i[1] - i[2]!
+    |> f~(<-i) : i[1] - i[2]!
 
 maak MyClass <- newClass("MyClass")!
-|> arrLit(id, name)!
-|> arrLit(myMethid, sub, getId)!
+    |> arrLit(id, name)!
+    |> arrLit(myMethid, sub, getId)!
 
 maak OtherClass <- newClass("OtherClass")!
-|> arrLit(id, name)!
-|> arrLit(myMethid, sub, getId)!
+    |> arrLit(id, name)!
+    |> arrLit(myMethid, sub, getId)!
 
 khuluma(call(MyClass, "MyClass.getId", arrLit()))!
 khuluma(call(MyClass, "MyClass.this", arrLit()))!

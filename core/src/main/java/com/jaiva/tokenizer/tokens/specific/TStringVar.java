@@ -9,7 +9,7 @@ import com.jaiva.tokenizer.tokens.Token;
 /**
  * Represents a string variable such as {@code maak name <- "John"};
  */
-public class TStringVar extends TUnknownScalar<String, TStringVar> {
+public final class TStringVar extends TUnknownScalar<String, TStringVar> {
 
     /**
      * Constructor for TStringVar

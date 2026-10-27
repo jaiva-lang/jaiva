@@ -5,7 +5,7 @@ _Allows byte level reading and writing of files onto disk. This makes use of con
 This library exports the following libraries: 
 - file/bytes/const
 
-Exported Symbols Include: `R_INTEGER`, `R_INT`, `W_INTEGER`, `W_INT`, `R_JAVA_UTF8`, `R_MOD_UTF8`, `W_JAVA_UTF8`, `W_MOD_UTF8`, `W_UTF8`, `W_STRING`, `W_UTF_8`, `R_DOUBLE`, `W_DOUBLE`, `R_LONG`, `W_LONG`, `R_BOOLEAN`, `R_BOOL`, `W_BOOLEAN`, `W_BOOL`, `R_BYTE`, `W_BYTE`, `R_BYTES`
+Exported Symbols Include: `F_R_INTEGER`, `F_R_INT`, `F_W_INTEGER`, `F_W_INT`, `F_R_JAVA_UTF8`, `F_R_MOD_UTF8`, `F_W_JAVA_UTF8`, `F_W_MOD_UTF8`, `F_W_UTF8`, `F_W_STRING`, `F_W_UTF_8`, `F_R_DOUBLE`, `F_W_DOUBLE`, `F_R_LONG`, `F_W_LONG`, `F_R_BOOLEAN`, `F_R_BOOL`, `F_W_BOOLEAN`, `F_W_BOOL`, `F_R_BYTE`, `F_W_BYTE`, `F_R_BYTES`
 
 ## Table of Contents
 | Alias | Link |
@@ -50,15 +50,11 @@ maak collected <- aowa!
 maak collect <-|!
 
 nikhil (conf(C_EOF)()') ->
-    maak byte <- read(R_BYTE)!
+    maak byte <- read(F_R_BYTE)!
 
-    if (byte?) ->
-        nevermind!
-    <~
+    sif (byte?) <? nevermind!
 
-    if (byte != 255) ->
-        collect <- arrLit(collect:::, byte)!
-    <~
+    sif (byte != 255) ?> collect <- arrLit(collect:::, byte)!
 <~
 
 conf(C_CLOSE)()!
@@ -102,8 +98,8 @@ tsea "jaiva/continuous!"
 maak cont <- f_cwriter("C:\Users\Wow\myFile.jib")!
 maak write <- cont(C_OUTPUT)!
 
-write(W_UTF8, "What's Up Dawg??")!
-write(W_BYTE, 255)! @ Write 255 marker so we know where the UTF8 bytes end.
+write(F_W_UTF8, "What's Up Dawg??")!
+write(F_W_BYTE, 255)! @ Write 255 marker so we know where the UTF8 bytes end.
 
 cont(C_FLUSH)()!
 cont(C_CLOSE)()!

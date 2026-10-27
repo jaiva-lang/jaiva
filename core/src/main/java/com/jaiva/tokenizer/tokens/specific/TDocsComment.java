@@ -1,7 +1,6 @@
 package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 
 /**
  * This represents a token which it's purpose is only for documentating specific
@@ -16,7 +15,7 @@ import com.jaiva.tokenizer.tokens.TokenDefault;
  * <p>
  * (This ensures if we collect multiple TDocsComment)
  */
-public class TDocsComment extends TokenDefault<TDocsComment> {
+public final class TDocsComment extends TokenDefault<TDocsComment> {
     /**
      * The documentation comment.
      */

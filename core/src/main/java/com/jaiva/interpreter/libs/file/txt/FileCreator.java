@@ -1,4 +1,4 @@
-package com.jaiva.interpreter.libs.file.api;
+package com.jaiva.interpreter.libs.file.txt;
 
 import java.util.ArrayList;
 

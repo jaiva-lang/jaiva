@@ -4,7 +4,7 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.jdoc.JDocBuilder;
-import com.jaiva.tokenizer.tokens.TokenDefault;
+import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.TArrayVar;
 import com.jaiva.tokenizer.tokens.specific.TBooleanVar;
 import com.jaiva.tokenizer.tokens.specific.TNumberVar;

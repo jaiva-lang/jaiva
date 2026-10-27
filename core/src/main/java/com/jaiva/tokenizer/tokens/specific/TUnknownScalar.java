@@ -27,7 +27,9 @@ import java.util.regex.Pattern;
  *
  * @param <Type> The type of the variable.
  */
-public class TUnknownScalar<Type, K extends TokenDefault<K>> extends TokenDefault<K> implements TVariable, TParamsExtendable {
+public sealed class TUnknownScalar<Type, K extends TokenDefault<K>> extends TokenDefault<K>
+        implements TVariable, TParamsExtendable
+        permits TBooleanVar, TStringVar, TNumberVar {
     /**
      * The value of the variable.
      */
@@ -77,6 +79,7 @@ public class TUnknownScalar<Type, K extends TokenDefault<K>> extends TokenDefaul
      */
     @Override
     public Token<K> toToken() {
+        //noinspection unchecked
         return new Token<K>((K) this);
     }
 

@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * body nor its own chain of elseIfs. only the original if contaisn all the else
  * ifs and the last else block.
  */
-public class TIfStatement extends TokenDefault<TIfStatement> implements TConstruct, TConditional, TParamsExtendable {
+public final class TIfStatement extends TokenDefault<TIfStatement> implements TConstruct, TConditional, TParamsExtendable {
     /**
      * The condition of the if statement.
      */

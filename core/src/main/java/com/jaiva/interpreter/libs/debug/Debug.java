@@ -17,7 +17,7 @@ import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
+import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.TVarRef;
 
 import java.util.ArrayList;

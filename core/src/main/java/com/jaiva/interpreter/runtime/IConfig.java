@@ -169,7 +169,7 @@ public final class IConfig<T> extends Config {
 
     /**
      * The sanitised arguments list stores the command-line arguments without
-     * arguments used by jaiva. It removes the first argument (FileApi path) and
+     * arguments used by jaiva. It removes the first argument (file path) and
      * possibly second argument (which is sometimes the debug flag).
      * This is useful for processing the arguments in a more user-friendly way.
      */

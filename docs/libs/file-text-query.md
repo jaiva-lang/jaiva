@@ -1,4 +1,4 @@
-# file/query (Library)
+# file/text/query (Library)
 
 _Allows querying of file stuff from the structured array instead of manual indexing_
 ## Exports

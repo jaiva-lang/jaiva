@@ -1,4 +1,4 @@
-package com.jaiva.interpreter.libs.file.api;
+package com.jaiva.interpreter.libs.file.txt;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Scope;
@@ -11,9 +11,9 @@ import java.util.ArrayList;
  * <p>
  *     This class extends ArrayList to hold file data and metadata.
  *     [
- *     "filename.txt",          // FileApi name
- *     "/p/t/o/",          // FileApi path
- *     ["line1", "line2"], // FileApi content as list of lines
+ *     "filename.txt",          // file name
+ *     "/p/t/o/",          // file path
+ *     ["line1", "line2"], // file content as list of lines
  *     [canRead, canWrite, canExecute] // Permissions as booleans
  *     [sizeInBytes, lastModifiedTimestamp] // Additional metadata (Not implemented yet)
  *     ]

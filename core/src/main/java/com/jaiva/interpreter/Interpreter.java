@@ -16,7 +16,7 @@ import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.tokens.TAtomicValue;
 import com.jaiva.tokenizer.tokens.TSymbol;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
+import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
 import com.yetnt.utils.builders.AnsiColour;
 import com.yetnt.utils.functional.consumer.ThrowableBiConsumer;

@@ -7,7 +7,7 @@ import com.jaiva.tokenizer.tokens.Token;
 /**
  * Represents a boolean variable such as {@code maak isTrue <- true};
  */
-public class TBooleanVar extends TUnknownScalar<Object, TBooleanVar> {
+public final class TBooleanVar extends TUnknownScalar<Object, TBooleanVar> {
 
     /**
      * Constructor for TBooleanVar

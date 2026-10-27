@@ -1,10 +1,9 @@
-package com.jaiva.interpreter.libs.file;
+package com.jaiva.interpreter.libs.file.txt;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.errors.InterpreterException.CatchAllException;
 import com.jaiva.errors.InterpreterException.FunctionParametersException;
 import com.jaiva.errors.InterpreterException.WtfAreYouDoingException;
-import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
@@ -12,9 +11,8 @@ import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libBuilders.var.VariableBuilder;
 import com.jaiva.interpreter.libs.BaseLibrary;
+import com.jaiva.interpreter.libs.annotation.Exports;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.libs.file.api.FileCreator;
-import com.jaiva.interpreter.libs.file.api.FileType;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
@@ -34,7 +32,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
-@JaivaLibrary(path = "file/api", description = "The file api for actually creating files and stuff yknow")
+@JaivaLibrary(path = "file/text", description = "The file text api for actually creating files and stuff yknow")
+@Exports(FileQuery.class)
 public class FileApi extends BaseLibrary {
 
     public FileApi(IConfig<Object> config) throws InterpreterException {
@@ -55,11 +54,11 @@ public class FileApi extends BaseLibrary {
             super(
                     VariableBuilder.start()
                             .name("f_name")
-                            .value(config.getFilePath() == null ? "FileApi" : config.getFilePath().getFileName().toString())
+                            .value(config.getFilePath() == null ? "file" : config.getFilePath().getFileName().toString())
                             .docs(
                                     JDoc.builder()
                                             .addDesc("Variable that holds the current file's name")
-                                            .addNote("If you call this within the REPL, or somehow the filePath is null, it holds \"FileApi\"")
+                                            .addNote("If you call this within the REPL, or somehow the filePath is null, it holds \"file\"")
                                             .sinceVersion("1.0.0")
                                             .addExample("""
                                             if (f_name != "myFile.jiv") ->
@@ -89,11 +88,11 @@ public class FileApi extends BaseLibrary {
             super(
                     VariableBuilder.start()
                             .name("f_dir")
-                            .value(config.getFileDirectory() == null ? "FileApi" : config.getFileDirectory().toAbsolutePath().toString())
+                            .value(config.getFileDirectory() == null ? "file" : config.getFileDirectory().toAbsolutePath().toString())
                             .docs(
                                     JDoc.builder()
                                             .addDesc("Variable that holds the current file's directory.")
-                                            .addNote("If you call this within the REPL, or somehow the filePath is null, it holds \"FileApi\"")
+                                            .addNote("If you call this within the REPL, or somehow the filePath is null, it holds \"file\"")
                                             .sinceVersion("1.0.0")
                                             .addExample("""
                                             khuluma("Current file directory is: " + f_dir)!
@@ -114,7 +113,7 @@ public class FileApi extends BaseLibrary {
      *   "fileName",                // Name of the current file, or "REPL" if not in a file context
      *   "fileDir",                 // Directory of the current file, or void value if not in a file context
      *   [contents],                // List of lines in the file, or a default list in REPL mode
-     *   [canRead?, canWrite?, canExecute?] // FileApi permission flags, or defaults in REPL mode
+     *   [canRead?, canWrite?, canExecute?] // file permission flags, or defaults in REPL mode
      * ]
      * </pre>
      * <p>
@@ -234,7 +233,7 @@ public class FileApi extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_file")
-                            .setLib("file/api")
+                            .setLib("file/text")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(
@@ -250,8 +249,8 @@ public class FileApi extends BaseLibrary {
                                             .addReturns("Returns an array containing the properties of the file at the given `path` \\n [fileName, fileDir, [contents], [canRead?, canWrite?, canExecute?]]")
                                             .addExample("""
                                             maak file <- f_file("data/myFile.txt")!
-                                            khuluma("FileApi name: " + file[0])!
-                                            khuluma("FileApi directory: " + file[1])!
+                                            khuluma("file name: " + file[0])!
+                                            khuluma("file directory: " + file[1])!
                                             """)
                                             .sinceVersion("1.0.1")
                             )
@@ -281,7 +280,7 @@ public class FileApi extends BaseLibrary {
 
             java.io.File file = filePath.toFile();
             if (!file.exists())
-                throw new WtfAreYouDoingException(new Scope(callProperties.config()), "FileApi does not exist: " + filePath,
+                throw new WtfAreYouDoingException(new Scope(callProperties.config()), "file does not exist: " + filePath,
                         callProperties.getLineNumber());
 
             ArrayList<String> contents = new ArrayList<>();
@@ -331,7 +330,7 @@ public class FileApi extends BaseLibrary {
             super(
                     FunctionBuilder.start()
                             .name("f_new")
-                            .setLib("file/api")
+                            .setLib("file/text")
                             .arguments(
                                     Arguments.getInstance()
                                             .add(new AArgument(
@@ -366,7 +365,7 @@ public class FileApi extends BaseLibrary {
                                             <| arrLit("Hello, World!", "This is a new file.")!
                                             <| (true, true, false)!
                                             if (success) ->
-                                                khuluma("FileApi created successfully!")!
+                                                khuluma("file created successfully!")!
                                             <~ else ->
                                                 khuluma("Failed to createFunction file.")!
                                             <~

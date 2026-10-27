@@ -4,13 +4,12 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.lang.Chars;
 import com.jaiva.tokenizer.tokens.TReference;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 
 /**
  * Represents a variable reference such as {@code name} or {@code age} or
  * {@code array[index]}.
  */
-public class TVarRef extends TokenDefault<TVarRef> implements TReference {
+public final class TVarRef extends TokenDefault<TVarRef> implements TReference {
     /**
      * The name of the variable being referenced.
      * <p>

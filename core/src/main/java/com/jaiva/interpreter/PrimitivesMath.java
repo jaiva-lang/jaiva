@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 // cuz java doesnt FUCKING allow you to just FUCKING compare generic FUCKING number.
 // is there a better way? probably. i couldnt care less tho
 
-public final class PrimitivesMath {
+final class PrimitivesMath {
 
     @NotNull
     private static String err(String op, @NotNull Object lhs, @NotNull Object rhs) {

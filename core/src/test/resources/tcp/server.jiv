@@ -6,26 +6,24 @@ tsea "jaiva/net"!
 tsea "jaiva/threads"!
 tsea "./shared"!
 
-kwenza onEnd(status, msg) ->
-    khuluma("Client thread ended. " + status)!
-<~
-
 @* Client function but server side.
 @* p        $> con <- F~any The connection function
-@* p        $> conId <- string connection id, usually just
-@*          $> address + port number
-@* p        $> conAddr <- string The connection address
+@* p        $> conAddress <- string The connection address
+@* p        $> conPort <- string The connection port
 @* p        $> close <- F~any close function which closes
 @*          $> this side of the socket when called.
-kwenza connectionHandler(F~con, conId, conAddress, F~close) ->
+kwenza connectionHandler(F~con, conAddress, conPort, F~close) ->
 
     maak conn_eof <- con(C_EOF)! @ EOF function to set calback and check
     maak conn_closed <- con(C_CLOSED)! @ Same thing as EOF
 
+    @* p    $> type <- string The type of the close call.
+    @*      $> "SELF" indicates this own handler closed, "CONNECTION" is when the connection
+    @*      $> closes gracefully. "INPUT"/"OUTPUT" means either of those from the client closed. "ERR" is what u expect
     kwenza closedHandler(_, _2, type) ->
         khuluma("Socket was closed!")!
-        @ we have conId and conAddress already.
-        maak identifier <- "$t|> " + conId + " on " +  conAddress!
+        @ we have conPort and conAddress already.
+        maak identifier <- "$t|> " + conPort + " on " +  conAddress!
 
         @ If its SELF, then this side was the one that close via invoking the close() function
         if (type != "SELF") ->
@@ -39,36 +37,29 @@ kwenza connectionHandler(F~con, conId, conAddress, F~close) ->
 	    close()!
     <~
 
-    @ you could just call
-    @ con(C_CLOSED)() and put all the args in the outer
-    @ since its the same instance and object no matter how many times u call it
-    @ better to just use variable.
+    @ Set the close callback
 	conn_closed(closedHandler)!
 
-	@ probably make better EOF handling. (by using an actual function and not a lambda to log lol.)
+    @ Set the EOF callback
 	conn_eof()!
 		|> f~(_, _2) : khuluma(conAddress + " encountered EOF wile reading!")!
 
 	zama zama ->
 	    @ Send first packet to da client
 		sendPacket(con, "What's up bro")!
-
         @ wait for any others.
 		nikhil ((conn_eof()') && (conn_closed()')) ->
 		    khuluma("Waiting for " + conAddress + " to send us a packet....")!
 			khuluma("[RECEIVED FROM "+conAddress+":] " + readPacket(con))!
 		<~
-
 	<~ chaai ->
-
         @ if the connection closed, then this is a false alarm.
         if (conn_closed() || conn_eof()) ->
             khutla idk!
         <~ mara ->
             @ client exited due to err
-            khuluma(conId + " disconnected weirdly..... " + error)!
+            khuluma(conAddress + " "+ conPort + " disconnected weirdly..... " + error)!
 		<~
-
 	<~
 
 	khuluma("Closing communication with " + conAddress)!
@@ -81,9 +72,11 @@ kwenza server(F~acceptConn, F~close) ->
     zama zama ->
         khuluma("Waiting for connections...")!
         nikhil (true;) ->
-            maak c <- acceptConn()! @ [con, conId, conAddress, closeFunction]
-            khuluma("Established connection from " + c[2])!
-            thread(f~() : connectionHandler(c:::), onEnd)!
+            maak c <- acceptConn()! @ [con, conAddress, conPort, closeFunction]
+            khuluma("Established connection from " + c[1])!
+            thread()!
+                |> f~() : connectionHandler(c:::)!
+                |> f~(status, msg) : khuluma("Client thread ended. " + status)!
         <~
 	<~ chaai ->
 	    khuluma("Server experienced an error")!

@@ -1,7 +1,6 @@
 package com.jaiva.tokenizer.tokens.specific;
 
 
-import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.tokens.*;
 
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
  * @implSpec This token isn't itself meant to be seen by the tokeniser as it gets
  * concatenated with the rest of the parameters of the previous function call
  */
-public class TExtendParams extends TokenDefault<TExtendParams> implements TStatement {
+public final class TExtendParams extends TokenDefault<TExtendParams> implements TStatement {
     /**
      * The arguments of the extension1
      * <p>

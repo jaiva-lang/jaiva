@@ -4,12 +4,11 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.tokens.TParamsExtendable;
 import com.jaiva.tokenizer.tokens.TStatement;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 
 /**
  * Represents a throw error statement such as {@code cima "Error message!"}
  */
-public class TThrowError extends TokenDefault<TThrowError> implements TStatement, TParamsExtendable {
+public final class TThrowError extends TokenDefault<TThrowError> implements TStatement, TParamsExtendable {
     /**
      * The error message to be thrown.
      */

@@ -1,10 +1,7 @@
 package com.jaiva.test;
 
 import com.jaiva.tokenizer.tokens.*;
-import com.jaiva.tokenizer.tokens.specific.TCodeblock;
-import com.jaiva.tokenizer.tokens.specific.TForLoop;
-import com.jaiva.tokenizer.tokens.specific.TFunction;
-import com.jaiva.tokenizer.tokens.specific.TVarRef;
+import com.jaiva.tokenizer.tokens.specific.*;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;

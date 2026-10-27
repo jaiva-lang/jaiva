@@ -17,8 +17,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ final class CFSockets {
         private final Socket socket;
         private final CFClosures.Closed closed;
         public WrappedCloseFunction(Socket socket, CFClosures.Closed closed) {
-            super(FunctionBuilder.start().setLib("net/tcp"));
+            super(FunctionBuilder.start().name("tcp_close").setLib("net/tcp"));
             freeze();
             this.socket = socket;
             this.closed = closed;
@@ -39,8 +39,8 @@ final class CFSockets {
         public Object call(CallProperties callProperties) throws Exception {
             closed.handleCallback(
                     new ArrayList<>(List.of(
-                            socket.getLocalAddress().toString(),
                             socket.getRemoteSocketAddress().toString(),
+                            ((InetSocketAddress)socket.getRemoteSocketAddress()).getPort(),
                             DoneStatus.SELF.name()
                     ))
                     , callProperties);

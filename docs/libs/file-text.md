@@ -1,8 +1,12 @@
-# file/api (Library)
+# file/text (Library)
 
-_The file api for actually creating files and stuff yknow_
+_The file text api for actually creating files and stuff yknow_
 ## Exports
 This library exports the following libraries: 
+- file/text/query
+
+Exported Symbols Include: `f_nameOf`, `f_dirOf`, `f_contentOf`, `f_permsOf`
+
 ## Table of Contents
 | Alias | Link |
 | --- | --- |
@@ -37,8 +41,8 @@ Since Version: _1.0.1_
 
 ```jaiva
 maak file <- f_file("data/myFile.txt")!
-khuluma("FileApi name: " + file[0])!
-khuluma("FileApi directory: " + file[1])!
+khuluma("file name: " + file[0])!
+khuluma("file directory: " + file[1])!
 ```
 
 
@@ -82,7 +86,7 @@ maak success <- f_new()!
 <| arrLit("Hello, World!", "This is a new file.")!
 <| (true, true, false)!
 if (success) ->
-    khuluma("FileApi created successfully!")!
+    khuluma("file created successfully!")!
 <~ else ->
     khuluma("Failed to createFunction file.")!
 <~
@@ -106,7 +110,7 @@ maak f_name <- (string)
 ```
 
 > [!NOTE]
-> _If you call this within the REPL, or somehow the filePath is null, it holds "FileApi"_
+> _If you call this within the REPL, or somehow the filePath is null, it holds "file"_
 
 
 Since Version: _1.0.0_
@@ -137,7 +141,7 @@ maak f_dir <- (string)
 ```
 
 > [!NOTE]
-> _If you call this within the REPL, or somehow the filePath is null, it holds "FileApi"_
+> _If you call this within the REPL, or somehow the filePath is null, it holds "file"_
 
 
 Since Version: _1.0.0_

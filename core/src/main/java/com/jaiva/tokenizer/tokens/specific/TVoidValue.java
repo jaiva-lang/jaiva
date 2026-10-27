@@ -3,13 +3,12 @@ package com.jaiva.tokenizer.tokens.specific;
 import com.jaiva.tokenizer.tokens.TAtomicValue;
 import com.jaiva.tokenizer.tokens.TStatement;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 
 /**
  * Represents a "null" value such as {@code maak name <- idk!} which is the same
  * as not defining a value at all.
  */
-public class TVoidValue extends TokenDefault<TVoidValue> implements TAtomicValue, TStatement {
+public final class TVoidValue extends TokenDefault<TVoidValue> implements TAtomicValue, TStatement {
 
     /**
      * Constructor for TVoidValue

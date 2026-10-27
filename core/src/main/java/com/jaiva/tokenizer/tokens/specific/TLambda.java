@@ -6,7 +6,7 @@ import com.jaiva.tokenizer.tokens.TAtomicValue;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TLambda extends TFunction implements TAtomicValue {
+public final class TLambda extends TFunction implements TAtomicValue {
     public TLambda(String name, String[] args, Object input, int ln) throws JaivaException {
         super(name, args, new TCodeblock(
                 new ArrayList<>(List.of(

@@ -2,7 +2,6 @@ package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 
 import java.util.ArrayList;
 
@@ -11,7 +10,7 @@ import java.util.ArrayList;
  * This class usually isn't used directly, but rather as a part of another
  * instance
  */
-public class TCodeblock extends TokenDefault<TCodeblock> {
+public final class TCodeblock extends TokenDefault<TCodeblock> {
     /**
      * The lines of code in the code block.
      */

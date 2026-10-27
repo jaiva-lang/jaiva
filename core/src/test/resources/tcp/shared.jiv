@@ -5,14 +5,22 @@
 tsea "jaiva/continuous"!
 tsea "jaiva/net"!
 
-kwenza *readPacket(con) ->
+@* Reads an input tcp packet
+@* p        $> con <- F~any The connection function
+@* rets     $> A String.
+@* devn     $> This function essentially reads first an integer, then reads the next bytes of that
+@*          $> integer length expecting it as a UTF-8 String.
+kwenza *readPacket(F~con) ->
 	maak msgLen <- con(C_READ)(NET_R_INT)!
 	maak pl <- con(C_READ)(NET_RU_BYTEBUFF, msgLen)!
 	@ Using NET_R_BYTEBUFF will only read whats available!
 	khutla tseaf("jaiva/types/numbers", t_strFromByteArr)(pl:::)!
 <~
 
-kwenza *sendPacket(con, msg) ->
+@* Send a packet through.
+@* p        $> con <- F~any The connection function
+@* p        $> msg <- string The message to send
+kwenza *sendPacket(F~con, msg) ->
 	maak bArr <- tseaf("jaiva/types/numbers", t_strToByteArr)(msg)!
 	con(C_WRITE)(NET_W_INT, bArr~)!
 	con(C_WRITE)(NET_W_BYTEBUFF, bArr)!

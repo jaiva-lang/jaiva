@@ -3,7 +3,6 @@ package com.jaiva.tokenizer.tokens.specific;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.tokens.TStatement;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 
 import java.util.ArrayList;
 
@@ -13,7 +12,7 @@ import java.util.ArrayList;
  * or
  * {@code tsea "path" <- func1, func2, func3!}
  */
-public class TImport extends TokenDefault<TImport> implements TStatement {
+public final class TImport extends TokenDefault<TImport> implements TStatement {
     /**
      * Indicates whether this import is a library import.
      * <p>
@@ -54,7 +53,7 @@ public class TImport extends TokenDefault<TImport> implements TStatement {
      * Constructor for TImport
      *
      * @param file     The file path.
-     * @param fileName FileApi name
+     * @param fileName file name
      * @param isLib    Whther its a libaray import
      * @param names    The imported symbols.
      * @param ln       The line number.

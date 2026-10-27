@@ -3,7 +3,6 @@ package com.jaiva.tokenizer.tokens.specific;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.tokens.TConstruct;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
  * Represents a try-catch statement such as
  * {@code zama zama -> ... <~ chaai -> ... <~}
  */
-public class TTryCatch extends TokenDefault<TTryCatch> implements TConstruct {
+public final class TTryCatch extends TokenDefault<TTryCatch> implements TConstruct {
     /**
      * The try block of the try-catch statement.
      */

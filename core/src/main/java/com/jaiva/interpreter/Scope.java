@@ -4,7 +4,7 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.jaiva.tokenizer.tokens.TokenDefault;
+import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.FileSystems;

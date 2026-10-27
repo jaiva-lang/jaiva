@@ -6,7 +6,6 @@ import com.jaiva.tokenizer.TConfig;
 import com.jaiva.tokenizer.tokens.TAtomicValue;
 import com.jaiva.tokenizer.tokens.TParamsExtendable;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 import com.jaiva.utils.Find;
 import com.jaiva.utils.cd.ContextDispatcher;
 import com.jaiva.utils.generic.LeastImportantOperator;
@@ -16,7 +15,7 @@ import com.jaiva.utils.generic.LeastImportantOperator;
  * This class usually isn't used directly, but rather as a part of another
  * instance.
  */
-public class TExpression extends TokenDefault<TExpression> implements TAtomicValue, TParamsExtendable {
+public final class TExpression extends TokenDefault<TExpression> implements TAtomicValue, TParamsExtendable {
     /**
      * The left hand side of the statement.
      * <p>

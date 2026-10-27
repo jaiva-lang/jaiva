@@ -1,7 +1,7 @@
 package com.jaiva.interpreter.symbol;
 
 import com.jaiva.interpreter.runtime.DebugController;
-import com.jaiva.tokenizer.tokens.TokenDefault;
+import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 
 /**
  * Base class for functions and variables

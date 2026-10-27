@@ -6,7 +6,6 @@ import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.TConstruct;
 import com.jaiva.tokenizer.tokens.TSymbol;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,8 @@ import java.util.regex.Pattern;
  * {@code kwenza addition(param1, param2) -> khutla (param1 + param2)! <~}
  * This class is
  */
-public class TFunction extends TokenDefault<TFunction> implements TSymbol, TConstruct {
+public sealed class TFunction extends TokenDefault<TFunction>
+        implements TSymbol, TConstruct permits TLambda {
     /**
      * The arguments of the function.
      */

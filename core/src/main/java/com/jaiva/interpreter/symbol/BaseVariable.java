@@ -1,11 +1,9 @@
 package com.jaiva.interpreter.symbol;
 
 import com.jaiva.errors.InterpreterException;
-import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.var.VariableBuilder;
-import com.jaiva.interpreter.libs.file.FileApi;
-import com.jaiva.tokenizer.tokens.TokenDefault;
+import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 
 import java.util.ArrayList;
 import java.util.Collection;

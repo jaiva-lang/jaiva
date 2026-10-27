@@ -21,6 +21,9 @@ _Jaiva's arrays standard library which is itself, made in Jaiva.  It really just
 | a_from | [a_from](#a_from) |
 | a_forEach | [a_forEach](#a_forEach) |
 | a_apply | [a_apply](#a_apply) |
+| a_findFirst | [a_findFirst](#a_findFirst) |
+| a_findLast | [a_findLast](#a_findLast) |
+| a_find | [a_find](#a_find) |
 ## Functions
 
 ### a_remove
@@ -266,12 +269,12 @@ F~a_filter(arr, F~predicate)
 - **_arr_**  **`<-`** _**[]**_
 	 - _The original array_
 - **_predicate_**  **`<-`** _**F~any**_
-	 - _A function that takes an element and returns true_
+	 - _A function that takes an element and additional parameters and returns a boolean._
 
 _**Returns:**_ **A new array with elements that satisfy the predicate function.**
 
 > [!NOTE]
-> _The predicate function must take in 1 parameter, the element and return a boolean. Throws if the first argument is not an array or if the second argument is not a function._
+> _The predicate function must take in at least 1 parameter, which is the input element. The function can then further take in an index as parameter 2, and the original array at parameter 3 and should return a boolean. Throws if the first argument is not an array or if the second argument is not a function._
 
 
 Since Version: _1.0.0-beta.3_
@@ -283,6 +286,8 @@ Since Version: _1.0.0-beta.3_
 maak arr <-| 1, 2, 3, 4, 5, 6!
 maak isEven <- f~(num) : num % 2 = 0! @ A lambda function to check if a number is even
 khuluma(a_filter(arr, isEven))! @ Returns [2, 4, 6]
+@ Filter for elements who's index is even.
+khuluma(a_filter(arr, f~(num, index) : index % 2 = 0)!
 ```
 
 
@@ -297,15 +302,15 @@ _**Replace an element at a specific index in an array with a new element**_
 #### Definition
 
 ```jaiva
-F~a_replace(arr, i, el)
+F~a_replace(arr, i, el?)
 ```
 
 - **_arr_**  **`<-`** _**[]**_
 	 - _The original array_
 - **_i_**  **`<-`** _**number**_
 	 - _The index to replace_
-- **_el_**  **`<-`** _**any**_
-	 - _The new element to insert_
+- **_el_** **`?`** **`<-`** _**any**_
+	 - _The new element to insert (Can be idk)_
 
 _**Returns:**_ **A new array with the element at index i replaced with el**
 
@@ -371,12 +376,12 @@ _**Finds the first occurrence of an element in an array and returns its index**_
 #### Definition
 
 ```jaiva
-F~a_indexOf(arr, el)
+F~a_indexOf(arr, el?)
 ```
 
 - **_arr_**  **`<-`** _**[]**_
 	 - _The original array_
-- **_el_**  **`<-`** _**any**_
+- **_el_** **`?`** **`<-`** _**any**_
 	 - _The element to find_
 
 _**Returns:**_ **The index of the first occurrence of el in arr, or idk if not found**
@@ -489,12 +494,12 @@ F~a_map(arr, F~mapperFunction)
 - **_arr_**  **`<-`** _**[]**_
 	 - _The original array to map over._
 - **_mapperFunction_**  **`<-`** _**F~any**_
-	 - _A function that takes one element and returns its transformed value._
+	 - _A function that takes the element and additional parameters returns its transformed value._
 
 _**Returns:**_ **A new array populated with the results of calling the mapperFunction on every element.**
 
 > [!NOTE]
-> _The mapperFunction must take in 1 parameter (the element). Throws if the first argument is not an array or if the second argument is not a function._
+> _The mapper function must take in at least 1 parameter, which is the input element. The function can then further take in an index as parameter 2, and the original array at parameter 3 and should return a new transformed version. Throws if the first argument is not an array or if the second argument is not a function._
 
 
 Since Version: _4.1.1_
@@ -563,12 +568,12 @@ F~a_forEach(arr, F~function)
 - **_arr_**  **`<-`** _**[]**_
 	 - _The original array to go over._
 - **_function_**  **`<-`** _**F~any**_
-	 - _A function that takes one element and shouldn't return really._
+	 - _A function that takes one element and extra parameters and shouldn't return really._
 
 _**Returns:**_ **idk**
 
 > [!NOTE]
-> _The function must take in 1 parameter (the element). Throws if the first argument is not an array or if the second argument is not a function._
+> _The function must take in at least 1 parameter (the element). and can optionally take in at the 2nd parameter an index, and at the third the original array. Throws if the first argument is not an array or if the second argument is not a function._
 
 
 Since Version: _5.1.0_
@@ -627,6 +632,42 @@ a_apply(arr)!
 @ Previous example but using newer parameter extension
 ```
 
+
+---
+
+
+### a_findFirst
+
+
+#### Definition
+
+```jaiva
+F~a_findFirst(arr, F~predicate)
+```
+
+---
+
+
+### a_findLast
+
+
+#### Definition
+
+```jaiva
+F~a_findLast(arr, F~predicate)
+```
+
+---
+
+
+### a_find
+
+
+#### Definition
+
+```jaiva
+F~a_find(arr, F~predicate)
+```
 
 ---
 

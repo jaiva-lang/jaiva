@@ -10,6 +10,7 @@ import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.yetnt.utils.builders.MarkDownLiteral;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -29,12 +30,12 @@ public class VfsToMD {
     private final ArrayList<SymbolLink> symbolToc = new ArrayList<>();
 
     public record SymbolLink(String displayName, String link) {
-
+        @NotNull
         @Override
-            public String toString() {
-                return new MarkDownLiteral(displayName).linkTo("#" + link).toString();
-            }
+        public String toString() {
+            return new MarkDownLiteral(displayName).linkTo("#" + link).toString();
         }
+    }
 
     public record MDFile(String content, String fileName) {}
 
@@ -83,12 +84,12 @@ public class VfsToMD {
             sb.append(String.join("\n", syms));
         }
 
-        String filePath = path
+        String filePath = path != null ? path
                 .replaceAll(Matcher.quoteReplacement("\""), "")
                 .toLowerCase()
                 .replace("\\", "-")
                 .replace("/", "-")
-                .trim();
+                .trim() : "unspecified";
 
 
         return new MDFile(sb.toString(), filePath);

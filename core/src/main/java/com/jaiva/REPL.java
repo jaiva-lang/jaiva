@@ -8,7 +8,7 @@ import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.tokenizer.TConfig;
 import com.jaiva.tokenizer.Tokenizer;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
+import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.TExpression;
 import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 import com.jaiva.tokenizer.tokens.specific.TVarRef;
