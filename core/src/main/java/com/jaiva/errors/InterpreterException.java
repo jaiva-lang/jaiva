@@ -47,6 +47,8 @@ public class InterpreterException extends JaivaException {
 
         if (c.isAssignableFrom(BaseFunction.class))      return "function";
         else if (c.isAssignableFrom(BaseVariable.class)) return "variable";
+        else if (c == TVarRef.class)                     return "variable reference";
+        else if (c == TFuncCall.class)                   return "function call";
         else if (c == String.class)                      return "string";
         else if (c == int.class)                         return "integer";
         else if (c == double.class)                      return "double";

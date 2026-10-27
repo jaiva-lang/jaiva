@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.jaiva</groupId>
-        <artifactId>jaiva-parent</artifactId>
-        <version>7.0.0-beta.1</version>
+        <groupId>com.github.yetnt.jaiva</groupId>
+        <artifactId>parent</artifactId>
+        <version>7.0.0-beta.2</version>
     </parent>
 
     <artifactId>core</artifactId>

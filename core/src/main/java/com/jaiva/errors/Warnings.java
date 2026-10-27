@@ -40,7 +40,7 @@ public final class Warnings {
             throw new InterpreterException.NoWarningsException(scope, ln, message);
         else {
             if (!config.isStreamer()) {
-                System.out.println(AnsiColour.print("[WARNING: line " + ln + "]", AnsiColour.FONT.BOLD, AnsiColour.BACK.BRIGHT_WHITE, AnsiColour.FORE.YELLOW) + " " + AnsiColour.print(message, AnsiColour.FORE.YELLOW));
+                System.out.println(AnsiColour.print("[WARNING: line " + ln + "]", AnsiColour.FONT.BOLD, AnsiColour.BACK.BRIGHT_WHITE, AnsiColour.FORE.YELLOW) + " " + AnsiColour.print(message, AnsiColour.FORE.BRIGHT_YELLOW));
             }
             config.addWarning(
                     new Warning(

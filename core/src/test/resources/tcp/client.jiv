@@ -1,4 +1,3 @@
-
 @ client.jiv
 
 tsea "jaiva/continuous"!
@@ -28,7 +27,7 @@ kwenza client(F~con, conId, conAddr, F~close) ->
         if (type != "SELF") ->
             @ if i ever introduce a switch, itd naturally replace this.
             sif (type = "CONNECTION") ?> khuluma(identifier + " was closed.")!
-            sif (type = "ERR") ?> khuluma(identifier + " crashed suddenly!")!
+            sif (type = "ERR") ?> khuluma(identifier + " crashe d suddenly!")!
             sif (type = "INPUT") ?> khuluma(identifier + " closed it's input stream!")!
             sif (type = "OUTPUT") ?> khuluma(identifier + " closed it's output stream!")!
         <~

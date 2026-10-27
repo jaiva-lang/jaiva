@@ -1,8 +1,12 @@
 package com.jaiva.tokenizer;
 
 import com.jaiva.Config;
+import com.jaiva.tokenizer.tokens.Token;
+import com.jaiva.tokenizer.tokens.specific.TIfStatement;
 import com.jaiva.utils.generic.BlockChain;
 import com.jaiva.utils.generic.MultipleLinesOutput;
+
+import java.util.ArrayList;
 
 
 /**
@@ -13,9 +17,12 @@ import com.jaiva.utils.generic.MultipleLinesOutput;
  */
 public class TConfig extends Config {
 
-    public Flags flags = new Flags();
+    public final Flags flags = new Flags();
 
-    private Object fileOrigin;
+    /**
+     * File origin. It can be a String or Path.
+     */
+    private final Object fileOrigin;
 
     /**
      * The constructor for the TConfig class.
@@ -37,6 +44,23 @@ public class TConfig extends Config {
      * configuring the behavior of the tokenizer.
      */
     public static class Flags {
+        /**
+         * Flag used by the tokeniser to indicate, that the subsequent handling of the "imaginary" block
+         * made by {@code sif} statement, being its {@link com.jaiva.tokenizer.tokens.specific.TIfStatement} representation
+         * as a 3 line statement, should ignore the canonical line number which the normal handling loop keeps track of to instead
+         * have the 3 line statement's line number be on the same line.
+         * <p>
+         *     This is set by {@link Tokenizer#readLine(String, String, MultipleLinesOutput, BlockChain, int, TConfig)}
+         *     when handling a {@code sif} such that when it passes on the creation of the {@link TIfStatement}
+         *     to {@code Tokenizer#processBlockLines(boolean, String, MultipleLinesOutput, String, ArrayList, String, String[], Token, int, TConfig)}
+         *     it can safely set and reset said line number endings when it itself calls readLine for the body
+         *     of the if statement.
+         * </p>
+         * <p>
+         *     This is more jsut a bonus, but its also used at the end of all the above handling right before returning
+         *     the token to set {@link TIfStatement#setShorthand(boolean)}
+         * </p>
+         */
         public boolean SHORTHAND_IF = false;
         /**
          * This flag is used by the tokenizer, to indicate to it that the line while being parsed by {@link Tokenizer#readLine(String, String, MultipleLinesOutput, BlockChain, int, TConfig)} should instead of trimming it's contents, preserve it.

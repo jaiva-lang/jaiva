@@ -1,37 +1,40 @@
-@* sduidhfiopsdf
-maak d <- f~(a, b) : a + b!
+tsea "jaiva/reflect"!
 
-@ tšea "jaiva/arrays"!
-@
-@ maak 2a <- arrLit(reservedKeywords:::, reservedKeywords:::, reservedKeywords:::, reservedKeywords:::)!
-@
-@ @ identical to
-@
-@ maak 4b <- arrLit()!
-@ |> (reservedKeywords:::, reservedKeywords:::, reservedKeywords:::, reservedKeywords:::)!
-@
-@ @ identical to
-@
-@ maak 3c <- arrLit()!
-@ |> (reservedKeywords:::)!
-@ |> (reservedKeywords:::)!
-@ |> (reservedKeywords:::)!
-@ |> (reservedKeywords:::)!
-@
-@ @ identical to
-@
-@ maak d <- arrLit()!
-@ |> [4] (reservedKeywords:::)!
-@
-@ khuluma(2a)!
-@ khuluma(4b)!
-@ khuluma(3c)!
-@ khuluma(d)!
-@
-@ maak another <- arrLit()!
-@ |> "ksfjdkf"!
-@ |> [2] ("sdf", "cx", 10)!
-@ |>[19] (arrLit("hi"), 200)!
-@ |> 230!
-@
-@ khuluma(another)!
+sif (true;) ?> khuluma()!
+|> "hiu"!
+
+maak a <- 10!
+
+khuluma(a)!
+
+a <- arrLit(100, 100)!
+
+khuluma(a)!
+
+@ the variable holds both the scalar and array value. it always defaults to the scalar value.
+@ Unless:
+
+r_vPreferArr(a)!
+
+khuluma(a)!
+
+@ and some other stuff
+
+r_fUnfreeze(typeOf)!
+
+typeOf <- 10!
+
+khuluma(typeOf)!
+
+@ and this one which will abso
+
+maak func <- tseaf("jaiva/math", m_sin)!
+
+@ lets make it evaluate params later, meaning its implementaiton will try call sin(Token) and not sin(Number)
+
+r_fEvalParamsLater(func)!
+
+maak b <- 10!
+
+khuluma(func(10))!
+khuluma(func(b))!

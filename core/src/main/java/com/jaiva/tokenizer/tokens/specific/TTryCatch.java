@@ -46,7 +46,7 @@ public class TTryCatch extends TokenDefault<TTryCatch> implements TConstruct {
 
     public void json() throws JaivaException {
         json.set("try", tryBlock);
-        json.set("catch", catchBlock);
+        json.nullSet("catch", catchBlock);
     }
 
     /**

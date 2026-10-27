@@ -33,3 +33,5 @@ Literlaly just plumbing
 - Refactor scope
 - Added parameter extending group repetition
 - Made a JDoc comment who was given to a variable set to a lambda, also apply to that same lambda. (Tokenizer side)
+- `sif` now supports parameter extending and `TIfStatement` JSON output has a new `isShorthand` field.
+- New `reflect` library.

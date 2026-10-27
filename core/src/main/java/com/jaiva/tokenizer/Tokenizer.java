@@ -244,6 +244,7 @@ public final class Tokenizer {
         String preLine = formattedPreLine.getFirst();
         ArrayList<Token<?>> nestedTokens = new ArrayList<>();
         config.flags.SKIP_READLINE_TRIM = true;
+        boolean shorthandIf = config.flags.SHORTHAND_IF;
         Object stuff = readLine(preLine, (formattedPreLine.getSecond() == true ? null : ""), null, null, finalMOutput.lineNumber + 1, config);
 //        line = Comments.decimate(line);
         try {
@@ -298,7 +299,9 @@ public final class Tokenizer {
                             "Ayo the condition in the if (" + cond + ") gotta resolve to a boolean dawg.",
                             finalMOutput.lineNumber);
                 }
-                specific = new TIfStatement(obj, codeblock, finalMOutput.lineNumber).toToken();
+                TIfStatement statement = new TIfStatement(obj, codeblock, finalMOutput.lineNumber);
+                if (shorthandIf) statement.setShorthand(true);
+                specific = statement.toToken();
                 if (line.contains(Keywords.ELSE)) {
                     return new BlockChain(specific, line.replaceFirst(Chars.BLOCK_CLOSE, "").trim());
                 }

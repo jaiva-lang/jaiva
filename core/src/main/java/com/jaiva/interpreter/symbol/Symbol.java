@@ -143,4 +143,8 @@ public class Symbol implements Cloneable {
     public Symbol clone() throws CloneNotSupportedException {
         return (Symbol) super.clone();
     }
+
+    public void unfreeze() {
+        isFrozen = false;
+    }
 }

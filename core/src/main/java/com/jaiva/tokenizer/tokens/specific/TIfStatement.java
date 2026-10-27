@@ -1,10 +1,7 @@
 package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.errors.JaivaException;
-import com.jaiva.tokenizer.tokens.TConditional;
-import com.jaiva.tokenizer.tokens.TConstruct;
-import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.TokenDefault;
+import com.jaiva.tokenizer.tokens.*;
 
 import java.util.ArrayList;
 
@@ -17,7 +14,7 @@ import java.util.ArrayList;
  * body nor its own chain of elseIfs. only the original if contaisn all the else
  * ifs and the last else block.
  */
-public class TIfStatement extends TokenDefault<TIfStatement> implements TConstruct, TConditional {
+public class TIfStatement extends TokenDefault<TIfStatement> implements TConstruct, TConditional, TParamsExtendable {
     /**
      * The condition of the if statement.
      */
@@ -34,6 +31,8 @@ public class TIfStatement extends TokenDefault<TIfStatement> implements TConstru
      * The chain of else if statements.
      */
     public ArrayList<TIfStatement> elseIfs = new ArrayList<>();
+
+    private boolean shorthand = false;
 
     /**
      * Constructor for TIfStatement
@@ -76,6 +75,7 @@ public class TIfStatement extends TokenDefault<TIfStatement> implements TConstru
         json.set("body", body);
         json.nullSet("elseIfs", elseIfs);
         json.nullSet("elseBody", elseBody);
+        json.set("isShorthand", shorthand);
     }
 
     /**
@@ -103,5 +103,16 @@ public class TIfStatement extends TokenDefault<TIfStatement> implements TConstru
                     .map(t -> t.body)
                     .forEach(blocks::add);
         return blocks;
+    }
+
+    public void setShorthand(boolean shorthand) {
+        this.shorthand = shorthand;
+        json.set("isShorthand", shorthand);
+    }
+
+    @Override
+    public TFuncCall get() {
+        if (!shorthand) return null;
+        return checkObject(getCodeBlocks().getFirst().lines.getFirst().value());
     }
 }

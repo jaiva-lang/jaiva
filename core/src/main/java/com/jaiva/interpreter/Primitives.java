@@ -57,6 +57,13 @@ public final class Primitives {
                         scope, config
                 );
             }
+            if (!Objects.isNull(c) && c.unsafe()) {
+                Warnings.println(
+                        lineNumber,
+                        s.name + " has been marked unsafe. I hope you know what you're doing.",
+                        scope, config
+                );
+            }
         }
     }
 

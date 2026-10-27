@@ -184,6 +184,10 @@ public class BaseFunction extends Symbol {
         this.evaluateParamsEarly = false;
     }
 
+    public void setEvaluateParamsEarly(boolean evaluateParamsEarly) {
+        this.evaluateParamsEarly = evaluateParamsEarly;
+    }
+
     /**
      * Resolves the parameters for a function call, handling spread operators.
      *
