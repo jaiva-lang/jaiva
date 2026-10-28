@@ -21,7 +21,7 @@ import java.util.List;
 
 public class SocketContainerLib extends BaseLibrary {
 
-    private static String example = """
+    private static final String example = """
             tsea "jaiva/continuous"!
             tsea "jaiva/net"!
             tsea "jaiva/threads"!

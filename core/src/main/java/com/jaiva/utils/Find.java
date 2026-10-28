@@ -158,59 +158,6 @@ public final class Find {
         return -1;
     }
 
-
-    /**
-     * Returns the index of the opening brace which is part of the last,
-     * outermost brace pair. Both () and [] are checked for agasinst each other.
-     * This will r
-     * <p>
-     * <blockquote>
-     *
-     * <pre>
-     * "func()" returns 4
-     * "()[]" returns 2
-     * "()" returns 0
-     * </pre>
-     *
-     * </blockquote>
-     * </p>
-     *
-     * @param line Input.
-     * @return the index where the outermost brace pair starts
-     * @implNote Specialization of {@link #lastOutermostBracePair(String)}
-     */
-    public static int lastOuterMostBracePairIndex(String line) {
-        SamePair<Integer> last = lastOutermostBracePair(line);
-        return last == null ? -1 : last.getFirst();
-    }
-
-
-    /**
-     * Returns the pair of indexes corresponding to the last,
-     * outermost brace pair. Both () and [] are checked for against each other.
-     * <p>
-     * <blockquote>
-     *
-     * <pre>
-     * "func()" returns SamePair(4, 5)
-     * "()[]" returns SamePair(2, 3)
-     * "()" returns SamePair(0, 1)
-     * </pre>
-     *
-     * </blockquote>
-     * </p>
-     *
-     * @param line Input.
-     * @return the pair where the outermost brace pair starts
-     */
-    @Nullable
-    public static SamePair<Integer> lastOutermostBracePair(String line) {
-        BracePairs bp = Find.bracePairs(line);
-        ArrayList<SamePair<Integer>> closed = bp.closedPairs();
-        if (closed.isEmpty()) return null;
-        return closed.getLast();
-    }
-
     /**
      * Determines the least important operator in a given mathematical or logical
      * statement.
@@ -483,12 +430,66 @@ public final class Find {
         return new BracePairs(finalArr, stack, danglingclose);
     }
 
+
+
+    /**
+     * Returns the index of the opening brace which is part of the last,
+     * outermost brace pair. Both () and [] are checked for agasinst each other.
+     * This will r
+     * <p>
+     * <blockquote>
+     *
+     * <pre>
+     * "func()" returns 4
+     * "()[]" returns 2
+     * "()" returns 0
+     * </pre>
+     *
+     * </blockquote>
+     * </p>
+     *
+     * @param line Input.
+     * @return the index where the outermost brace pair starts
+     * @implNote Specialization of {@link #lastOutermostBracePair(String)}
+     */
+    public static int lastOuterMostBracePairIndex(String line) {
+        SamePair<Integer> last = lastOutermostBracePair(line);
+        return last == null ? -1 : last.getFirst();
+    }
+
+
+    /**
+     * Returns the pair of indexes corresponding to the last,
+     * outermost brace pair. Both () and [] are checked for against each other.
+     * <p>
+     * <blockquote>
+     *
+     * <pre>
+     * "func()" returns SamePair(4, 5)
+     * "()[]" returns SamePair(2, 3)
+     * "()" returns SamePair(0, 1)
+     * </pre>
+     *
+     * </blockquote>
+     * </p>
+     *
+     * @param line Input.
+     * @return the pair where the outermost brace pair starts
+     */
+    @Nullable
+    public static SamePair<Integer> lastOutermostBracePair(String line) {
+        BracePairs bp = Find.bracePairs(line);
+        ArrayList<SamePair<Integer>> closed = bp.closedPairs();
+        if (closed.isEmpty()) return null;
+        return closed.getLast();
+    }
+
     /**
      * Finds the last index of the given input string in statement, while
      * disregarding input enclosed in quotation marks or inside a set of brackets []
      * or parenthesis ()
      * <p>
-     * This is meant for {@link Token#processContext(String, int)} to properly split
+     * This is meant for {@link Token#processContext(String, int, com.jaiva.tokenizer.TConfig)} to properly split
      * nested {@link TTernary} at the correct places. It can be used elsewhere
      * provided with caution
      * 

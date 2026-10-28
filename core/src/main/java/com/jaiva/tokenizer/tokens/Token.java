@@ -137,6 +137,7 @@ public record Token<T extends TokenDefault<?>>(T value) {
      */
     public static Object processContext(String line, int lineNumber, TConfig config) throws JaivaException {
         line = line.trim(); // gotta trim da line fr
+        String originalLine = line;
 
         ContextDispatcher d = new ContextDispatcher(line);
         if (d.getDeligation() == To.TEXPRESSION) {
@@ -274,7 +275,8 @@ public record Token<T extends TokenDefault<?>>(T value) {
                 }
                 return new TFuncCall(processContext(simplifyIdentifier(name, "F~"), lineNumber, config), parsedArgs,
                         lineNumber, line.charAt(line.length() - 1) == Chars.LENGTH_CHAR,
-                        line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD)).toToken();
+                        line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD))
+                        .setOriginalCall(originalLine).toToken();
             } else if (index != -1 && (line.charAt(index) == '[')) {
                 // then its a variable call an array one to be specific
                 // name[index]

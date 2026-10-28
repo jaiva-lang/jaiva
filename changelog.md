@@ -37,3 +37,5 @@ Literlaly just plumbing
 - New `reflect` library.
 - `file/query` has moved to `file/api/query`
 - Renamed `file/api` and sub libraries to `file/text` to better represent that they are text based file-related api
+- Add error for when a block has no code.
+- Fix `TIfStatement` json not having `elseBody`

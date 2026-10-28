@@ -67,6 +67,8 @@ kwenza connectionHandler(F~con, conAddress, conPort, F~close) ->
 	close()!
 <~
 
+
+@* p $> close <- F~any The close function to close the server.
 kwenza server(F~acceptConn, F~close) ->
     khuluma("Started server")!
     zama zama ->

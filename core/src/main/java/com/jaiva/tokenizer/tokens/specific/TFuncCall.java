@@ -36,6 +36,7 @@ public final class TFuncCall extends TokenDefault<TFuncCall> implements TReferen
      * Indicates whether the function call spreads an array as arguments.
      */
     private boolean spreadArr = false;
+    private String originalCall;
 
     /**
      * Constructor for TFuncCall
@@ -75,6 +76,13 @@ public final class TFuncCall extends TokenDefault<TFuncCall> implements TReferen
         json.set("getLength", getLength);
         json.set("spreadArr", spreadArr);
         json.set("args", args);
+        json.nullSet("originalCall", originalCall);
+    }
+
+    public TFuncCall setOriginalCall(String originalCall) {
+        this.originalCall = originalCall;
+        json.set("originalCall", originalCall);
+        return this;
     }
 
     /**

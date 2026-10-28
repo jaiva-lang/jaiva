@@ -85,11 +85,21 @@ public class MarkdownMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "jaiva.allOutOptionsTrue")
     private boolean allOutputOptionsTrue;
 
+    /**
+     * Whether to skip this mojo.
+     */
+    @Parameter(
+            defaultValue = "false",
+            property = "jaiva.md.skip"
+    )
+    private boolean skip;
+
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
     @Override
     public void execute() throws MojoExecutionException {
+        if (skip) return;
         prepareOutputDirectory();
         load(basePackage, outputDir);
     }

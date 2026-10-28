@@ -1,40 +1,12 @@
-tsea "jaiva/reflect"!
+@ jdnsjkj
 
-sif (true;) ?> khuluma()!
-|> "hiu"!
+sif (a = 10) ?> a!
 
-maak a <- 10!
+@ suidjk
+@ sodihdsoj
+@ kosdfjosdlk
+@ siojds
 
-khuluma(a)!
+func(1, a, a, a, a, a, a)!
 
-a <- arrLit(100, 100)!
-
-khuluma(a)!
-
-@ the variable holds both the scalar and array value. it always defaults to the scalar value.
-@ Unless:
-
-r_vPreferArr(a)!
-
-khuluma(a)!
-
-@ and some other stuff
-
-r_fUnfreeze(typeOf)!
-
-typeOf <- 10!
-
-khuluma(typeOf)!
-
-@ and this one which will abso
-
-maak func <- tseaf("jaiva/math", m_sin)!
-
-@ lets make it evaluate params later, meaning its implementaiton will try call sin(Token) and not sin(Number)
-
-r_fEvalParamsLater(func)!
-
-maak b <- 10!
-
-khuluma(func(10))!
-khuluma(func(b))!
+maak x <- func(a, a, a, a, a, a, a, a, a, a)!

@@ -405,7 +405,8 @@ public final class Tokenizer {
 
     @NotNull
     @Contract("_ -> new")
-    private static Pair<String, Boolean> formatPreline(@NotNull MultipleLinesOutput finalMOutput) {
+    private static Pair<String, Boolean> formatPreline(@NotNull MultipleLinesOutput finalMOutput)
+    throws TokenizerException {
         boolean isInline = false;
         String preLine = finalMOutput.preLine;
         preLine = preLine.startsWith(Keywords.D_FUNCTION) ? preLine.replaceFirst(Keywords.D_FUNCTION, "") : preLine;
@@ -419,6 +420,10 @@ public final class Tokenizer {
         preLine = preLine.substring(preLine.indexOf(Chars.BLOCK_OPEN) + 2);
         preLine = preLine.substring(0, preLine.lastIndexOf(Chars.BLOCK_CLOSE));
         String[] parts = preLine.split("\n");
+        if (parts.length == 0)
+            throw new TokenizerException.MalformedSyntaxException(
+                    "Empty block? Whats the point then.", finalMOutput.lineNumber
+            );
         if (parts[0].trim().startsWith(String.valueOf(Chars.COMMENT))) isInline = true;
         return new Pair<>(preLine, isInline);
     }

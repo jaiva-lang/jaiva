@@ -68,6 +68,7 @@ public final class TIfStatement extends TokenDefault<TIfStatement> implements TC
      */
     public void appendElse(TCodeblock elseBody) {
         this.elseBody = elseBody;
+        json.set("elseBody", elseBody);
     }
 
     public void json() throws JaivaException {
