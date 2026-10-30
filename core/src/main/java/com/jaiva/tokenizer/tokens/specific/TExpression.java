@@ -63,7 +63,16 @@ public final class TExpression extends TokenDefault<TExpression> implements TAto
      */
     public static Object syntaxSugar(Object s) throws TokenizerException.MalformedSyntaxException {
         if (s instanceof TExpression statement) {
-            if (statement.rHandSide == null && statement.op.equals("?")) {
+            if (
+                    statement.rHandSide instanceof Token(TokenDefault<?> value)
+                            && value instanceof TExpression expr
+                            && statement.op.equals("?")
+            ){
+                if (expr.lHandSide == null && expr.op.equals("=")) {
+                    statement.rHandSide = Token.voidValue(statement.lineNumber);
+                    statement.op = "!=";
+                }
+            } else if (statement.rHandSide == null && statement.op.equals("?")) {
                 statement.rHandSide = Token.voidValue(statement.lineNumber);
                 statement.op = "=";
             } else if (statement.lHandSide == null && statement.op.equals("-")) {

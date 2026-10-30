@@ -117,7 +117,7 @@ import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 
 import java.util.ArrayList;
 
-@PublicLibrary(path = "namespace/reflective")
+@PublicLibrary(path = "namespace/reflective", description="Lol.")
 public class ReflectiveLib extends BaseLibrary {
 
     public ReflectiveLib() {
@@ -156,14 +156,14 @@ public class ReflectiveLib extends BaseLibrary {
         // The method to override to enable functionality
 
         @Override
-        public Object call(TFuncCall tFuncCall, ArrayList<Object> params, IConfig<Object> config, Scope scope) throws Exception {
+        public Object call(CallProperties callProperties) throws Exception {
             // This method checks that all required parameters and possible functional type hints were satisfied
             // Although if you defined it to be variadic, this isn't needed.
-            checkParams(tFuncCall, config, scope);
+            checkParams(callProperties.toCheckParams());
 
-            // While the value is parsed, its safer to call this one more time in the event it isnt.
-
-            Object value = Primitives.toPrimitive(params.getFirst(), false, config, scope);
+            // Get the first value.
+            
+            Object value = params.getFirst();
 
             // Check whether its a function or not
 

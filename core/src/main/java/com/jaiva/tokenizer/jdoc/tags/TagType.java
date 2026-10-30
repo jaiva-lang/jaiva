@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public enum TagType {
     PARAMETER("parameter","par","param", "p", "arg", "argument"),
-    RETURNS("returns", "ret",  "rets", "r", Keywords.RETURN),
+    RETURNS("returns", "ret",  "rets", "r", Keywords.RETURN, "return"),
     DEPENDS("depends", "deps", "dependencies", "depend", "requires"),
     DEVNOTE("devnote", "note", "devn", "dn"),
     DEPRECATED("deprecated", "deprec", "depr"),

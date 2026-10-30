@@ -39,3 +39,6 @@ Literlaly just plumbing
 - Renamed `file/api` and sub libraries to `file/text` to better represent that they are text based file-related api
 - Add error for when a block has no code.
 - Fix `TIfStatement` json not having `elseBody`
+- Fix bug with ternaries
+- Fix bug where using logical not required enclosing the atomic braces.
+  - Further fix by adding quck path for `x?'` to become `x != idk`

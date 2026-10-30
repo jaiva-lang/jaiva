@@ -114,6 +114,8 @@ public final class Validate {
     public static boolean isLogicalNot(int logicalNotIndex, int opAfterLogicalNotIndex, String inputString) {
         if (inputString.charAt(logicalNotIndex) != '\'')
             return false;
+        if (inputString.length() == logicalNotIndex + 1 && inputString.charAt(logicalNotIndex) == '\'')
+            return true;
         return inputString.substring(logicalNotIndex != inputString.length() - 1 ? logicalNotIndex + 1
                 : inputString
                         .length(),

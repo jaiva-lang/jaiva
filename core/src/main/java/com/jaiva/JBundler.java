@@ -4,8 +4,14 @@ package com.jaiva;
 import com.jaiva.interpreter.Interpreter;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libs.BaseLibrary;
+import com.jaiva.interpreter.libs.Globals;
+import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
+import com.jaiva.interpreter.libs.annotation.PublicLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.tokenizer.tokens.Token;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfoList;
+import io.github.classgraph.ScanResult;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,6 +62,13 @@ public final class JBundler {
         classes = Arrays.asList(cls);
     }
 
+    public JBundler(String packagePath) {
+        this.filePath = "";
+        instanceNum = instances;
+        instances++;
+        classes = new ArrayList<>(findExternalLibraries(packagePath, JBundler.class.getClassLoader()));
+    }
+
     /**
      * Tokenizes and interprets the given filePath
      * @param filePath THe file path
@@ -95,5 +108,30 @@ public final class JBundler {
 
     public static int getInstances() {
         return instances;
+    }
+
+
+    @NotNull
+    private static List<Class<? extends BaseLibrary>> findExternalLibraries(
+            String packagePath, ClassLoader cl
+    ) {
+        try (ScanResult scan = new ClassGraph()
+                .enableClassInfo()
+                .overrideClassLoaders(cl)
+                .enableAnnotationInfo()
+                .acceptPackages(packagePath)
+                .scan()) {
+
+            ClassInfoList candidates = scan.getClassesWithAnnotation(PublicLibrary.class.getName())
+                    .filter(ci -> !ci.isInterface() && !ci.isAbstract());
+
+            List<Class<? extends BaseLibrary>> result = new ArrayList<>();
+            for (var ci : candidates) {
+                @SuppressWarnings("unchecked")
+                Class<? extends BaseLibrary> cls = (Class<? extends BaseLibrary>) ci.loadClass();
+                result.add(cls);
+            }
+            return result;
+        }
     }
 }

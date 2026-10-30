@@ -1,12 +1,6 @@
-@ jdnsjkj
+tsea "jaiva/arrays"!
 
-sif (a = 10) ?> a!
+maak z <- a_apply(arrLit(100, 2, 3, 4, 1))!
+    |> f~(arr) : a_map(arr, f~(el) : el+2)!
 
-@ suidjk
-@ sodihdsoj
-@ kosdfjosdlk
-@ siojds
-
-func(1, a, a, a, a, a, a)!
-
-maak x <- func(a, a, a, a, a, a, a, a, a, a)!
+khuluma(z)!

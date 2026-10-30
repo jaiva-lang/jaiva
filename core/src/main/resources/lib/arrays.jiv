@@ -408,7 +408,7 @@ kwenza *a_apply(<-params) ->
         maak function <- params[i]!
         sif (typeOf(function) != "function") ?> cima <== function + " should be a function to apply to the array!"!
         maak out <- function(arr)!
-        sif ((out?)') ?> arr <- typeOf(out) = "array" => out however arr!
+        sif (out?') ?> arr <- typeOf(out) = "array" => out however arr!
     <~
 
     khutla arr!

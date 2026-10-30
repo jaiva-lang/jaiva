@@ -14,6 +14,7 @@ import com.jaiva.utils.cd.ContextDispatcher;
 import com.jaiva.utils.cd.ContextDispatcher.To;
 import com.jaiva.utils.cd.ReservedCases;
 import com.jaiva.utils.generic.BracePairs;
+import com.yetnt.utils.tuple.SamePair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -143,9 +144,10 @@ public record Token<T extends TokenDefault<?>>(T value) {
         if (d.getDeligation() == To.TEXPRESSION) {
             return new TExpression(lineNumber).parse(line, config);
         }
-        int index = Find.lastOuterMostBracePairIndex(line);
+        SamePair<Integer> ind = Find.lastOutermostBracePair(line);
+        int index = ind != null ? ind.getFirst() : 0;
 
-        if (index == 0) {
+        if (ind != null && ind.getFirst() == 0 && ind.getSecond() == line.length()-1) {
             // the outmost pair is just () so its prolly a TStatement, remove the stuff then
             // parse as TStatement, if it isnt a TStatement,TStatement will route back here
             // anyways.
@@ -271,6 +273,7 @@ public record Token<T extends TokenDefault<?>>(T value) {
                 ArrayList<String> args = new ArrayList<>(Token.splitByTopLevelComma(params));
                 ArrayList<Object> parsedArgs = new ArrayList<>();
                 for (String arg : args) {
+                    if (arg.isEmpty()) continue;
                     parsedArgs.add(processContext((String) arg, lineNumber, config));
                 }
                 return new TFuncCall(processContext(simplifyIdentifier(name, "F~"), lineNumber, config), parsedArgs,

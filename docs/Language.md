@@ -286,6 +286,8 @@ khuluma(func())! @ Prints idk, as the parameter t did not get a value.
 | hexshift right                                     | `>x`     |
 | String containment check/[idk](#idk) check         | `?`      |
 
+> [!NOTE]
+> There is no "truthiness".
 
 > [!NOTE]
 > Where other languages use `!` as logical NOT as a prefix to the expression. Jaiva uses `'` as a logical NOT as a `post`fix expression. Where a normal language would right `!(var != 3)` in Jaiva the equivalent is `(var != 3)'`
@@ -297,12 +299,13 @@ khuluma(func())! @ Prints idk, as the parameter t did not get a value.
 
 This is just a list of operators which resolve to something specific
 
-| Operation        | Input Value | Parsed As       |
-|------------------|-------------|-----------------|
-| Unary Minus      | `-value`    | `-1 * value`    |
-| idk check*       | `value?`    | `value = idk`   |
-| Logical NOT      | `value'`    | `value = false` |
-| Logical Identity | `value;`    | `value = true`  |
+| Operation            | Input Value | Parsed As       |
+|----------------------|-------------|-----------------|
+| Unary Minus          | `-value`    | `-1 * value`    |
+| idk check*           | `value?`    | `value = idk`   |
+| idk check* (inverse) | `value?'`   | `value != idk`  |
+| Logical NOT          | `value'`    | `value = false` |
+| Logical Identity     | `value;`    | `value = true`  |
 
 > [!NOTE]
 > The idk check only works if there is no right hand side input. If there is, then it

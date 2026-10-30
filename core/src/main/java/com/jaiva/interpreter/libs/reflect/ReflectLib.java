@@ -20,7 +20,7 @@ import com.jaiva.tokenizer.tokens.specific.TVarRef;
 public class ReflectLib extends BaseLibrary {
 
     public ReflectLib() {
-        add(new FFuncEvalParamsLater(), new FVarPreferArr(), new FFuncUnfreeze());
+        add(new FFuncEvalParamsLater(), new FVarPreferArr(), new FSymUnfreeze());
     }
 
     private static Symbol getSymbol(CallProperties callProperties, BaseFunction func, Object obj) throws InterpreterException {
@@ -143,12 +143,12 @@ public class ReflectLib extends BaseLibrary {
 
 
     @SymbolConfig(unsafe = true)
-    static class FFuncUnfreeze extends BaseFunction {
-        public FFuncUnfreeze() {
+    static class FSymUnfreeze extends BaseFunction {
+        public FSymUnfreeze() {
             super(FunctionBuilder.start()
-                    .name("r_fUnfreeze")
+                    .name("r_sUnfreeze")
                     .arguments(Arguments.getInstance()
-                            .add(new AArgument("funcRef", "The function reference.", false, Argument.Type.ANY))
+                            .add(new AArgument("symbol", "The symbol reference. Fucntion or variable.", false, Argument.Type.ANY))
                     )
             );
             freeze();
@@ -157,8 +157,8 @@ public class ReflectLib extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams());
-            BaseFunction func = getAsFunction(callProperties, this, callProperties.params().getFirst());
-            func.unfreeze();
+            Symbol symbol = getSymbol(callProperties, this, callProperties.params().getFirst());
+            symbol.unfreeze();
             return Token.voidValue(callProperties.getLineNumber());
         }
     }

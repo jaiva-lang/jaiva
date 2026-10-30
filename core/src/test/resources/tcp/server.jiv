@@ -48,7 +48,7 @@ kwenza connectionHandler(F~con, conAddress, conPort, F~close) ->
 	    @ Send first packet to da client
 		sendPacket(con, "What's up bro")!
         @ wait for any others.
-		nikhil ((conn_eof()') && (conn_closed()')) ->
+		nikhil ((conn_eof() || conn_closed())') ->
 		    khuluma("Waiting for " + conAddress + " to send us a packet....")!
 			khuluma("[RECEIVED FROM "+conAddress+":] " + readPacket(con))!
 		<~
