@@ -6,6 +6,8 @@ import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 
+import java.util.ArrayList;
+
 /**
  * Represents a string variable such as {@code maak name <- "John"};
  */
@@ -18,8 +20,8 @@ public final class TStringVar extends TUnknownScalar<String, TStringVar> {
      * @param value The value of the variable.
      * @param ln    The line number.
      */
-    public TStringVar(String name, String value, int ln) throws JaivaException {
-        super(name, value, ln);
+    public TStringVar(String name, String value, ArrayList<String> mods, int ln) throws JaivaException {
+        super(name, value, mods, ln);
         this.value = value;
         json();
     }

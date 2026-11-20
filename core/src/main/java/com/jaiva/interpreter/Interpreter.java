@@ -12,6 +12,8 @@ import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.BaseVariable.VariableType;
 import com.jaiva.interpreter.symbol.Symbol;
+import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
+import com.jaiva.interpreter.symbol.mod.ModifierValidator;
 import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.tokens.TAtomicValue;
 import com.jaiva.tokenizer.tokens.TSymbol;
@@ -132,12 +134,15 @@ public final class Interpreter {
      *                   performing an invalid operation.
      */
     @Nullable
-    public static Object handleVariables(Object t, IConfig<Object> config, Scope scope)
+    public static Object handleSymbols(Object t, IConfig<Object> config, Scope scope)
             throws Exception {
         // fast path
         if (t instanceof TSymbol && config.getImportVfs().active && !config.getImportVfs().shouldImport(((TokenDefault<?>)t).name.replace("F~", ""))) {
             return null;
         }
+        if (t instanceof TSymbol symbol)
+            ModifierValidator.validateModifiers(config, scope, ((TokenDefault<?>)symbol).lineNumber, symbol);
+
         switch (t) {
             case TNumberVar tNumberVar -> {
                 Object number = Primitives.toPrimitive(tNumberVar.value, false, config, scope);
@@ -237,19 +242,15 @@ public final class Interpreter {
                 Object o = Primitives.toPrimitive(tVarReassign.newValue, false,
                         config, scope);
 
-
-                if (o instanceof TThrowError) {
+                if (o instanceof TThrowError)
                     throwIfGlobalContext(scope, o, tVarReassign.lineNumber);
-                }
+
 
                 if (o instanceof BaseFunction func) {
                     mapValue.setValue(func);
                 } else if (var instanceof BaseVariable v) {
-                    if (o instanceof ArrayList a) {
-                        v.a_set(a, scope);
-                    } else {
-                        v.s_set(o, scope);
-                    }
+                    if (o instanceof ArrayList a) v.a_set(a, scope);
+                    else v.s_set(o, scope);
                 } else if (var instanceof BaseFunction && Primitives.isPrimitive(o)) {
                     // create BaseVariable instead
                     Warnings.println(tVarReassign.lineNumber, "Reassigning what once was a function to a variable can cause token errors and confusion. Avoid doing this.", scope, config);
@@ -257,8 +258,17 @@ public final class Interpreter {
                             o instanceof ArrayList<?> a ? (ArrayList<Object>) a : new ArrayList<>(List.of(o)), false
                     ));
                 }
-
                 // so hopefully this changes the instance and yeah 👍
+
+                HashSet<String> mods = new HashSet<>(mapValue.getValue().getModifiers());
+                mods.addAll(tVarReassign.getNewModifiers());
+                mapValue.getValue().getModifiers().clear();
+                mapValue.getValue().getModifiers().addAll(mods);
+                ModifierValidator.validateModifiers(config, scope, tVarReassign.lineNumber, (TSymbol) mapValue.getValue().token);
+
+                if (mapValue.getValue().containsModifier(DefaultModifiers.CONSTANT))
+                    mapValue.getValue().freeze();
+
             }
             default -> {
                 // here its a primitive being parsed or recursively called
@@ -338,13 +348,13 @@ public final class Interpreter {
                 scope.getVfs().putAll(vfsFromFile);
             } else if (isVariableToken(token)) {
                 if (token instanceof TFuncCall || token instanceof TVarRef || token instanceof TLambda)
-                    handleVariables(t, config, scope);
+                    handleSymbols(t, config, scope);
                 else
-                    handleVariables(token, config, scope);
+                    handleSymbols(token, config, scope);
                 // If it returns a meaningful value, then oh well, because in this case they
                 // basically called a function that returned soemthing but dont use that value.
             } else if (token instanceof TFuncReturn tFuncReturn && !config.getImportVfs().active) {
-                Object c = handleVariables(tFuncReturn.value, config, scope);
+                Object c = handleSymbols(tFuncReturn.value, config, scope);
                 return throwIfGlobalContext(scope, c, token.lineNumber);
             } else if (token instanceof TLoopControl loopControl && !config.getImportVfs().active) {
                 Object lc = loopControl.type;
@@ -427,7 +437,7 @@ public final class Interpreter {
                 // if statement handling above
             } else if (token instanceof TForLoop tForLoop && !config.getImportVfs().active) {
                 // for loop
-                handleVariables(tForLoop.variable, config, scope);
+                handleSymbols(tForLoop.variable, config, scope);
                 Object vObject = scope.getVfs().get(tForLoop.variable.name).getValue();
                 if (!(vObject instanceof BaseVariable v))
                     throw new WtfAreYouDoingException(scope, vObject, BaseVariable.class,
@@ -518,12 +528,12 @@ public final class Interpreter {
                                 || isVariableToken(g.c)) {
                             return throwIfGlobalContext(scope, out, g.lineNumber);
                         } else if (g.c instanceof TThrowError err) {
-                            Token<?> tContainer = new Token<>(null);
                             scope.getVfs().put(varName,
                                     BaseVariable.create(
                                             varName,
                                             new TStringVar(
                                                     varName, err.errorMessage.toString(),
+                                                    new ArrayList<>(List.of("const")),
                                                     err.lineNumber),
                                             new ArrayList<>(Collections.singletonList(
                                                     err.errorMessage)),
@@ -541,7 +551,6 @@ public final class Interpreter {
                     }
                 } catch (JaivaException e) {
                     // catch any exception, and call the catch block with the error.
-                    Token<?> tContainer = new Token<>(null);
 
                     String string = AnsiColour.remove(e.getMessage());
                     scope.getVfs().put(varName,
@@ -549,6 +558,7 @@ public final class Interpreter {
                                     varName,
                                     new TStringVar(
                                             varName, string,
+                                            new ArrayList<>(List.of("const")),
                                             throwError.catchBlock.lineNumber),
                                     new ArrayList<>(Collections.singletonList(
                                             string)),

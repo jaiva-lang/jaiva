@@ -1,1 +1,23 @@
-khuluma(yebo + "")!
+@ maak [const, cow] x <- 10!
+@ maak [frozen] r <- 1!
+@ kwenza [constant] t(a, b) ->
+@     khutla a + b!
+@ <~
+@
+@ khuluma(x, r)!
+@
+@ t <- khuluma!
+@
+@ maak [mod1, mod2, mod3] c!
+@ maak [mod1 mod2 mo3] c! @ Both work, if there is a comma it will use that as the splitter.
+
+kwenza func(a) ->
+    khuluma(a)!
+    a <- 4!
+    khuluma(a)!
+    [const] a <- a!
+    a <- 2!
+    khuluma($a)!
+<~
+
+func(10)!

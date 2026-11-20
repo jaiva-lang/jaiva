@@ -1,7 +1,13 @@
 package com.jaiva.interpreter.symbol;
 
 import com.jaiva.interpreter.runtime.DebugController;
+import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
+import com.jaiva.interpreter.symbol.mod.SymbolModifier;
+import com.jaiva.tokenizer.tokens.TSymbol;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 /**
  * Base class for functions and variables
@@ -79,6 +85,18 @@ public class Symbol implements Cloneable {
         result = prime * result + (isFrozen ? 1231 : 1237);
         result = prime * result + ((token == null) ? 0 : token.hashCode());
         return result;
+    }
+
+    public ArrayList<String> getModifiers() {
+        return ((TSymbol)token).getModifiers();
+    }
+
+    public boolean containsModifier(@NotNull SymbolModifier symbolModifier) {
+        return ((TSymbol)token).getModifiers().stream().anyMatch(symbolModifier.getAllAliases()::contains);
+    }
+
+    public boolean containsModifier(@NotNull DefaultModifiers symbolModifier) {
+        return containsModifier(symbolModifier.getInstance());
     }
 
     /**

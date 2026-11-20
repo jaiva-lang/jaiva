@@ -5,14 +5,19 @@ import com.jaiva.tokenizer.tokens.TParamsExtendable;
 import com.jaiva.tokenizer.tokens.TStatement;
 import com.jaiva.tokenizer.tokens.Token;
 
+import java.util.ArrayList;
+
 /**
  * Represents a reassignment such as {@code x <- 10}
+ * @implSpec you can actually also add new modifiers to the thing you're updating. such as
+ * {@code [cow] param <- 100} or for the use case of adding a new modifier only {@code [const] param <- param}
  */
 public final class TVarReassign extends TokenDefault<TVarReassign> implements TStatement, TParamsExtendable {
     /**
      * The new value of the variable.
      */
     public Object newValue;
+    private ArrayList<String> newModifiers = new ArrayList<>();
 
     /**
      * Constructor for TVarReassign
@@ -21,9 +26,10 @@ public final class TVarReassign extends TokenDefault<TVarReassign> implements TS
      * @param value The new value of the variable.
      * @param ln    The line number.
      */
-    public TVarReassign(String name, Object value, int ln) throws JaivaException {
+    public TVarReassign(String name, Object value, ArrayList<String> newMods, int ln) throws JaivaException {
         super(name, ln);
         this.newValue = value;
+        this.newModifiers = newMods;
         json();
     }
 
@@ -42,6 +48,7 @@ public final class TVarReassign extends TokenDefault<TVarReassign> implements TS
 
     public void json() throws JaivaException {
         json.set("value", newValue);
+        json.set("newModifiers", newModifiers);
     }
 
     /**
@@ -57,5 +64,9 @@ public final class TVarReassign extends TokenDefault<TVarReassign> implements TS
     @Override
     public TFuncCall get() {
         return checkObject(newValue);
+    }
+
+    public ArrayList<String> getNewModifiers() {
+        return newModifiers;
     }
 }

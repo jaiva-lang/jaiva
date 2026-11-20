@@ -519,4 +519,55 @@ public final class Find {
         return index;
     }
 
+
+    /**
+     * Splits a string by a given character, ignoring delimiters within quotation marks or brace pairs.
+     * This method handles nested braces and quotes.
+     *
+     * @param input The string to be split.
+     * @param c The character to split the string by.
+     * @return An {@link ArrayList} of strings, where each string is a segment of the input string.
+     * @implNote Funny enough, this method is stolen from <a href="https://github.com/yetnt/j3engine">J3Engine</a>.
+     * While yes all the utilities such as brace and quote parsing J3Engine stole from this class, it made the split
+     * method from it idk how this never got made in Jaiva in the first place.
+     */
+    @NotNull
+    public static ArrayList<String> split(String input, char c) {
+        BracePairs bracePairs = bracePairs(input);
+        ArrayList<SamePair<Integer>> quotePairs = quotationPairs(input);
+
+        StringBuilder acc = new StringBuilder();
+        ArrayList<String> content = new ArrayList<>();
+        // since we know where brace pairs and quote pairs are
+        // we trust it. meaning if we encounter a quote or opening brace and
+        // nether say it belongs there, accumulate everything as mishandled string.
+        boolean dangling = false;
+        for (int i = 0; i < input.length(); i++) {
+            char ch = input.charAt(i);
+            int finalI = i;
+            boolean inBrace = bracePairs.closedPairs().stream().anyMatch(
+                    pair -> finalI >= pair.getFirst() && finalI <= pair.getSecond());
+            boolean inQuote = quotePairs.stream().anyMatch(
+                    pair -> finalI >= pair.getFirst() && finalI <= pair.getSecond()
+            );
+            if (ch != c || dangling || (inBrace || inQuote)) {
+                if ((ch == '\"' || ch == '(') && !(inBrace || inQuote))
+                    dangling = true;
+                acc.append(ch);
+                continue;
+            }
+
+            if (!acc.isEmpty()) {
+                content.add(acc.toString());
+                acc = new StringBuilder();
+            }
+        }
+
+        if (!acc.isEmpty()) {
+            content.add(acc.toString());
+        }
+
+        return content;
+    }
+
 }

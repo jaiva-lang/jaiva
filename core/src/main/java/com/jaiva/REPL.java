@@ -286,7 +286,7 @@ public class REPL {
                 if (mode == REPLMode.STANDARD) {
                     TokenDefault token = ((Token<?>) something).value();
                     if (Interpreter.isVariableToken(token)) {
-                        Object value = Interpreter.handleVariables(token,
+                        Object value = Interpreter.handleSymbols(token,
                                 iConfig, scope);
                         // TODO: This assumes the global context, which might not be correct.
                         assert value != null;
@@ -314,7 +314,7 @@ public class REPL {
                                     ? ((Token<?>) tokens.getFirst())
                                     : token;
                             // TODO: This assumes the global context, which might not be correct.
-                            Object value = Interpreter.handleVariables(input, iConfig, scope);
+                            Object value = Interpreter.handleSymbols(input, iConfig, scope);
                             if (isReturnTokenClass) {
                                 assert value != null;
                                 return new ReadOuput(value.toString());

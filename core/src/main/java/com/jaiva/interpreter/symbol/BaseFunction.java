@@ -6,6 +6,7 @@ import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.runtime.IConfig;
+import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.tokens.TReference;
 import com.jaiva.tokenizer.tokens.Token;
@@ -346,7 +347,9 @@ public class BaseFunction extends Symbol {
     @NotNull
     @Contract("_, _ -> new")
     public static DefinedFunction createFunction(String name, TFunction token) {
-        return new DefinedFunction(name, token);
+        DefinedFunction function = new DefinedFunction(name, token);
+        if (function.containsModifier(DefaultModifiers.CONSTANT)) function.freeze();
+        return function;
     }
 
     /**

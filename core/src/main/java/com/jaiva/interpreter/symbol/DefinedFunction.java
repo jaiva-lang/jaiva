@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * A Function that is defined by the user at runtime.
@@ -48,7 +49,7 @@ public sealed class DefinedFunction extends BaseFunction permits LinkedFunction,
                     varArgsArr.add(Primitives.toPrimitive(o, false, callProperties.config(), callProperties.scope()));
                 }
             newVfs.put(paramNames[0], new BaseVariable(paramNames[0],
-                    new TArrayVar(paramNames[0], varArgsArr, callProperties.getLineNumber()),
+                    new TArrayVar(paramNames[0], varArgsArr, new ArrayList<>(), callProperties.getLineNumber()),
                     varArgsArr));
         } else {
             checkParams(callProperties.toCheckParams());
@@ -106,7 +107,7 @@ public sealed class DefinedFunction extends BaseFunction permits LinkedFunction,
                         wrappedValue = l;
                     else
                         wrappedValue = BaseVariable.create(name,
-                                new TUnknownScalar(name, o, callProperties.getLineNumber()),
+                                new TUnknownScalar(name, o, new ArrayList<>(), callProperties.getLineNumber()),
                                 o instanceof ArrayList ? (ArrayList) o : new ArrayList<>(Collections.singletonList(o)), false);
                 }
                 newVfs.put(name.replace("F~", "").replace("V~", ""), (Symbol) wrappedValue);
@@ -137,8 +138,8 @@ public sealed class DefinedFunction extends BaseFunction permits LinkedFunction,
     @Contract("_, _, _ -> new")
     private BaseVariable createScalarOrArr(String name, Object value, TFuncCall tFuncCall) throws JaivaException {
         return BaseVariable.create(name,
-                value instanceof ArrayList ? new TArrayVar(name, (ArrayList) value, tFuncCall.lineNumber)
-                        : new TUnknownScalar(name, value, tFuncCall.lineNumber),
+                value instanceof ArrayList ? new TArrayVar(name, (ArrayList) value, new ArrayList<>(), tFuncCall.lineNumber)
+                        : new TUnknownScalar(name, value, new ArrayList<>(), tFuncCall.lineNumber),
                 value instanceof ArrayList ? (ArrayList) value : new ArrayList<>(Collections.singletonList(value)),
                 value instanceof ArrayList);
     }

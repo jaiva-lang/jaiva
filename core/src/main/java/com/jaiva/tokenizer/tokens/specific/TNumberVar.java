@@ -4,6 +4,8 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 
+import java.util.ArrayList;
+
 /**
  * Represents a number variable such as {@code maak age <- 20};
  */
@@ -15,8 +17,8 @@ public final class TNumberVar extends TUnknownScalar<Object, TNumberVar> {
      * @param value The value of the variable.
      * @param ln    The line number.
      */
-    public TNumberVar(String name, Object value, int ln) throws JaivaException {
-        super(name, value, ln);
+    public TNumberVar(String name, Object value, ArrayList<String> mods, int ln) throws JaivaException {
+        super(name, value, mods, ln);
         this.value = value;
         json();
     }

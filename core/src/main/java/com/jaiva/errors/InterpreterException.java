@@ -521,6 +521,19 @@ public class InterpreterException extends JaivaException {
     }
 
     /**
+     * Exception thrown when symbol modifiers are mutally exclusive but are used together anyway
+     */
+    public static class SymbolModifiersException extends InterpreterException {
+
+        @Serial
+        private static final long serialVersionUID = 1L;
+
+        public SymbolModifiersException(Scope ct, int lineNumber, String mod1, String mod2) {
+            super(ct, lineNumber, "The modifiers \""+mod1+"\" and \""+mod2+"\" are mutually excluse bro. u cant use em together.");
+        }
+    }
+
+    /**
      * Exception thrown if the current scope is not allowed to print warnings.
      * This is used by {@link Warnings} to throw errors instead of print.
      */

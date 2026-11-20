@@ -3,6 +3,7 @@ package com.jaiva.interpreter.runtime;
 import com.jaiva.Config;
 import com.jaiva.Main;
 import com.jaiva.errors.Warnings;
+import com.jaiva.interpreter.symbol.mod.SymbolModifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ public final class IConfig<T> extends Config {
     private boolean streamer = false;
     private final ArrayList<Warnings.Warning> warnings = new ArrayList<>();
     private boolean jBundler = false;
+    private ArrayList<SymbolModifier> customModifiers = new ArrayList<>();
 
     // ...add more interpreter settings.
 
@@ -230,5 +232,13 @@ public final class IConfig<T> extends Config {
 
     public void setjBundler(boolean jBundler) {
         this.jBundler = jBundler;
+    }
+
+    public ArrayList<SymbolModifier> getCustomModifiers() {
+        return customModifiers;
+    }
+
+    public void addCustomModifier(SymbolModifier modifier) {
+        customModifiers.add(modifier);
     }
 }

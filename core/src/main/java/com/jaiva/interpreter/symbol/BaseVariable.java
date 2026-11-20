@@ -3,7 +3,9 @@ package com.jaiva.interpreter.symbol;
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.var.VariableBuilder;
+import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -246,10 +248,11 @@ public class BaseVariable extends Symbol {
      * @param arr  The arraylist.
      * @return A User Defined Variable.
      */
-    public static DefinedVariable create(String name, TokenDefault<?> t, ArrayList<Object> arr, boolean setArray) {
-        if (arr.size() == 1 && !setArray)
-            return new DefinedVariable(name, t, arr.get(0));
-        return new DefinedVariable(name, t, arr);
+    @NotNull
+    public static DefinedVariable create(String name, TokenDefault<?> t, @NotNull ArrayList<Object> arr, boolean setArray) {
+        DefinedVariable var = arr.size() == 1 && !setArray ? new DefinedVariable(name, t, arr.getFirst()) : new DefinedVariable(name, t, arr);
+        if (var.containsModifier(DefaultModifiers.CONSTANT)) var.freeze();
+        return var;
     }
 
 

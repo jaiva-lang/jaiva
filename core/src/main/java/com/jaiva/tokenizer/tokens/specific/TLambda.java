@@ -12,6 +12,6 @@ public final class TLambda extends TFunction implements TAtomicValue {
                 new ArrayList<>(List.of(
                         new TFuncReturn(input, ln).toToken()
                 )), ln, ln
-        ), ln);
+        ), new ArrayList<>(), ln);
     }
 }

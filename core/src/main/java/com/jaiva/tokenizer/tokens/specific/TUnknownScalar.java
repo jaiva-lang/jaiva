@@ -5,6 +5,7 @@ import com.jaiva.lang.Chars;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.*;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +35,7 @@ public sealed class TUnknownScalar<Type, K extends TokenDefault<K>> extends Toke
      * The value of the variable.
      */
     public Type value;
+    public ArrayList<String> modifiers;
 
     /**
      * Constructor for basic.
@@ -42,13 +44,14 @@ public sealed class TUnknownScalar<Type, K extends TokenDefault<K>> extends Toke
      * @param value The value of the variable.
      * @param ln    The line number.
      */
-    public TUnknownScalar(String name, Type value, int ln) throws JaivaException {
+    public TUnknownScalar(String name, Type value, ArrayList<String> mods, int ln) throws JaivaException {
         super(name.startsWith(Character.toString(Chars.EXPORT_SYMBOL)),
                 (name.startsWith(Character.toString(Chars.EXPORT_SYMBOL))
                         ? name.replaceFirst(Pattern.quote(Character.toString(Chars.EXPORT_SYMBOL)),
                         Matcher.quoteReplacement(""))
                         : name),
                 ln);
+        modifiers = mods;
         this.value = value;
         json();
     }
@@ -70,6 +73,12 @@ public sealed class TUnknownScalar<Type, K extends TokenDefault<K>> extends Toke
     public void json() throws JaivaException {
         if (!json.keyExists("value"))
             json.set("value", value);
+        json.set("modifiers", modifiers);
+    }
+
+    @Override
+    public ArrayList<String> getModifiers() {
+        return modifiers;
     }
 
     /**

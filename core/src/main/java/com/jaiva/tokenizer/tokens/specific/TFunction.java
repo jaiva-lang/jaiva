@@ -27,6 +27,7 @@ public sealed class TFunction extends TokenDefault<TFunction>
      * The body of the function.
      */
     public TCodeblock body;
+    public ArrayList<String> modifiers = new ArrayList<>();
 
     /**
      * An arraylist of booleans that specify which arguments are optional.
@@ -46,13 +47,14 @@ public sealed class TFunction extends TokenDefault<TFunction>
      * @param body The body of the function.
      * @param ln   The line number.
      */
-    public TFunction(String name, String[] args, TCodeblock body, int ln) throws JaivaException {
+    public TFunction(String name, String[] args, TCodeblock body, ArrayList<String> mods, int ln) throws JaivaException {
         super(name.startsWith(Character.toString(Chars.EXPORT_SYMBOL)),
                 "F~" + (name.startsWith(Character.toString(Chars.EXPORT_SYMBOL)) ? name
                         .replaceFirst(Pattern.quote(Character.toString(Chars.EXPORT_SYMBOL)),
                                 Matcher.quoteReplacement(""))
                         : name),
                 ln);
+        modifiers = mods;
         String[] newArgs = new String[args.length];
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -111,9 +113,15 @@ public sealed class TFunction extends TokenDefault<TFunction>
 
     public void json() throws JaivaException {
         json.set("args", args);
+        json.set("modifiers", modifiers);
         json.set("isArgOptional", isArgOptional);
         json.set("varArgs", varArgs);
         json.nullSet("body", body);
+    }
+
+    @Override
+    public ArrayList<String> getModifiers() {
+        return modifiers;
     }
 
     /**

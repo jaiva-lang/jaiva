@@ -8,6 +8,7 @@ import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.libs.annotation.PublicLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
+import com.jaiva.interpreter.symbol.mod.SymbolModifier;
 import com.jaiva.tokenizer.tokens.Token;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
@@ -34,6 +35,7 @@ public final class JBundler {
     private final String filePath;
     private ArrayList<Token<?>> tokens = new ArrayList<>();
     private final List<Class<? extends BaseLibrary>> classes;
+    private ArrayList<SymbolModifier> modifiers = new ArrayList<>();
 
     /**
      * Default Constructor for JBundler

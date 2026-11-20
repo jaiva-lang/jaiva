@@ -21,6 +21,7 @@ import com.jaiva.utils.Find;
 import com.jaiva.utils.Validate;
 import com.jaiva.utils.Validate.IsValidSymbolName;
 import com.jaiva.utils.generic.BlockChain;
+import com.jaiva.utils.generic.BracePairs;
 import com.jaiva.utils.generic.MultipleLinesOutput;
 import io.github.yetnt.utils.tuple.Pair;
 import io.github.yetnt.utils.tuple.SamePair;
@@ -34,6 +35,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * The Tokenizer class is one of the 3 main classes which handle Jaiva code.
@@ -374,11 +376,13 @@ public final class Tokenizer {
                 for (int i = 0; i < fArgs.length; i++)
                     fArgs[i] = fArgs[i].trim();
 
-                IsValidSymbolName IVSN = Validate.isValidSymbolName(args[0]);
+                Pair<String, ArrayList<String>> def = symbolModifiers(args[0], finalMOutput.lineNumber);
+                String name = def.getFirst();
+                IsValidSymbolName IVSN = Validate.isValidSymbolName(name);
                 if (!IVSN.isValid)
                     throw new MalformedSyntaxException(
                             IVSN.op + " cannot be used in a variable name zawg.", finalMOutput.lineNumber);
-                specific = new TFunction(args[0], fArgs, codeblock, finalMOutput.lineNumber).toToken();
+                specific = new TFunction(name, fArgs, codeblock, def.getSecond(), finalMOutput.lineNumber).toToken();
                 break;
             }
             case "nikhil": {
@@ -451,21 +455,24 @@ public final class Tokenizer {
             line = line.substring(4);
             String[] parts = line.split("<-\\|");
             parts[0] = parts[0].trim();
+
             if (parts[0].isEmpty())
                 throw new MalformedSyntaxException(
                         "Bro defined a variable on line with no name lmao.", lineNumber);
 
             ArrayList<Object> parsedValues = new ArrayList<>();
 
+            Pair<String, ArrayList<String>> def = symbolModifiers(parts[0], lineNumber);
+            String name = def.getFirst();
+
             if (parts.length == 1)
                 // delcared with no value, empty array.
-                return new TArrayVar(parts[0], parsedValues, lineNumber).toToken();
-
+                return new TArrayVar(name, parsedValues, def.getSecond(), lineNumber).toToken();
 
             for (String value : Token.splitByTopLevelComma(parts[1])) {
                 parsedValues.add(Token.processContext(value.trim(), lineNumber, config));
             }
-            return new TArrayVar(parts[0], parsedValues, lineNumber).toToken();
+            return new TArrayVar(name, parsedValues, def.getSecond(), lineNumber).toToken();
 
         }
         int stringStart = line.indexOf(Chars.STRING);
@@ -488,11 +495,13 @@ public final class Tokenizer {
                 throw new MalformedSyntaxException(
                         "Bro defined a variable on line " + lineNumber + " with no name lmao.", lineNumber);
             }
+            Pair<String, ArrayList<String>> def = symbolModifiers(name, lineNumber);
+            String actualName = def.getFirst();
             if (line.contains(Chars.ASSIGNMENT))
                 throw new MalformedSyntaxException(
                         "if you're finna define a variable without a value, remove the assignment operator.",
                         lineNumber);
-            return new TUnknownScalar<>(name, new TVoidValue(lineNumber), lineNumber)
+            return new TUnknownScalar<>(actualName, new TVoidValue(lineNumber), def.getSecond(), lineNumber)
                     .toToken();
         }
         String[] parts = new String[] {
@@ -500,43 +509,78 @@ public final class Tokenizer {
                 line.substring(line.indexOf(Chars.ASSIGNMENT) + 2)
         };
         parts[0] = parts[0].trim();
-        IsValidSymbolName IVSN = Validate.isValidSymbolName(parts[0]);
+        Pair<String, ArrayList<String>> def = symbolModifiers(parts[0], lineNumber);
+        String name = def.getFirst();
+        IsValidSymbolName IVSN = Validate.isValidSymbolName(name);
         if (!IVSN.isValid)
             throw new MalformedSyntaxException(IVSN.op + " cannot be used in a variable name zawg.", lineNumber);
         parts[1] = parts[1].trim();
 
         if (isString) {
-            return new TStringVar(parts[0], parts[1], lineNumber).toToken();
+            return new TStringVar(name, parts[1], def.getSecond(), lineNumber).toToken();
         } else {
             try {
-                return new TNumberVar(parts[0], Token.parseNumberLiteral(parts[1]), lineNumber).toToken();
+                return new TNumberVar(name, Token.parseNumberLiteral(parts[1]), def.getSecond(), lineNumber).toToken();
             } catch (NumberFormatException e) {
                 try {
-                    return new TNumberVar(parts[0], Double.parseDouble(parts[1]), lineNumber).toToken();
+                    return new TNumberVar(name, Double.parseDouble(parts[1]), def.getSecond(), lineNumber).toToken();
                 } catch (Exception e2) {
                     if (parts[1].equals("true") || parts[1].equals("false") || parts[1].equals(Keywords.TRUE)
                             || parts[1].equals(Keywords.FALSE)) {
                         parts[1] = parts[1].replace(Keywords.TRUE, "true").replace(
                                 Keywords.FALSE,
                                 "false");
-                        return new TBooleanVar(parts[0], Boolean.parseBoolean(parts[1]),
-                                lineNumber).toToken();
+                        return new TBooleanVar(name, Boolean.parseBoolean(parts[1]),
+                                def.getSecond(), lineNumber).toToken();
                     } else {
                         Object object = Token.dispatchContext(parts[1], lineNumber, config);
                         if (object instanceof Token<?>(TokenDefault<?> g)) {
                             if (g.name.equals("TStatement")) {
                                 return ((TExpression) g).statementType == 0
-                                        ? new TBooleanVar(parts[0], object,
-                                                lineNumber).toToken()
-                                        : new TNumberVar(parts[0], object, lineNumber).toToken();
+                                        ? new TBooleanVar(name, object,
+                                        def.getSecond(), lineNumber).toToken()
+                                        : new TNumberVar(name, object, def.getSecond(), lineNumber).toToken();
                             }
                         }
 
-                        return new TUnknownScalar<>(parts[0], object, lineNumber).toToken();
+                        return new TUnknownScalar<>(name, object, def.getSecond(), lineNumber).toToken();
                     }
                 }
             }
         }
+    }
+
+    @NotNull
+    @Contract("_, _ -> new")
+    private static Pair<String, ArrayList<String>> symbolModifiers(String part, int lineNumber) throws JaivaException {
+        SamePair<Integer> bp = Find.lastOutermostBracePair(part);
+        if (bp != null) {
+            if (bp.getFirst() != 0)
+                throw new MalformedSyntaxException("What the hell are you doing?? Modifiers go first", lineNumber);
+            if (bp.getSecond() == part.length()-1)
+                throw new MalformedSyntaxException("Daaamn try add modifiers for a symbol with NO NAME???", lineNumber);
+
+            String mods = part.substring(1, bp.getSecond()).trim();
+            String name = part.substring(bp.getSecond()+1).trim();
+
+            ArrayList<String> modifiers;
+
+            // if it contains , use it
+            if (mods.contains(","))
+                modifiers = Find.split(mods, ',')
+                        .stream()
+                        .map(String::trim)
+                        .collect(Collectors.toCollection(ArrayList::new));
+            else
+                modifiers = Find.split(mods, ' ')
+                        .stream()
+                        .map(String::trim)
+                        .collect(Collectors.toCollection(ArrayList::new));
+
+            return new Pair<>(name, modifiers);
+
+        }
+        return new Pair<>(part, new ArrayList<>());
     }
 
     /**
@@ -962,22 +1006,20 @@ public final class Tokenizer {
             return tokens;
         }
 
-        // if it doesnt start with declaration nfor var, it might be a reassingment
-        String[] parts = line.split(Chars.ASSIGNMENT);
+        // if it doesn't start with declaration nfor var, it might be a reassingment
+        String[] parts = line.split(Chars.ASSIGNMENT, 2);
         if (parts.length > 1 && !parts[0].endsWith("(")) {
             String varName = parts[0].trim();
+            Pair<String, ArrayList<String>> def = symbolModifiers(varName, lineNumber);
+            String name = def.getFirst();
             Object varValue = Token.processContext(parts[1].trim(), lineNumber, config);
-            if (varName.contains("]") || varName.contains("[")) {
-                // This is an array reassignment.
-                tokens.add(new TVarReassign(Token.processContext(varName,
-                        lineNumber, config), varValue, lineNumber).toToken());
-                return tokens;
-            } else
-                tokens.add(
-                        new TVarReassign(parts[0].trim(), Token.processContext(parts[1].trim(),
-                                lineNumber,config),
-                                lineNumber)
-                                .toToken());
+            tokens.add(
+                    new TVarReassign(
+                            name,
+                            varValue,
+                            def.getSecond(),
+                            lineNumber
+                    ).toToken());
 
             return tokens;
         }

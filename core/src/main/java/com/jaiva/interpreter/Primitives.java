@@ -438,7 +438,7 @@ public final class Primitives {
             c = null;
 
 
-        Object condition = Interpreter.handleVariables(c, config, scope);
+        Object condition = Interpreter.handleSymbols(c, config, scope);
 
         if (!(condition instanceof Boolean)) {
             assert condition != null;

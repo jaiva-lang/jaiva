@@ -18,6 +18,7 @@ public final class TArrayVar extends TokenDefault<TArrayVar> implements TVariabl
      * The contents of the array variable.
      */
     public ArrayList<Object> contents;
+    public ArrayList<String> modifiers = new ArrayList<>();
 
     /**
      * Constructor for TArrayVar
@@ -26,13 +27,14 @@ public final class TArrayVar extends TokenDefault<TArrayVar> implements TVariabl
      * @param contents The contents of the variable.
      * @param ln       The line number.
      */
-    public TArrayVar(@NotNull String name, ArrayList<Object> contents, int ln) {
+    public TArrayVar(@NotNull String name, ArrayList<Object> contents,ArrayList<String> mods, int ln) {
         super(name.startsWith(Character.toString(Chars.EXPORT_SYMBOL)),
                 (name.startsWith(Character.toString(Chars.EXPORT_SYMBOL))
                         ? name.replaceFirst(Pattern.quote(Character.toString(Chars.EXPORT_SYMBOL)),
                         Matcher.quoteReplacement(""))
                         : name),
                 ln);
+        modifiers = mods;
         this.contents = contents;
         json();
     }
@@ -52,6 +54,12 @@ public final class TArrayVar extends TokenDefault<TArrayVar> implements TVariabl
 
     public void json() {
         json.set("value", contents);
+        json.set("modifiers", modifiers);
+    }
+
+    @Override
+    public ArrayList<String> getModifiers() {
+        return modifiers;
     }
 
     /**
