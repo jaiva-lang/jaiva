@@ -76,7 +76,7 @@ public class BaseFunction extends Symbol {
      * @return The definition string
      */
     @Override
-    public final String toString() {
+    public String toString() {
         return ((TFunction)token).toDefinitionString();
     }
 

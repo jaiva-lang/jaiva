@@ -6,7 +6,7 @@ import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.continuous.CFuncInput;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.yetnt.utils.builders.MarkDownLiteral;
+import io.github.yetnt.utils.builders.MarkDownLiteral;
 
 @JaivaLibrary(
         path = "continuous",

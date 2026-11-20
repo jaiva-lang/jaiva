@@ -65,6 +65,12 @@ import java.util.ArrayList;
  *             calling {@link Closeable#close()}
  *             </td>
  *         </tr>
+ *         <tr>
+ *             <td>{@link CFuncInput#DONE}</td> <td>{@link CFClosures.Closed}</td>
+ *             <td> Provies any {@link ContinuousFunction} of an {@link InputStream} to  signal the closure of the resource. Although
+ *             the implementation si responsible for what exactly that means as not all input streams have some EOF marker.
+ *             </td>
+ *         </tr>
  *     </table>
  * </p>
  * <p>

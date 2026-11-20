@@ -6,8 +6,8 @@ import com.jaiva.interpreter.Interpreter;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.tokenizer.tokens.Token;
-import com.yetnt.utils.builders.AnsiColour;
-import com.yetnt.utils.builders.SimpleJSON;
+import io.github.yetnt.utils.builders.AnsiColour;
+import io.github.yetnt.utils.builders.SimpleJSON;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;

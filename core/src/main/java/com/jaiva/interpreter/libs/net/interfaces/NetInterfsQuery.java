@@ -11,7 +11,7 @@ import com.jaiva.interpreter.libs.types.TypeConverter;
 import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.yetnt.utils.functional.function.ThrowableBiFunction;
+import io.github.yetnt.utils.functional.function.ThrowableBiFunction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

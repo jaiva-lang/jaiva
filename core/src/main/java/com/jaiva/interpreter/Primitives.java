@@ -11,7 +11,7 @@ import com.jaiva.tokenizer.tokens.TConditional;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
-import com.yetnt.utils.builders.AnsiColour;
+import io.github.yetnt.utils.builders.AnsiColour;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -121,9 +121,9 @@ public final class Primitives {
                 String op = tExpression.op;
                 Object rhs = toPrimitive(tExpression.rHandSide, false, config, scope);
 
-                Object sTuff = PrimitivesMath.resolveStringOperations(lhs, rhs, op, tExpression, scope);
+                Object sTuff = PrimitivesMath.resolveOverloadedOperators(lhs, rhs, op, tExpression, scope);
                 if (sTuff != void.class)
-                    return sTuff;
+                    return sTuff; // it did yipeeeeeeeeeee
 
                 // Check the input type, where input 1 is arithmatic, and 0 is boolean.
                 if (tExpression.statementType == 1 || (op.equals("|") || op.equals("&"))) {
@@ -146,14 +146,14 @@ public final class Primitives {
                 } else {
                     // In this else branch, the type is boolean logic
                     switch (op) {
-                        case "&&", "||", "'" -> {
+                        case "&&", "||" -> {
                             // if the logic operator is one of these naturally, the input has to be boolean
                             // check input first of all
                             if (!(lhs instanceof Boolean))
                                 throw new TExpressionResolutionException(scope,
                                         tExpression, "left hand side",
                                         lhs.toString());
-                            if (!op.equals("'") && !(rhs instanceof Boolean))
+                            if (!(rhs instanceof Boolean))
                                 throw new TExpressionResolutionException(scope,
                                         tExpression, "right hand side",
                                         rhs.toString());
@@ -163,8 +163,8 @@ public final class Primitives {
                                     return ((Boolean) lhs) && ((Boolean) rhs);
                                 case "||":
                                     return ((Boolean) lhs) || ((Boolean) rhs);
-                                case "'":
-                                    return !((Boolean) lhs);
+//                                case "'": // doesnt exist. Since tokenizer normalizes a' to a = idk anyways.
+//                                    return !((Boolean) lhs);
                             }
                         }
                         case ">=", "<=", "<", ">" -> {
@@ -174,16 +174,11 @@ public final class Primitives {
                             // here, the inputs can be either a
                             // int, double, boolean or string.
                             // check input first of all
-                            // TODO: This is literally just anything that can be input. Fix
-                            if (!(lhs instanceof Integer) && !(lhs instanceof Double) && !(lhs instanceof Boolean)
-                                    && !(lhs instanceof String) && !(lhs instanceof TVoidValue) && !(lhs instanceof ArrayList)
-                                    && !(lhs instanceof BaseFunction) && !(lhs instanceof Long))
+                            if (!(isPrimitive(lhs)))
                                 throw new TExpressionResolutionException(scope,
                                         tExpression, "left hand side",
                                         lhs.toString());
-                            if (!(rhs instanceof Integer) && !(rhs instanceof Double) && !(rhs instanceof Boolean)
-                                    && !(rhs instanceof String) && !(rhs instanceof TVoidValue) && !(lhs instanceof ArrayList)
-                                    && !(lhs instanceof BaseFunction) && !(lhs instanceof Long))
+                            if (!(isPrimitive(rhs)))
                                 throw new TExpressionResolutionException(scope,
                                         tExpression, "right hand side",
                                         rhs.toString());
@@ -195,6 +190,9 @@ public final class Primitives {
                                 lhs = void.class;
 
                             // handle ALL types.
+//                            if (lhs instanceof ArrayList<?> arr && rhs instanceof ArrayList<?> arr2) {
+//                                arr.equals()
+//                            }
                             switch (op) {
                                 case "=":
                                     return lhs.equals(rhs);
@@ -219,7 +217,7 @@ public final class Primitives {
                         : (tVarRef).varName);
                 Object index = (tVarRef).index == null ? null : toPrimitive(tVarRef.index, false, config, scope);
                 if (index != null && (Integer) index <= -1)
-                    return new WtfAreYouDoingException(scope,
+                    throw new WtfAreYouDoingException(scope,
                             "Now tell me, how do you access negative data in ana array?",
                             tVarRef.lineNumber);
                 if (v == null)
@@ -259,7 +257,7 @@ public final class Primitives {
                         else if (t instanceof String) return t;
                     }
                     if (arr.size() <= (Integer) index)
-                        return new WtfAreYouDoingException(scope,
+                        throw new WtfAreYouDoingException(scope,
                                 "Bro you're tryna access more data than there is in " + variable.name, tVarRef.lineNumber);
                     return arr.get((Integer) index) instanceof ArrayList && tVarRef.getLength()
                             ? ((ArrayList<?>) arr.get((Integer) index)).size()
@@ -306,8 +304,8 @@ public final class Primitives {
                 BaseFunction function = null;
                 MapValue v = null;
 
-                if (funcName instanceof Lambda lambda) {
-                    function = lambda;
+                if (funcName instanceof BaseFunction f) {
+                    function = f;
                 } else {
                     if (!(funcName instanceof String name))
                         throw new WeirdAhhFunctionException(scope, tFuncCall);
@@ -384,7 +382,7 @@ public final class Primitives {
                     case Long l -> l;
                     case Double d -> {
                         double val = d;
-                        if (val == Math.rint(val)) {
+                        if (val == Math.rint(val) && !scope.getConfig().noImplicitDoubleConverting()) {
                             yield (int) val;
                         } else {
                             yield d;
@@ -398,8 +396,7 @@ public final class Primitives {
                         for (Object o : a) {
                             parsedArr.add(toPrimitive(o, false, config, scope));
                         }
-                        yield parsedArr; // yield keyword for returning in switch expressions
-                        // pretty cool, never used it before
+                        yield parsedArr;
                     }
                     default -> void.class;
                 };
@@ -414,7 +411,7 @@ public final class Primitives {
      * @return True if the object is a primitive type, false otherwise.
      */
     public static boolean isPrimitive(Object t) {
-        return t instanceof Boolean || t instanceof Integer
+        return t instanceof Boolean || t instanceof Integer || t instanceof Long || t instanceof BaseFunction
                 || t instanceof Double || t instanceof String || t instanceof TVoidValue || t instanceof ArrayList<?>;
     }
 

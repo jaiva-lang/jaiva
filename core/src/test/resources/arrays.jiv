@@ -1,0 +1,14 @@
+maak a <-| 100, 3, 200, 12, khuluma, 8080!
+
+khuluma(a - 2)!
+khuluma(2 - a)!
+khuluma(3 - a - 2)!
+khuluma(a * 2)!
+khuluma(a * 3)!
+khuluma(2 * a)!
+khuluma(3 * a)!
+khuluma(a + 2)!
+khuluma(2 + a)!
+
+khuluma(a ? "3")!
+khuluma(a ? khuluma)!

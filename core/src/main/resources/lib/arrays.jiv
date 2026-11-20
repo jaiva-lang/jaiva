@@ -436,7 +436,6 @@ kwenza *a_findFirst(arr, F~predicate) ->
         maak element <- arr[i]!
         sif (predicate(element, i, arr);) ?> khutla element!
     <~
-    khutla idk!
 <~
 
 @* Finds the last element which pass the given predicate.
@@ -456,11 +455,10 @@ kwenza *a_findFirst(arr, F~predicate) ->
 kwenza *a_findLast(arr, F~predicate) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_findLast() only works on arrays"!
     sif (typeOf(predicate) != "function") ?>  cima <== "a_findLast()'s second argument must be a function"!
-    colonize (i <- arr~ - 1 <| i > 0 <| -) ->
+    colonize (i <- arr~ - 1 <| i >= 0 <| -) ->
         maak element <- arr[i]!
         sif (predicate(element, i, arr);) ?> khutla element!
     <~
-    khutla idk!
 <~
 
 
@@ -487,4 +485,35 @@ kwenza *a_find(arr, F~predicate) ->
         sif (predicate(element, i, arr);) ?> collect <- arrLit(collect:::, element)!
     <~
     khutla collect!
+<~
+
+@* Sorts an array using a comparator function without mutating the original array.
+@* p        $> arr <- [] The original array to sort.
+@* p        $> compareFn <- F~any A function taking two elements (a, b) and returning a number.
+@*          $> Negative if a comes before b, positive if a comes after b, 0 if equal.
+@* returns  $> A new sorted array.
+@* devn     $> Throws if the first argument is not an array or if the second argument is not a function.
+@* example  $> maak nums <-| 5, 2, 9, 1!
+@*          $> maak asc <- f~(a, b) : a - b!
+@*          $> khuluma(a_sort(nums, asc))! @ Returns
+kwenza *a_sort(arr, F~compareFn) ->
+    sif (typeOf(arr) != "array") ?> cima <== "a_sort() only works on arrays"!
+    sif (typeOf(compareFn) != "function") ?> cima <== "a_sort()'s second argument must be a function"!
+
+    maak sorted <-|!
+    colonize (current with arr) ->
+        maak nextSorted <-|!
+        maak inserted <- false!
+        colonize (j <- 0 <| j < sorted~ <| +) ->
+            if (inserted' && compareFn(current, sorted[j]) < 0) ->
+                nextSorted <- arrLit(nextSorted:::, current)!
+                inserted <- true!
+            <~
+            nextSorted <- arrLit(nextSorted:::, sorted[j])!
+        <~
+        sif (inserted') ?> nextSorted <- arrLit(nextSorted:::, current)!
+        sorted <- nextSorted!
+    <~
+
+    khutla sorted!
 <~

@@ -11,9 +11,9 @@ import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.specific.TVoidValue;
-import com.yetnt.utils.builders.AnsiColour;
-import com.yetnt.utils.functional.consumer.ThrowableBiConsumer;
-import com.yetnt.utils.functional.generic.ThrowableRunnable;
+import io.github.yetnt.utils.builders.AnsiColour;
+import io.github.yetnt.utils.functional.consumer.ThrowableBiConsumer;
+import io.github.yetnt.utils.functional.generic.ThrowableRunnable;
 
 import java.util.ArrayList;
 import java.util.List;

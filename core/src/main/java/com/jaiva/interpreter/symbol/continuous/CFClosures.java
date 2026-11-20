@@ -10,9 +10,9 @@ import com.jaiva.interpreter.symbol.inf.BFMethodComposition;
 import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
 import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
 import com.jaiva.tokenizer.tokens.Token;
-import com.yetnt.utils.functional.consumer.ThrowableConsumer;
-import com.yetnt.utils.functional.function.ThrowableTriFunction;
-import com.yetnt.utils.functional.generic.ThrowableSupplier;
+import io.github.yetnt.utils.functional.consumer.ThrowableConsumer;
+import io.github.yetnt.utils.functional.function.ThrowableTriFunction;
+import io.github.yetnt.utils.functional.generic.ThrowableSupplier;
 
 import java.io.Closeable;
 import java.io.IOException;

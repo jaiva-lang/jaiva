@@ -3,6 +3,7 @@ package com.jaiva.interpreter.symbol;
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.*;
+import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.*;
@@ -15,10 +16,14 @@ import java.util.Collections;
 /**
  * A Function that is defined by the user at runtime.
  */
-public sealed class DefinedFunction extends BaseFunction permits Lambda {
+public sealed class DefinedFunction extends BaseFunction permits LinkedFunction, Lambda {
 
     DefinedFunction(String name, TFunction token) {
         super(name, token);
+    }
+
+    DefinedFunction(FunctionBuilder functionBuilder) {
+        super(functionBuilder);
     }
 
     @Override
@@ -29,6 +34,7 @@ public sealed class DefinedFunction extends BaseFunction permits Lambda {
         // params contains the input for the function.
         // this DefinedFunction, contains a TFunction where we need to check the params
         // so we can make name value pairs.
+//        checkParams(callProperties.toCheckParams());
         String[] paramNames = ((TFunction) this.token).args;
         Vfs newVfs = callProperties.scope().getVfs().clone();
         if (((TFunction) this.token).varArgs) {
@@ -75,7 +81,9 @@ public sealed class DefinedFunction extends BaseFunction permits Lambda {
                             throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), v.getValue(), BaseFunction.class,
                                     tVarRef.lineNumber);
                         wrappedValue = v.getValue();
-                    }
+                    } else if (!(value instanceof BaseFunction))
+                        throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), value, BaseFunction.class,
+                                callProperties.getLineNumber());
 
 
                 }

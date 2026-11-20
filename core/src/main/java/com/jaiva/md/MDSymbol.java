@@ -10,8 +10,8 @@ import com.jaiva.tokenizer.tokens.specific.TBooleanVar;
 import com.jaiva.tokenizer.tokens.specific.TFunction;
 import com.jaiva.tokenizer.tokens.specific.TNumberVar;
 import com.jaiva.tokenizer.tokens.specific.TStringVar;
-import com.yetnt.utils.builders.MarkDownLiteral;
-import com.yetnt.utils.tuple.SamePair;
+import io.github.yetnt.utils.builders.MarkDownLiteral;
+import io.github.yetnt.utils.tuple.SamePair;
 
 import java.util.ArrayList;
 import java.util.List;

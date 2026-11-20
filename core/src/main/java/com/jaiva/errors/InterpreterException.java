@@ -9,7 +9,7 @@ import com.jaiva.interpreter.symbol.DefinedFunction;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
-import com.yetnt.utils.builders.AnsiColour;
+import io.github.yetnt.utils.builders.AnsiColour;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -431,9 +431,9 @@ public class InterpreterException extends JaivaException {
     }
 
     /*
-     * Exception to throw when something goes wrong during a string calculation
+     * Exception to throw when something goes wrong during a overloaed operator calculation
      */
-    public static class StringCalcException extends InterpreterException {
+    public static class OverloadedCalcException extends InterpreterException {
         @Serial
         private static final long serialVersionUID = 1L;
 
@@ -443,9 +443,9 @@ public class InterpreterException extends JaivaException {
          * 
          * @param st The TStatement.
          */
-        public StringCalcException(Scope ct, TExpression st) {
+        public OverloadedCalcException(Scope ct, TExpression st) {
             super(ct, st.lineNumber,
-                    st.statement + "A statement contains invalid string operations. Not telling u what tho lolol.");
+                    st.statement + "A statement contains invalid operations bruv. Not telling u what tho lolol.");
         }
 
         /**
@@ -455,11 +455,11 @@ public class InterpreterException extends JaivaException {
          * @param s The TStatement.
          * @param e The Exception that got caught.
          */
-        public StringCalcException(Scope ct, TExpression s, Exception e) {
+        public OverloadedCalcException(Scope ct, TExpression s, Exception e) {
             super(ct, s.lineNumber,
                     e instanceof StringIndexOutOfBoundsException
-                            ? "Bro, whatever you did, it's out of the string's bounbds. fix it pls 🙏"
-                            : "So something parsed to a negative number, when sum else shouldnt have it yknow. I'm too lazy to finish writing this error tho.");
+                            ? "Bro, whatever you did, it's out of the string/array's bounbds. fix it pls 🙏"
+                            : "So something parsed to a negative number or you indexed too far? idk man I'm too lazy to finish writing this error.");
         }
     }
 

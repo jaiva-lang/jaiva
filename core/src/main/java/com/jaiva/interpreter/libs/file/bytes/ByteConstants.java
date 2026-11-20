@@ -5,7 +5,7 @@ import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.yetnt.utils.tuple.Pair;
+import io.github.yetnt.utils.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.function.BiConsumer;

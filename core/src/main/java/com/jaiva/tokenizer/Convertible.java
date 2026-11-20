@@ -1,7 +1,7 @@
 package com.jaiva.tokenizer;
 
 import com.jaiva.errors.JaivaException;
-import com.yetnt.utils.builders.ToJSON;
+import io.github.yetnt.utils.builders.ToJSON;
 
 /**
  * Let's go!

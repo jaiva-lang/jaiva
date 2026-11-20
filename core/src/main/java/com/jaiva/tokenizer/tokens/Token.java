@@ -14,7 +14,7 @@ import com.jaiva.utils.cd.ContextDispatcher;
 import com.jaiva.utils.cd.ContextDispatcher.To;
 import com.jaiva.utils.cd.ReservedCases;
 import com.jaiva.utils.generic.BracePairs;
-import com.yetnt.utils.tuple.SamePair;
+import io.github.yetnt.utils.tuple.SamePair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

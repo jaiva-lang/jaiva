@@ -16,9 +16,9 @@ import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
 import com.jaiva.interpreter.libs.types.TypeConverter;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
-import com.yetnt.utils.builders.MarkDownLiteral;
-import com.yetnt.utils.functional.consumer.ThrowableConsumer;
-import com.yetnt.utils.functional.generic.ThrowableSupplier;
+import io.github.yetnt.utils.builders.MarkDownLiteral;
+import io.github.yetnt.utils.functional.consumer.ThrowableConsumer;
+import io.github.yetnt.utils.functional.generic.ThrowableSupplier;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

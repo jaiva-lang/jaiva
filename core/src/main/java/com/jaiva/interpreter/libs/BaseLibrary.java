@@ -12,8 +12,8 @@ import com.jaiva.interpreter.symbol.SymbolType;
 import com.jaiva.tokenizer.NewJson;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
-import com.yetnt.utils.builders.SimpleJSON;
-import com.yetnt.utils.collection.HashMultiMap;
+import io.github.yetnt.utils.builders.SimpleJSON;
+import io.github.yetnt.utils.collection.HashMultiMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;

@@ -8,7 +8,7 @@ This library exports the following libraries:
 | --- | --- |
 | r_fEvalParamsLater | [r_fEvalParamsLater](#r_fEvalParamsLater) |
 | r_vPreferArr | [r_vPreferArr](#r_vPreferArr) |
-| r_fUnfreeze | [r_fUnfreeze](#r_fUnfreeze) |
+| r_sUnfreeze | [r_sUnfreeze](#r_sUnfreeze) |
 ## Functions
 
 ### r_fEvalParamsLater
@@ -49,18 +49,18 @@ F~r_vPreferArr(varRef, newValue?)
 ---
 
 
-### r_fUnfreeze
+### r_sUnfreeze
 
-This symbol can be reached by the following aliases: _`r_fUnfreeze`_
+This symbol can be reached by the following aliases: _`r_sUnfreeze`_
 
 
 #### Definition
 
 ```jaiva
-F~r_fUnfreeze(funcRef)
+F~r_sUnfreeze(symbol)
 ```
-- **_funcRef_**  **`<-`** _**idk**_
-	 - _The function reference._
+- **_symbol_**  **`<-`** _**idk**_
+	 - _The symbol reference. Fucntion or variable._
 
 ---
 

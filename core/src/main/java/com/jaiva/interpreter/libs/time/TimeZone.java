@@ -8,7 +8,7 @@ import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.yetnt.utils.tuple.SamePair;
+import io.github.yetnt.utils.tuple.SamePair;
 
 import java.time.ZoneId;
 import java.util.ArrayList;

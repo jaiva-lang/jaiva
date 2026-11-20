@@ -2,7 +2,7 @@ package com.jaiva.errors;
 
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.yetnt.utils.builders.AnsiColour;
+import io.github.yetnt.utils.builders.AnsiColour;
 
 public final class Warnings {
 

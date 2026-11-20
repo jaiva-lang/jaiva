@@ -6,7 +6,7 @@ import com.jaiva.interpreter.Interpreter;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.tokenizer.tokens.Token;
-import com.yetnt.utils.tuple.SamePair;
+import io.github.yetnt.utils.tuple.SamePair;
 
 import java.util.ArrayList;
 import java.util.HashSet;

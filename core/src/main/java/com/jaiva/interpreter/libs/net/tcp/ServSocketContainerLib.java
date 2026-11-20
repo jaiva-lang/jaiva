@@ -11,7 +11,7 @@ import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
-import com.yetnt.utils.tuple.Pair;
+import io.github.yetnt.utils.tuple.Pair;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

@@ -1,10 +1,11 @@
+
 # Building Jaiva!
 
 idk why you'd subject yourself to this
 
 Requirements:
 
-- [Java 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
+- [Java 25](https://www.oracle.com/java/technologies/javase/jdk25-archive-downloads.html)
 - Maven 3.8+ (or an IDE with Maven support)
 - An IDE, although you can build this purely in a terminal. Just more pain
 

@@ -3,7 +3,7 @@ package com.jaiva.errors;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.yetnt.utils.builders.AnsiColour;
+import io.github.yetnt.utils.builders.AnsiColour;
 
 /**
  * Generic loading exceptions usually library related where we might or might not have a line number

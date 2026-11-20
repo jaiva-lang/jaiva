@@ -44,6 +44,8 @@ public class Comments {
         int commentIdx = line.indexOf(Chars.COMMENT);
         if (commentIdx == -1 || line.indexOf(Chars.COMMENT_DOC) == commentIdx)
             return line;
+        if (commentIdx > 0 && line.charAt(commentIdx - 1) == Chars.ESCAPE)
+            return line;
         String out = line.substring(0, commentIdx);
         // Replace comment with a newline to preserve line structure
         return out/* + ' '*/;

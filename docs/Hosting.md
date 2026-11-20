@@ -157,6 +157,7 @@ public class ReflectiveLib extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
+            // CallProperties has: the TFuncCall token
             // This method checks that all required parameters and possible functional type hints were satisfied
             // Although if you defined it to be variadic, this isn't needed.
             checkParams(callProperties.toCheckParams());
@@ -177,6 +178,17 @@ public class ReflectiveLib extends BaseLibrary {
     }
 }
 ```
+
+> [!NOTE]
+> (Call Properties is defined as such)
+> ```java
+> public record CallProperties(
+> TFuncCall tFuncCall, // The actual funciton call token. half the time u dont need this
+> ArrayList<Object> params, // the parsed params
+> IConfig<Object> config, // the execution config
+> Scope scope // The call scope
+> ) {/*...*/}
+> ```
 
 then back in our lovely test
 

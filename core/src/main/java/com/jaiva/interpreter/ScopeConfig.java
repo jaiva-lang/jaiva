@@ -18,6 +18,8 @@ public final class ScopeConfig {
      */
     private boolean supressWarnings = false;
 
+    private boolean noImplicitDoubleConverting = false;
+
     public ScopeConfig() {
     }
 
@@ -28,6 +30,7 @@ public final class ScopeConfig {
                 case "elevatewarnings", "ew", "warningsarebad": elevateWarnings = true; break;
                 case "suppresswarnings", "sw", "fuckwarnings": supressWarnings = true; break;
                 case "strict": freezeAll = true; elevateWarnings = true; break;
+                case "noimplicitdoubleconverting", "keepmydoublesintact ", "nidc": noImplicitDoubleConverting = true; break;
             }
         }
         if (elevateWarnings && supressWarnings) {
@@ -45,5 +48,9 @@ public final class ScopeConfig {
 
     public boolean suppressWarnings() {
         return supressWarnings;
+    }
+
+    public boolean noImplicitDoubleConverting() {
+        return noImplicitDoubleConverting;
     }
 }

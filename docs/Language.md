@@ -15,10 +15,12 @@ which the current stable versions supports.
         -   [Number](#number)
         -   [Booleans](#booleans)
         -   [Strings](#strings)
-            -   [String Operations](#string-operations)
             -   [Escaping Characters](#escaping-characters)
         -   [idk](#idk)
     -   _[Operators](#operators)_
+        -   [Overloaded Operators](#overloaded-operators)
+           -   [String Operations](#string-related)
+           -   [Array Operations](#array-related)
     -   _[Blocks](#blocks)_
     -   _[Chaining](#chaining)_
 -   **[Keywords](#keywords)**
@@ -111,17 +113,18 @@ And also for throwing errors, thats `<==` (See [Throw an error](#throw-an-error)
 
 ## Types
 
-In terms of actual types, Jaiva doesnt have type syntax like Java or Typescript. This is a loosely typed language. However some functions do error when you do not provide the correct type, so keep that in mind.
+In terms of actual types, Jaiva doesnt have type syntax like Java or TypeScript. This is a loosely typed language. However some functions do error when you do not provide the correct type, so keep that in mind.
 
 ### Number
 
-This is just any integer or real number
+This is just any integer (`integer` or `long`) or real number (`double`)
 
 They don't need any special format, you can just type the number out to use it
 
 ```jiv
 maak b <- 10!
 maak c <- 9.321!
+maak d <- 100392394823423L!
 ```
 
 (also scientific notation is supported)
@@ -150,7 +153,7 @@ maak b <- aowa!
 
 ### Strings
 
-Strings, stolen striaght from Java use `"` (double quotes) to start and end a string.
+Strings, stolen straight from Java use `"` (double quotes) to start and end a string.
 
 These are the only characters for strings. No string literals or multi line strings because wtf dawg.
 
@@ -163,51 +166,6 @@ To get the length of a string use the `~` operator
 ```jiv
 maak b <- "let's gooo"!
 khuluma(b~)! @ returns 10
-```
-
-#### String operations.
-
-1.  Concatenation
-
-    `"a" + "string"` _returns_ **`"astring"`**
-
-    `1 + "string"` _returns_ **`"1string"`**
-
-    `"string" + 1` _returns_ **`"string1"`**
-
-2.  Substring (first occurance)
-
-    `"string" - "tri"` _returns_ **`"sing"`** (removes the first occuramce of rhs from the lhs.
-
-    `"string" - 2` _returns_ **`"stri"`**
-
-    `2 - "string"` _returns_ **`"ring"`**
-
-3.  Multiplication
-
-    `"String" * 3` _returns_ **`"StringStringString"`**
-
-4.  Substring (all occurances)
-
-    `"remove all es please" / "e"` _returns_ **`"rmov all s plas"`** (removes ALL occurences of rhs from the lhs.)
-
-    `"Hello ong World" / 2` _returns_ **`"Hello o"`** (returns the substring in the range _[0, (lhs' length)/rhs)_ )
-
-    `4 / "Hello ong World"` _returns_ **`"lo ong World"`** (returns the substring in the range _[(rhs' length)/lhs, rhs.length-1)_ )
-
-    And of course, you can compare strings to each other using `=` and `!=`
-
-5.  Contains
-
-    `"string" ? "tri"` _returns_ **`true`** (checks if the left-hand string contains the right-hand string)
-
-    `"string" ? "xyz"` _returns_ **`false`**
-
-Also you can go nuts and compound them together
-
-```jaiva
-maak output <- 2 - "hello" - 2!
-@ Output holds "l"
 ```
 
 #### Escaping characters
@@ -237,6 +195,8 @@ Table of escape characters
 ### idk
 
 This is a constant and value which is used to represent nothingness.
+
+[See Operators](#operators)
 
 ```jaiva
 maak a <- idk!  @ Using idk as a value
@@ -284,7 +244,7 @@ khuluma(func())! @ Prints idk, as the parameter t did not get a value.
 | bitshift right                                     | `>>`     |
 | hexshift left                                      | `<x`     |
 | hexshift right                                     | `>x`     |
-| String containment check/[idk](#idk) check         | `?`      |
+| String/Array containment check/[idk](#idk) check   | `?`      |
 
 > [!NOTE]
 > There is no "truthiness".
@@ -296,6 +256,8 @@ khuluma(func())! @ Prints idk, as the parameter t did not get a value.
 > Similarly. Jaiva uses `^` for exponentiation. and `#` for XOR
 
 ### Special Operators
+
+(Otherwise Syntax Sugar)
 
 This is just a list of operators which resolve to something specific
 
@@ -325,6 +287,99 @@ All Operations follow this exact order:
 7. Logical Operators (Lowest precedence)
 
 Use `(`braces`)` to change the order however you wish. (Espeically since sometimes this shit doesnt wanna work)
+
+### Overloaded Operators
+
+#### String-related
+
+1.  Concatenation
+
+    `"a" + "string"` _returns_ **`"astring"`**
+
+    `1 + "string"` _returns_ **`"1string"`**
+
+    `"string" + 1` _returns_ **`"string1"`**
+
+2.  Substring (first occurance)
+
+    `"string" - "tri"` _returns_ **`"sing"`** (removes the first occurrence of rhs from the lhs.
+
+    `"string" - 2` _returns_ **`"stri"`**
+
+    `2 - "string"` _returns_ **`"ring"`**
+
+3.  Multiplication
+
+    `"String" * 3` _returns_ **`"StringStringString"`**
+
+4.  Substring (all occurances)
+
+    `"remove all es please" / "e"` _returns_ **`"rmov all s plas"`** (removes ALL occurences of rhs from the lhs.)
+
+    `"Hello ong World" / 2` _returns_ **`"Hello o"`** (returns the substring in the range _[0, (lhs length)/rhs)_ )
+
+    `4 / "Hello ong World"` _returns_ **`"lo ong World"`** (returns the substring in the range _[(rhs length)/lhs, rhs.length-1)_ )
+
+    And of course, you can compare strings to each other using `=` and `!=`
+
+5.  Contains
+
+    `"string" ? "tri"` _returns_ **`true`** (checks if the left-hand string contains the right-hand string)
+
+    `"string" ? "xyz"` _returns_ **`false`**
+
+Also you can go nuts and compound them together
+
+```jaiva
+maak output <- 2 - "hello" - 2!
+@ Output holds "l"
+```
+
+#### Array-related
+
+[See Arrays](#arrays)
+
+provided `arr` is defined as:
+
+```jaiva
+maak arr <-| 1, 2, 10, "fwe", aowa, arrLit()!
+@ Or using arrLit only
+maak arr <- arrLit(1, 2, 10, "fwe", aowa, arrLit())!
+
+maak arr2 <-| 12, "fwe", 2, true!
+
+khuluma(a)! @ Prints [1, 3, 10, "fwe", aowa, []]
+```
+
+1. Array sublist
+
+   `1 - arr` _returns_ **`[3, 10, "fwe", aowa, []]`**
+
+   `arr - 1` _returns_ **`[1, 3, 10, "fwe", aowa]`**
+
+2. Repetition
+
+   `arr * 2` _returns_ **`[1, 3, 10, "fwe", aowa, [], 1, 3, 10, "fwe", aowa, []]`**
+
+   `2 * arr` _returns_ **`[1, 1, 3, 3, 10, 10, "fwe", "fwe", aowa, aowa, [], []]`**
+
+4. Contains
+
+   `arr ? "tri"` _returns_ **`false`** (checks if the left-hand array contaisn the right hand value inside it.)
+
+   `arr ? false` _returns_ **`true`** (recall `false` and `aowa` are identical.)
+
+5. Intersection
+
+    `arr && arr2` _returns_ **`["fwe", 2]`** (The intersection between the 2 arrays.
+    not sure about the order however it seems more dependant on RHS)
+
+Also you can go nuts and compound them together
+
+```jaiva
+maak output <- 2 - arr - 2!
+@ Output holds [3, 10, "fwe", aowa]
+```
 
 ## Blocks
 
@@ -422,8 +477,11 @@ if (a = 10) ->
     maak d <- 40!
     khuluma(d)! @ 40
     kwenza addition(param1, param2) ->
-        khuluma(param1 + param2)!
+        khuluma(param1 + param2 + r)!
     <~
+    maak r <- 10!
+    addition(10, 30)!   @ Will work. by the time the function is called
+                        @ r is available in it's parent's scope.
 <~ mara ->
     khuluma(d)! @ This will error, because d isn't defined in this scope.
     khuluma(a)! @ 10. This works because a is defined in the global scope.
@@ -441,6 +499,35 @@ When a block is closed, the scope is destroyed, and any variables or functions d
 This scoping mechanism allows for encapsulation and prevents naming conflicts between variables and functions defined in different scopes.
 
 The only exception to the conventional scoping rules are [Lambas](#lambdas) which preserve the scope they were created in.
+
+What makes scoping a vital is that, all Jaiva Errors, throw scope traces, not call traces (because yes.)
+
+Meaning you see the entire execution scope from where the error was raised up until the `global` scope.
+
+Example:
+```jiv
+maak a <- 10!
+maak d!
+if (d?) ->
+    kwenza func(l, b?) ->
+        cima <== "Will always throw."!
+    <~
+    khuluma(func(a, d))!
+<~
+```
+
+will throw
+
+```text
+[line 5] Ight. Stopped program. Reason: Will always throw.
+ (file: C:\...\file.jiv)		 [TFunction 4] : F~func() 
+	-> (file: C:\...\file.jiv)	 [TIfStatement 3] 
+	-> global
+```
+
+Where the line number of the error is, in the error obviously, but each line of a new scope is
+literally the scope parent chain up until global. Notice for functions it doesn't point
+to where the function was invoked, but instead the function's definition line.
 
 # Variables
 
@@ -569,7 +656,7 @@ arguments when calling a function.
 maak arr <-| 10, 20, 30!
 
 kwenza sum(param1, param2, param3) ->
-    khutla (param1 + param2 + param3)!
+    khutla param1 + param2 + param3!
 <~
 
 maak result <- sum(arr:::)! @ This is equivalent to sum(10, 20, 30)
@@ -583,7 +670,7 @@ maak arr <-| 10, 20, 30!
 
 kwenza sum(<-params) ->
     maak total!
-    colonize param with params ->
+    colonize (param with params) ->
         total <- total + param!
     <~
 <~
@@ -671,7 +758,7 @@ And some more funky examples
 ```jiv
 kwenza anotherFunc() ->
     khutla 10!
-<-
+<~
 
 maak t <- anotherFunc!  @ This assigns t, the reference to anotherFunc
 anotherFunc <- khuluma! @ This reassigns anotherFunc as a reference to khuluma
@@ -686,7 +773,8 @@ anotherFunc("hello")!   @ Prints "hello" (Since this is just khuluma.)
 
 ### Higher-Order Functions
 
-In the case wehere you want to pass a function into another function, you will have to input `F~` to the name of the parameter to explicity tell the interpreter that the shi u finna input should be treated as a function.
+You can pass functions into other functions, although there is the `F~` sigil, which forces the interpreter to hard fail
+if it was not given a callable input (function)
 
 `V~` is available for variables, but its not needed as without this typing, its always assumed to be a variable
 
@@ -702,15 +790,13 @@ kwenza returnNum() ->
 khuluma(function(returnNum))! @ prints 10
 ```
 
-be careful when you start doing this though as when you start calling and chaining these, you loose variables in scopes since it doesnt know an shi.
-
 ### Optional Arguments
 
 In the case where you need certain arguments to be optional, stolen straight from typescript, all you gotta do is suffix the parameter name with `?` then it will not be required when calling the function.
 
 ```jiv
 kwenza function(param?) ->
-    khuluma(param = idk)! @ When a parameter is optional and it is not given,
+    khuluma(param?)!       @ When a parameter is optional and it is not given,
                            @ It will be set to the type idk
 <~
 
@@ -852,6 +938,73 @@ f_new()!
 
 id document more but come on man go test urself
 
+### Where?
+
+The main rule is that an argument extension can be applied to a function call
+or any construct which has a function call as it's _*right most value*_
+
+All of these are valid:
+```jaiva
+func()! @ generic fucntion call
+|> "a"!
+
+(f~(a) : khuluma(a))()! @ IIFE (same case as above technically.)
+|> "a"!
+
+maak var <- func()! @ variable assignment
+|> "a"!
+
+var <- func()! @ Variable reassignment.
+|> "b"!
+
+khutla func()! @ Function return
+|> "g"!
+
+cima <== func()! @ Throw
+|> "g"!
+
+sif (var = "b") ?> func()! @ Shorthand if
+|> "g"!
+
+@ And then any expression who's right most value is a function call.
+maak z <- sin(90) + func(9)!
+|> true!
+```
+
+### Repeated Groups
+
+One thing argument extensions have over normal function calls is you can reduce
+multiple of the same parameter into a simple repeated addition.
+
+E.g. I have
+```jaiva
+maak a <- hello("hi", "lol", "hi", "lol", "hi", "lol")!
+```
+
+you could go
+```jaiva
+maak a <- hello()!
+    |> ("hi", "lol", "hi", "lol", "hi", "lol")!
+```
+
+or otherwise
+```jaiva
+maak a <- hello()!
+    |> ("hi", "lol")!
+    |> ("hi", "lol")!
+    |> ( "hi", "lol")!
+```
+
+or expand it to single args which works its the exact same. but this pattern can be reduced to:
+
+```jaiva
+maak a <- hello()!
+    |> [3] ("hi", "lol")!
+```
+
+where the number in brackets (a non negative, integer number that doesnt have to be parsed to be recognized)
+represents the amoutn of times the group will repeat in the function call.
+
 ## Continuous Functions
 
 These are special types of functions which provide a closure over resources.
@@ -877,7 +1030,6 @@ maak collect <-|!
 nikhil (conf(C_EOF)()') ->
     @ Read 1 byte
     maak byte <- read(R_BYTE)!
-
     @ Shorthand ifs that execute the statement if the condition is true
     sif (byte?) ?> nevermind!
     sif (byte != 255) ?> collect <- arrLit(collect:::, byte)!
@@ -888,6 +1040,110 @@ conf(C_CLOSE)()!
 @ t_strFromByteArr function provided by "jaiva/types/numbers"
 khuluma(t_strFromByteArr(collect:::))!
 ```
+
+However this isn't specifically for file input, theres a whole working TCP example in [the resources folder](../core/src/test/resources/tcp)
+
+Here's a little snippet: (similar file except this is apart of [tcp_handshake's documentation example](libs/net-tcp.md#tcp_handshake))
+
+```jaiva
+tsea "jaiva/continuous"!
+tsea "jaiva/net"!
+tsea "jaiva/threads"!
+tsea "jaiva/types/numbers"!
+
+@* Send a packet through.
+@* p        $> con <- F~any The connection function
+@* p        $> msg <- string The message to send
+kwenza sendPacket(con, msg) ->
+	maak bArr <- t_strToByteArr(msg)!
+	con(C_WRITE)(NET_W_INT, bArr~)!
+	con(C_WRITE)(NET_W_BYTEBUFF, bArr)!
+	con(C_FLUSH)()!
+<~
+
+@* Reads an input tcp packet
+@* p        $> con <- F~any The connection function
+@* rets     $> A String.
+@* devn     $> This function essentially reads first an integer, then reads the next bytes of that
+@*          $> integer length expecting it as a UTF-8 String.
+kwenza readPacket(con) ->
+	maak msgLen <- con(C_READ)(NET_R_INT)!
+	maak pl <- con(C_READ)(NET_RU_BYTEBUFF, msgLen)!
+	@ Using NET_R_BYTEBUFF will only read whats available!
+	khutla t_strFromByteArr(pl:::)!
+<~
+
+@* Client function. Its the client itself.
+@* p        $> con <- F~any The connection function
+@* p        $> conAddress <- string The connection address
+@* p        $> conPort <- string The connection port
+@* p        $> close <- F~any close function which closes
+@*          $> this side of the socket when called.
+kwenza client(F~con, conAddress, conPort, F~close) ->
+
+    maak conn_eof <- con(C_EOF)! @ EOF function to set calback and check
+    maak conn_closed <- con(C_CLOSED)! @ Same thing as EOF
+
+    @ Handle errs
+    kwenza erHandler(_, _2, type) ->
+        @ we have conId and conAddress already.
+        maak identifier <- "Server on " + conAddress!
+
+        @ If its SELF, then this side was the one that closed via invoking the close() function
+        if (type != "SELF") ->
+            @ if i ever introduce a switch, itd naturally replace this.
+            sif (type = "CONNECTION") ?> khuluma(identifier + " was closed.")!
+            sif (type = "ERR") ?> khuluma(identifier + " crashe d suddenly!")!
+            sif (type = "INPUT") ?> khuluma(identifier + " closed it's input stream!")!
+            sif (type = "OUTPUT") ?> khuluma(identifier + " closed it's output stream!")!
+        <~
+
+	    close()! @ might as well close if this was invoked.
+    <~
+
+    conn_closed(erHandler)!
+    conn_eof()! @ Rather use argument extensions here since its a long lambda.
+        |> f~(_, _2) : khuluma("EOF was reached while reading.... oh no.")!
+
+    zama zama ->
+        @ read first packet
+        maak greet <- readPacket(con)!
+
+        khuluma("Received from server " + greet)!
+        khuluma()!
+
+        @ send to server
+        nikhil ((con(C_EOF)() || con(C_CLOSED)())') ->
+            khuluma("Send to server: ", true)!
+            maak out <- mamela()! @ listen to da input blocking.
+
+            sif (out = "exit" || out~ = 0) ?> voetsek!
+
+            sendPacket(con, out)!
+
+            khuluma()!
+        <~
+	<~ chaai ->
+        @ if the connection closed, then this is a false alarm.
+        @ EOF is supposed to
+        sif (conn_closed() || conn_eof()) ?> khutla idk!
+	    khuluma("Connection to " + conAddress + " fucking died...: " + error)!
+	<~
+	khuluma("Closing communication with " + conAddress)!
+	@ tcp_handshake provides a convenience for this
+    @ con(C_CLOSE)()!
+	@ with the close parameter.
+	close()!
+<~
+
+zama zama ->
+    @ could use "localhost" but im testing whether this does return 10.0.0.17
+	tcp_handshake(net_localIpv4(), 5050, client)!
+<~ chaai ->
+	khuluma("Couldn't connect to server or some other error. " + error)!
+<~
+```
+
 
 # If Statements
 
@@ -979,7 +1235,7 @@ So you can do things like
 ```jiv
 maak control!
 @* braces are added to make it more readable, you don't need them
-maak a <- ((control = idk) => idk however 0xFFFF)!
+maak a <- (control? => idk however 0xFFFF)!
 ```
 
 Where if the variable `control` is [idk](#idk) , thne variable `a` will be set to idk too. Otherwise, it will be set to the integer `0xFFFF`
@@ -1046,12 +1302,12 @@ if (CONDITION) ->
 
 ## Nikhil loops (while loops)
 
-Shoutout to Nikhil for this one.
+Shoutout to Nikhil for this one. (He begged me to add while loops.)
 
 [Twitter](https://x.com/NikhilLala11)
 [Instagram](https://www.instagram.com/_nikhil1707_/) <br>
 YouTube @nikhil17 (probably idk) <br>
-Discord @Nikx17 <br>
+Discord @Nikx17 <br>
 
 ```jiv
 nikhil (condition) ->
@@ -1130,9 +1386,8 @@ To skip to the next iteration of a loop, use the `nevermind` keyword.
 
 ```jiv
 colonize (i <- 0 <| i <= 10 <| +) ->
-    if (i = 5) ->
-        nevermind! @ this will skip the rest of the loop and go to the next iteration.
-    <~
+    @ this will skip the rest of the loop and go to the next iteration.
+    sif (i = 5) ?> nevermind!
     khuluma(i)! @ 0, 1, 2, 3, 4, 6, 7, 8, 9, 10
 <~
 ```
@@ -1239,14 +1494,14 @@ khuluma(addition(a, 1))! @ 11
 Or if you want to import a specific variable or function, you can do this.
 
 ```jiv
-tsea "file.jiv" <- addition!
+tsea "file.jiv" <- addition, subtraction!
 ```
 
 > [!NOTE]
 > File paths are relative to the current working directory. So if you have a file in a different directory, you will have to use the full path to the file.
 
 > [!NOTE]
-> You can also import files from the Jaiva library. Example to import the arrays files
+> You can also import files from the standard library. Example to import the arrays files
 >
 > ```jiv
 > tsea "jaiva/arrays"!
@@ -1257,6 +1512,25 @@ tsea "file.jiv" <- addition!
 > [!NOTE]
 > Omitting the file extension is okay, however it will default to `.jiv`
 
+## Functional Import
+
+If you only need say a single function or value and dont want to have the entire improt declaration
+you can use [tseaf function](libs/globals.md#tseaf)
+
+An example below, although view the function's documentation for more information
+
+```jaiva
+@ Lets say i need m_toDeg from math only
+
+maak conv <- tseaf("jaiva/math", "m_toDeg")!
+
+conv(0.5)!  @ Functions the 
+            @ exact same as calling m_toDeg(0.5) as it has the function reference.
+            
+@ Or just call it directly.
+
+tseaf("jaiva/math", "m_toDeg")(0.5)!
+```
 
 # Arrow Syntax Table
 

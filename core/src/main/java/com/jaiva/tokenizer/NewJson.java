@@ -4,7 +4,7 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TCodeblock;
-import com.yetnt.utils.builders.SimpleJSON;
+import io.github.yetnt.utils.builders.SimpleJSON;
 import org.jetbrains.annotations.NotNull;
 
 import javax.crypto.Mac;

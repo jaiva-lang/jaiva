@@ -7,8 +7,8 @@ import com.jaiva.tokenizer.tokens.specific.TIfStatement;
 import com.jaiva.tokenizer.tokens.specific.TTernary;
 import com.jaiva.tokenizer.tokens.specific.TVarRef;
 import com.jaiva.utils.cd.ContextDispatcher;
-import com.yetnt.utils.tuple.Pair;
-import com.yetnt.utils.tuple.SamePair;
+import io.github.yetnt.utils.tuple.Pair;
+import io.github.yetnt.utils.tuple.SamePair;
 
 import java.util.ArrayList;
 

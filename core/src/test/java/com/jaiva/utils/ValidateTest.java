@@ -3,7 +3,7 @@ package com.jaiva.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.yetnt.utils.tuple.SamePair;
+import io.github.yetnt.utils.tuple.SamePair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

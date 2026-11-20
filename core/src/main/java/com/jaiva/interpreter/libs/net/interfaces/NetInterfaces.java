@@ -10,7 +10,7 @@ import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
-import com.yetnt.utils.collection.buckets.Buckets;
+import io.github.yetnt.utils.collection.buckets.Buckets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

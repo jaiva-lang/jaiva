@@ -2,8 +2,8 @@ package com.jaiva.lang;
 
 import com.jaiva.errors.TokenizerException;
 import com.jaiva.utils.Find;
-import com.yetnt.utils.tuple.Pair;
-import com.yetnt.utils.tuple.SamePair;
+import io.github.yetnt.utils.tuple.Pair;
+import io.github.yetnt.utils.tuple.SamePair;
 
 import java.util.ArrayList;
 import java.util.Arrays;

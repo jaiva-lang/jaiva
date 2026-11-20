@@ -12,7 +12,7 @@ import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
 import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
 import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
 import com.jaiva.tokenizer.tokens.Token;
-import com.yetnt.utils.tuple.Pair;
+import io.github.yetnt.utils.tuple.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

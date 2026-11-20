@@ -15,7 +15,7 @@ import com.jaiva.interpreter.symbol.CallProperties;
 import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.specific.TVoidValue;
-import com.yetnt.utils.functional.function.ThrowableTriFunction;
+import io.github.yetnt.utils.functional.function.ThrowableTriFunction;
 
 import java.util.ArrayList;
 

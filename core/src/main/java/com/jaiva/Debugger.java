@@ -9,7 +9,7 @@ import com.jaiva.interpreter.symbol.BaseVariable.DefinedVariable;
 import com.jaiva.interpreter.symbol.DefinedFunction;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.tokenizer.tokens.Token;
-import com.yetnt.utils.tuple.SamePair;
+import io.github.yetnt.utils.tuple.SamePair;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

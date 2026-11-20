@@ -67,7 +67,7 @@ on the next omit the tagName and it will be added to the previous!
 
 `@* param $> (paramName)<?> <- (paramType) (description)`
 
-Aliases: `parameter` ,`par`, `p`, `arg`, `argument`
+Aliases: `parameter` ,`par`, `p`, `arg`, `argument`, `param`
 
 Used to describe a function parameter. The parameter name must match the actual parameter name of course
 but the type can be anything you want. (As long as it is a single word).
@@ -87,7 +87,7 @@ kwenza add(a, b?) ->
 
 `@* ret $> (description)`
 
-Aliases: `khutla`, `ret`, `returns`, `r`, `rets`
+Aliases: `khutla`, `ret`, `returns`, `r`, `rets`, `return`
 
 Used to describe what a function returns.
 

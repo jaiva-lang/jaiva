@@ -18,6 +18,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
 
         <!-- For tests -->
@@ -32,8 +39,8 @@
 
         <dependency>
             <groupId>io.github.yetnt</groupId>
-            <artifactId>ytils</artifactId>
-            <version>1.4.0</version>
+            <artifactId>ytils-all</artifactId>
+            <version>2.0.0</version>
         </dependency>
 
         <!-- Specifically for loading internal jaiva libraries so we don't have to define it everytime -->

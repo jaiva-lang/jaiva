@@ -47,9 +47,7 @@ kwenza *get(class, prop) ->
         |> f~(el) : el[0] = split[1]!
 
     if (typeOf(found) = "array") ->
-        if (found[2] = -1) ->
-            cima <== prop + " is inaccessible"!
-        <~
+        sif (found[2] = -1) ?> cima <== prop + " is inaccessible"!
         khutla found[1]!
     <~
 <~

@@ -3,7 +3,7 @@ package com.jaiva.md;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.yetnt.utils.builders.AnsiColour;
+import io.github.yetnt.utils.builders.AnsiColour;
 
 import java.io.File;
 import java.io.IOException;

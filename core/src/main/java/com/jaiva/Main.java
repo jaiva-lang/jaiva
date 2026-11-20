@@ -23,7 +23,7 @@ import com.jaiva.tokenizer.tokens.specific.TDocsComment;
 import com.jaiva.tokenizer.tokens.specific.TExtendParams;
 import com.jaiva.utils.generic.BlockChain;
 import com.jaiva.utils.generic.MultipleLinesOutput;
-import com.yetnt.utils.builders.AnsiColour;
+import io.github.yetnt.utils.builders.AnsiColour;
 
 import java.io.File;
 import java.io.FileNotFoundException;

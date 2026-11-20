@@ -12,18 +12,21 @@ import com.jaiva.tokenizer.TConfig;
 import com.jaiva.tokenizer.Tokenizer;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TImport;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public final class ExternalLibraryLoader {
     private static final String LIB_DIR = "lib/";
-    private static final ArrayList<String> libFiles = new ArrayList<>(Arrays.asList(
+    private static final ArrayList<String> libFiles = new ArrayList<>(List.of(
             "arrays.jiv"
             // and more, probably not but whatever.
     ));
 
+    @NotNull
     public HashMap<String, Vfs> loadAllLibraries(IConfig<Object> config) throws InterpreterException.LibImportException {
 
         HashMap<String, Vfs> imported = new HashMap<>();
@@ -57,7 +60,7 @@ public final class ExternalLibraryLoader {
         }
     }
 
-    private Vfs loadLibrary(String content, String name, String path, IConfig<Object> config) throws Exception {
+    private Vfs loadLibrary(String content, String name, String path, @NotNull IConfig<Object> config) throws Exception {
 //        System.out.println("Loading " + name + " (" + content.length() + " chars)");
 
         IConfig<Object> newConfig = new IConfig<Object>(config.getSanitisedArgs(), path

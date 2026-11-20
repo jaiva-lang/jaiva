@@ -1,6 +1,1 @@
-tsea "jaiva/arrays"!
-
-maak z <- a_apply(arrLit(100, 2, 3, 4, 1))!
-    |> f~(arr) : a_map(arr, f~(el) : el+2)!
-
-khuluma(z)!
+khuluma(yebo + "")!

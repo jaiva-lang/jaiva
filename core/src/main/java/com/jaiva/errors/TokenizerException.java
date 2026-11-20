@@ -1,7 +1,7 @@
 package com.jaiva.errors;
 
 import com.jaiva.tokenizer.tokens.specific.TIfStatement;
-import com.yetnt.utils.builders.AnsiColour;
+import io.github.yetnt.utils.builders.AnsiColour;
 
 /**
  * Base Syntax Error Exception.

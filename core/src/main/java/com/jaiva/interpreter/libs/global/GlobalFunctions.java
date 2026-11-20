@@ -59,7 +59,8 @@ public class GlobalFunctions extends BaseLibrary {
                                                         "sw" to suppress all warnings.\s
                                                         "ew" to elevate all warnings.\s
                                                         "constant" to make all symbols given constant. and\s
-                                                        "strict" which toggles "ew" and "constant"
+                                                        "strict" which toggles "ew" and "constant"\s
+                                                        "nidc" disable perfect doubles converting to integers.
                                                     """
                                             )
                                             .addExample("""

@@ -1,7 +1,7 @@
 package com.jaiva.lang;
 
 import com.jaiva.utils.Find;
-import com.yetnt.utils.tuple.SamePair;
+import io.github.yetnt.utils.tuple.SamePair;
 
 import java.util.ArrayList;
 import java.util.Arrays;

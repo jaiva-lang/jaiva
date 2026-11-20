@@ -9,7 +9,7 @@ import com.jaiva.tokenizer.jdoc.tags.DGeneric;
 import com.jaiva.tokenizer.jdoc.tags.DParameter;
 import com.jaiva.tokenizer.jdoc.tags.Tag;
 import com.jaiva.tokenizer.jdoc.tags.TagType;
-import com.yetnt.utils.builders.ToJSONList;
+import io.github.yetnt.utils.builders.ToJSONList;
 
 import java.util.ArrayList;
 import java.util.Scanner;

@@ -1,8 +1,4 @@
-# v7.0.0
-
-breaking change : Switch from Java 21 to Java 25
-
-Literlaly just plumbing
+# v7.0.0 (NOT FINAL CHANGELOG, JUST WRITING CHANGES AS I GO)
 
 - All Jaiva repositories have been moved to the [Jaiva-Lang](https://github.com/jaiva-lang) org.
   - [jaiva-lang/jaiva](https://github.com/jaiva-lang/jaiva)
@@ -40,5 +36,10 @@ Literlaly just plumbing
 - Add error for when a block has no code.
 - Fix `TIfStatement` json not having `elseBody`
 - Fix bug with ternaries
+- Java 21 to 25.
 - Fix bug where using logical not required enclosing the atomic braces.
   - Further fix by adding quck path for `x?'` to become `x != idk`
+- Added `<skip>` to both mojos to skip their execution.
+- Added array operators and array equals.
+- Added function links
+- switch to ytils 2.0.0 cuz yes.

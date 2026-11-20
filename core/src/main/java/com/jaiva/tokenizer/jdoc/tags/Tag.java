@@ -3,7 +3,7 @@ package com.jaiva.tokenizer.jdoc.tags;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.errors.TokenizerException;
 import com.jaiva.tokenizer.NewJson;
-import com.yetnt.utils.builders.ToJSON;
+import io.github.yetnt.utils.builders.ToJSON;
 
 import java.util.ArrayList;
 import java.util.Arrays;

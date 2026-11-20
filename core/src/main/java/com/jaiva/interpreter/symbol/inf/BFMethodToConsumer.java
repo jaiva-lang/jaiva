@@ -1,8 +1,8 @@
 package com.jaiva.interpreter.symbol.inf;
 
 import com.jaiva.interpreter.symbol.CallProperties;
-import com.yetnt.utils.functional.consumer.ThrowableConsumer;
-import com.yetnt.utils.functional.function.ThrowableFunction;
+import io.github.yetnt.utils.functional.consumer.ThrowableConsumer;
+import io.github.yetnt.utils.functional.function.ThrowableFunction;
 
 import java.io.IOException;
 

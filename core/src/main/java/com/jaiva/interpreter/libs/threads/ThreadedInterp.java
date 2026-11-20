@@ -6,8 +6,8 @@ import com.jaiva.errors.Warnings;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.runtime.Resources;
-import com.yetnt.utils.functional.consumer.ThrowableBiConsumer;
-import com.yetnt.utils.functional.generic.ThrowableRunnable;
+import io.github.yetnt.utils.functional.consumer.ThrowableBiConsumer;
+import io.github.yetnt.utils.functional.generic.ThrowableRunnable;
 
 import java.io.IOException;
 import java.util.function.BiConsumer;
