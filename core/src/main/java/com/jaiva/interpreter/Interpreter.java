@@ -245,29 +245,32 @@ public final class Interpreter {
                 if (o instanceof TThrowError)
                     throwIfGlobalContext(scope, o, tVarReassign.lineNumber);
 
-
                 if (o instanceof BaseFunction func) {
-                    mapValue.setValue(func);
+                    mapValue.setValue(cloneAndLink(tVarReassign, func, mapValue.getValue()));
                 } else if (var instanceof BaseVariable v) {
-                    if (o instanceof ArrayList a) v.a_set(a, scope);
-                    else v.s_set(o, scope);
-                } else if (var instanceof BaseFunction && Primitives.isPrimitive(o)) {
+                    BaseVariable newV = (BaseVariable) cloneAndLink(tVarReassign, v, mapValue.getValue());
+                    mapValue.setValue(newV);
+                    if (o instanceof ArrayList a) newV.a_set(a, scope);
+                    else newV.s_set(o, scope);
+                } else {
                     // create BaseVariable instead
                     Warnings.println(tVarReassign.lineNumber, "Reassigning what once was a function to a variable can cause token errors and confusion. Avoid doing this.", scope, config);
-                    mapValue.setValue(BaseVariable.create(tVarReassign.name, tVarReassign,
+                    mapValue.setValue(cloneAndLink(tVarReassign, BaseVariable.create(tVarReassign.name, tVarReassign,
                             o instanceof ArrayList<?> a ? (ArrayList<Object>) a : new ArrayList<>(List.of(o)), false
-                    ));
+                    ), mapValue.getValue()));
                 }
                 // so hopefully this changes the instance and yeah 👍
 
-                HashSet<String> mods = new HashSet<>(mapValue.getValue().getModifiers());
-                mods.addAll(tVarReassign.getNewModifiers());
-                mapValue.getValue().getModifiers().clear();
-                mapValue.getValue().getModifiers().addAll(mods);
-                ModifierValidator.validateModifiers(config, scope, tVarReassign.lineNumber, (TSymbol) mapValue.getValue().token);
+                if (!tVarReassign.getNewModifiers().isEmpty()) {
+                    HashSet<String> mods = new HashSet<>(mapValue.getValue().getModifiers());
+                    mods.addAll(tVarReassign.getNewModifiers());
+                    mapValue.getValue().getModifiers().clear();
+                    mapValue.getValue().getModifiers().addAll(mods);
+                    ModifierValidator.validateModifiers(config, scope, tVarReassign.lineNumber, (TSymbol) mapValue.getValue().token);
 
-                if (mapValue.getValue().containsModifier(DefaultModifiers.CONSTANT))
-                    mapValue.getValue().freeze();
+                    if (mapValue.getValue().containsModifier(DefaultModifiers.CONSTANT))
+                        mapValue.getValue().freeze();
+                }
 
             }
             default -> {
@@ -278,6 +281,13 @@ public final class Interpreter {
         }
 
         return null; // return null because we are not returning anything.
+    }
+
+    private static Symbol cloneAndLink(@NotNull TVarReassign tVarReassign, Symbol var, Symbol oldSym) throws CloneNotSupportedException {
+        if (!tVarReassign.getNewModifiers().isEmpty()) {
+            var.setParentSymbol(oldSym.equals(var) ? var.clone() : oldSym);
+        }
+        return var;
     }
 
     /**

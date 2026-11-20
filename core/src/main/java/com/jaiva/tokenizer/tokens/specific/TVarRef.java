@@ -4,6 +4,8 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.lang.Chars;
 import com.jaiva.tokenizer.tokens.TReference;
 import com.jaiva.tokenizer.tokens.Token;
+import com.jaiva.utils.Find;
+import io.github.yetnt.utils.tuple.Pair;
 
 /**
  * Represents a variable reference such as {@code name} or {@code age} or
@@ -34,6 +36,7 @@ public final class TVarRef extends TokenDefault<TVarRef> implements TReference {
      * Indicates whether the function call spreads an array as arguments.
      */
     private boolean spreadArr = false;
+    private int lineageIndexAmount = 0;
 
     /**
      * Constructor for TVarRef
@@ -47,6 +50,11 @@ public final class TVarRef extends TokenDefault<TVarRef> implements TReference {
             n = n.endsWith(Chars.LENGTH_CHAR + "") ? n.substring(0, n.length() - 1) : n;
             if (n.endsWith(Chars.SPREAD))
                 n = n.substring(0, n.length() - Chars.SPREAD.length());
+            if (n.startsWith(String.valueOf(Chars.SYMBOL_LINEAGE))) {
+                Pair<String, Integer> nam = Find.countAndTruncateStart(n, String.valueOf(Chars.SYMBOL_LINEAGE));
+                this.lineageIndexAmount = nam.getSecond();
+                n = nam.getFirst();
+            }
             this.varName = n;
         } else
             this.varName = name;
@@ -94,6 +102,7 @@ public final class TVarRef extends TokenDefault<TVarRef> implements TReference {
         json.set("getLength", getLength);
         json.set("spreadArr", spreadArr);
         json.set("index", index);
+        json.set("symbolLineage", lineageIndexAmount);
     }
 
     /**
@@ -113,5 +122,10 @@ public final class TVarRef extends TokenDefault<TVarRef> implements TReference {
     @Override
     public boolean getSpreadArr() {
         return spreadArr;
+    }
+
+    @Override
+    public int getLineageIndexAmount() {
+        return lineageIndexAmount;
     }
 }

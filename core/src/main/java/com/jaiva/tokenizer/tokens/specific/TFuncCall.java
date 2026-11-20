@@ -1,9 +1,12 @@
 package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.errors.JaivaException;
+import com.jaiva.lang.Chars;
 import com.jaiva.tokenizer.tokens.TParamsExtendable;
 import com.jaiva.tokenizer.tokens.TReference;
 import com.jaiva.tokenizer.tokens.Token;
+import com.jaiva.utils.Find;
+import io.github.yetnt.utils.tuple.Pair;
 
 import java.util.ArrayList;
 
@@ -37,6 +40,7 @@ public final class TFuncCall extends TokenDefault<TFuncCall> implements TReferen
      */
     private boolean spreadArr = false;
     private String originalCall;
+    private int lineageIndexAmount;
 
     /**
      * Constructor for TFuncCall
@@ -48,7 +52,13 @@ public final class TFuncCall extends TokenDefault<TFuncCall> implements TReferen
      */
     public TFuncCall(Object name, ArrayList<Object> args, int ln, boolean getL) throws JaivaException {
         super("TFuncCall", ln);
-        this.functionName = name;
+
+        if (name instanceof String n && n.startsWith(String.valueOf(Chars.SYMBOL_LINEAGE))) {
+            Pair<String, Integer> name2 = Find.countAndTruncateStart(n, String.valueOf(Chars.SYMBOL_LINEAGE));
+            this.lineageIndexAmount = name2.getSecond();
+            this.functionName = name2.getFirst();
+        } else
+            this.functionName = name;
         this.args = args;
         this.getLength = getL;
         json();
@@ -63,10 +73,7 @@ public final class TFuncCall extends TokenDefault<TFuncCall> implements TReferen
      * @param spreadArr Indicates whether the function call spreads an array as arguments.
      */
     public TFuncCall(Object name, ArrayList<Object> args, int ln, boolean getL, boolean spreadArr) throws JaivaException {
-        super("TFuncCall", ln);
-        this.functionName = name;
-        this.args = args;
-        this.getLength = getL;
+        this(name, args, ln, getL);
         this.spreadArr = spreadArr;
         json();
     }
@@ -76,6 +83,7 @@ public final class TFuncCall extends TokenDefault<TFuncCall> implements TReferen
         json.set("getLength", getLength);
         json.set("spreadArr", spreadArr);
         json.set("args", args);
+        json.set("symbolLineage", lineageIndexAmount);
         json.nullSet("originalCall", originalCall);
     }
 
@@ -112,5 +120,10 @@ public final class TFuncCall extends TokenDefault<TFuncCall> implements TReferen
     @Override
     public TFuncCall get() {
         return this;
+    }
+
+    @Override
+    public int getLineageIndexAmount() {
+        return lineageIndexAmount;
     }
 }

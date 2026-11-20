@@ -10,6 +10,7 @@ import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
 import io.github.yetnt.utils.builders.AnsiColour;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -530,6 +531,23 @@ public class InterpreterException extends JaivaException {
 
         public SymbolModifiersException(Scope ct, int lineNumber, String mod1, String mod2) {
             super(ct, lineNumber, "The modifiers \""+mod1+"\" and \""+mod2+"\" are mutually excluse bro. u cant use em together.");
+        }
+    }
+    /**
+     * Exception thrown when symbol lineage simply does not go that far
+     */
+    public static class SymbolLineageExplorerException extends InterpreterException {
+
+        @Serial
+        private static final long serialVersionUID = 1L;
+
+        public SymbolLineageExplorerException(Scope ct, int lineNumber, int definitionLineage, int maxLineage, @NotNull Symbol sym) {
+            super(ct, lineNumber, "Okay so, " + sym.name + " cannot go as far as " + definitionLineage + " up the lineage" +
+                    " as it only has up until " + maxLineage);
+        }
+
+        public SymbolLineageExplorerException(Scope ct, int lineNumber, @NotNull Symbol symbol) {
+            super(ct, lineNumber, symbol.name + " literally has no parent to access bruv.");
         }
     }
 

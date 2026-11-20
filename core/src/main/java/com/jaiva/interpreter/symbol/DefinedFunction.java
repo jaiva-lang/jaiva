@@ -96,6 +96,8 @@ public sealed class DefinedFunction extends BaseFunction permits LinkedFunction,
                     Object o = Primitives.toPrimitive(value, false, callProperties.config(), callProperties.scope());
                     // wrappedValue = new BaseVariable(name, tFuncCall, o);
                     wrappedValue = createScalarOrArr(name, o, callProperties.tFuncCall());
+                } else if (value instanceof BaseFunction f) {
+                    wrappedValue = f;
                 } else if (Primitives.isPrimitive(value)) {
                     // primitivers ong
                     wrappedValue = createScalarOrArr(name, value, callProperties.tFuncCall());

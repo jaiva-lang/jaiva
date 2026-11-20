@@ -8,6 +8,7 @@ import com.jaiva.interpreter.symbol.BaseVariable.VariableType;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.TConditional;
+import com.jaiva.tokenizer.tokens.TReference;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
@@ -222,10 +223,11 @@ public final class Primitives {
                             tVarRef.lineNumber);
                 if (v == null)
                     throw new UnknownVariableException(scope, tVarRef);
-                if (!(v.getValue() instanceof BaseVariable variable)) {
-                    if (v.getValue() instanceof BaseFunction) {
+                Symbol s = symbolLineage(scope, config, v.getValue(), tVarRef);
+                if (!(s instanceof BaseVariable variable)) {
+                    if (s instanceof BaseFunction) {
                         if (index == null)
-                            return v.getValue();
+                            return s;
                         // in this case, index is something so we need to call the function and it
                         // SHOULD return an array.
                         // therefore, we want to call toPrimitive on it again
@@ -240,7 +242,7 @@ public final class Primitives {
                                 : ((ArrayList<?>) ret)
                                 .get((Integer) index);
                     } else {
-                        throw new WtfAreYouDoingException(scope, v.getValue(), BaseVariable.class,
+                        throw new WtfAreYouDoingException(scope, s, BaseVariable.class,
                                 tVarRef.lineNumber);
                     }
                 }
@@ -323,18 +325,25 @@ public final class Primitives {
                                 returnName, config, scope);
                         if (t instanceof BaseFunction) function = (BaseFunction) (t);
                         else if (t instanceof String) return t;
-
                     }
 
                 }
 
-                if (v != null && v.getValue() instanceof BaseVariable bn) {
-                    throw new WtfAreYouDoingException(scope,
-                            "You are trying to use the variable " + bn.name + " as a function.",
-                            tFuncCall.lineNumber);
-                }
-                function = function != null ? function : (BaseFunction) v.getValue();
+                boolean checkedLineage = false;
 
+                if (v != null && v.getValue() instanceof BaseVariable bn) {
+                    Symbol sym = symbolLineage(scope, config, v.getValue(), tFuncCall);
+                    if (sym instanceof BaseFunction f) {
+                        function = f;
+                        checkedLineage = true;
+                    } else
+                        throw new WtfAreYouDoingException(scope,
+                                "You are trying to use the variable " + bn.name + " as a function.",
+                                tFuncCall.lineNumber);
+                }
+
+                function = function != null ? function : (BaseFunction) v.getValue();
+                if (!checkedLineage) function = (BaseFunction) symbolLineage(scope, config, function, tFuncCall);
                 checkSymbolAnnotation(function, tFuncCall.lineNumber, scope, config);
 
                 ArrayList<Object> args = BaseFunction.resolveSpreadOperator(function, tFuncCall, config, scope);
@@ -403,6 +412,28 @@ public final class Primitives {
             }
         }
         return void.class;
+    }
+
+    private static Symbol symbolLineage(Scope scope, IConfig<Object> config, Symbol symbol, @NotNull TReference ref)
+            throws SymbolLineageExplorerException {
+        int amount = ref.getLineageIndexAmount();
+
+        if (amount == 0) return symbol;
+        if (symbol.getParentSymbol() == null)
+            throw new SymbolLineageExplorerException(
+                    scope, ((TokenDefault)ref).lineNumber, symbol
+            );
+        while (amount > 0) {
+            if (symbol.getParentSymbol() == null)
+                throw new SymbolLineageExplorerException(
+                        scope,
+                        ((TokenDefault)ref).lineNumber,
+                        amount, amount-1, symbol
+                );
+            symbol = symbol.getParentSymbol();
+            amount--;
+        }
+        return symbol;
     }
 
     /**

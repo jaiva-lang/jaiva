@@ -4,6 +4,7 @@ import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 import io.github.yetnt.utils.builders.AnsiColour;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Generic loading exceptions usually library related where we might or might not have a line number
@@ -41,10 +42,10 @@ public class LoadException extends JaivaException {
      * When {@code BaseLibrary#instantiate(Class, IConfig, Globals)} runs into reflection issues.
      */
     public static class InvalidLibraryClassException extends LoadException {
-        public InvalidLibraryClassException(Class<?> clazz, String message) {
+        public InvalidLibraryClassException(@NotNull Class<?> clazz, String message) {
             super("Cannot load the " + clazz.getName() + " library: " + AnsiColour.printInline(message, AnsiColour.FORE.RED));
         }
-        public InvalidLibraryClassException(Class<?> clazz, Exception e) {
+        public InvalidLibraryClassException(@NotNull Class<?> clazz, @NotNull Exception e) {
             super("Cannot load the " + clazz.getName() + " library: " + AnsiColour.printInline(e.getMessage(), AnsiColour.FORE.RED));
         }
     }

@@ -62,6 +62,11 @@ public final class TArrayVar extends TokenDefault<TArrayVar> implements TVariabl
         return modifiers;
     }
 
+    @Override
+    public void setModifiers(ArrayList<String> modifiers) {
+        this.modifiers = modifiers;
+    }
+
     /**
      * Converts this token to the default {@link Token}
      *

@@ -8,12 +8,14 @@ import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
 import com.jaiva.lang.EscapeSequence;
+import com.jaiva.tokenizer.NewJson;
 import com.jaiva.tokenizer.tokens.TReference;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 import com.jaiva.tokenizer.tokens.specific.TFunction;
 import com.jaiva.tokenizer.tokens.specific.TVoidValue;
+import io.github.yetnt.utils.builders.ToJSON;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +44,7 @@ import java.util.Collections;
  * @see Primitives
  * @author Lehlogonolo Poole
  */
-public class BaseFunction extends Symbol {
+public class BaseFunction extends Symbol implements ToJSON<NewJson, Exception> {
 
     /**
      * Whether to evaluate parameters early or delegate to the function itself's job.
@@ -249,6 +251,12 @@ public class BaseFunction extends Symbol {
         return newTokenArgs;
     }
 
+    // it shouldn't ever convert tto json but hey.
+    @Override
+    public NewJson toJson() throws Exception {
+        return token.toJson();
+    }
+
     public record CheckParams(
             TFuncCall tFuncCall,
             Scope scope,
@@ -330,11 +338,6 @@ public class BaseFunction extends Symbol {
     @Deprecated(since = "7.0.0")
     protected final void checkParams(@NotNull TFuncCall tFuncCall, Scope scope, ArrayList<Object> params) throws InterpreterException {
         checkParams(new CheckParams(tFuncCall, scope, params));
-    }
-
-    @Override
-    public Symbol clone() throws CloneNotSupportedException {
-        return super.clone();
     }
 
     /**

@@ -570,4 +570,16 @@ public final class Find {
         return content;
     }
 
+    @NotNull
+    @Contract("_, _ -> new")
+    public static Pair<String, Integer> countAndTruncateStart(@NotNull String input, @NotNull String thing) {
+        int amount = 0;
+        if (thing.isEmpty()) return new Pair<>(input, amount);
+        while (input.startsWith(thing)) {
+            input = input.substring(thing.length());
+            amount++;
+        }
+        return new Pair<>(input, amount);
+    }
+
 }

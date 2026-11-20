@@ -25,22 +25,26 @@ which the current stable versions supports.
     -   _[Chaining](#chaining)_
 -   **[Keywords](#keywords)**
 -   **[Scopes](#scopes)**
--   **[Variables](#variables)**
-    -   _[Definition](#definition)_
-    -   _[Usage](#usage)_
-    -   _[Reassignment](#reassignment)_
--   **[Arrays](#arrays)**
--   **[Functions](#functions)**
-    -   _[Definition](#definition-1)_
-    -   _[Calling](#calling)_
-        -   [Spread Operator](#spread-operator)
-    -   _[Referencing](#referencing)_
-    -   _[Parameters](#parameters)_
-        -   [Higher-Order Functions](#higher-order-functions)
-        -   [Optional Arguments](#optional-arguments)
-        - [Variadic Arguments](#variadic-arguments)
-    - _[Lambdas](#lambdas)_
-    - _[Argument Extension](#argument-extensions)_
+-   **[Symbols](#symbols)**
+    -   **[Variables](#variables)**
+        -   _[Definition](#definition)_
+        -   _[Usage](#use)_
+    -   **[Arrays](#arrays)**
+    -   **[Functions](#functions)**
+        -   _[Definition](#definition-1)_
+        -   _[Calling](#calling)_
+            -   [Spread Operator](#spread-operator)
+        -    _[Referencing](#referencing)_
+        -   _[Parameters](#parameters)_
+            -   [Higher-Order Functions](#higher-order-functions)
+            -   [Optional Arguments](#optional-arguments)
+            - [Variadic Arguments](#variadic-arguments)
+        - _[Lambdas](#lambdas)_
+        - _[Argument Extension](#argument-extensions)_
+        - _[Function Linking](#function-links)_
+    -   **[Reassignment](#reassignment)**
+    -   **[Export](#export-syntax)**
+    -   **[Modifiers](#modifiers)**
 -   **[If Statements](#if-statements)**
     -   _[Basic If](#basic-if)_
     -   _[mara (else)](#mara-else)_
@@ -529,13 +533,29 @@ Where the line number of the error is, in the error obviously, but each line of 
 literally the scope parent chain up until global. Notice for functions it doesn't point
 to where the function was invoked, but instead the function's definition line.
 
-# Variables
+# Symbols
+
+When the docs or jaiva itself reference a **symbol** it is simply a 
+[Function](#functions) or [Variable](#variables).
+
+These are THE corner stone of jaiva. and i mean i guess you'd know what a symbol is if 
+you've coded a day in your life.
+
+Essentially anything that can be
+- named
+- referenced
+- exported
+- documented with [JDoc](JDoc.md)
+
+is a symbol.
+
+## Variables
 
 Variables are [scoped](#scopes) constructs.
 
 See [Globals](docs/Libraries.md) for a list of global variables that are available to you.
 
-## Definition
+### Definition
 
 ```jiv
 maak (variable name) <- (value)!
@@ -557,11 +577,10 @@ Also a neat feature, since only a specifc set of chars are reserved, this allows
 | `maak a b <- 10!`                         | `a b`         |
 | `maak a  b <- 100!` (diferent from above) | `a  b`        |
 | `maak b... <- 20!`                        | `b...`        |
-| `maak \ <- 10!`                           | `\`           |
 
 And more crazy combos you can come up with. if it doesnt result in a generic Java error, it's probably valid. Go wild.
 
-## Use
+### Use
 
 ```jiv
 maak a <- 20!
@@ -569,18 +588,10 @@ maak b <- 10!
 maak c <- a + b! @ 30
 ```
 
-## Reassignment
+##  Arrays
 
-```jiv
-maak a <- 20!
-
-a <- 10!
-a <- "string"!
-```
-
-You can reassign any type really. This shit aint type safe.
-
-#  Arrays
+Arrays aren't really themselves a "symbol" however they are extremely integrated with
+variables and functions, as they have dedicated syntax geared towards them.
 
 **Arrays are 0-indexed. This isn't Lua afterall**
 
@@ -615,13 +626,13 @@ maak a <-| 10, 23, 984!
 
 Then there's spreading arrays into functions, but thats in [Argument Spreading](#spread-operator)
 
-# Functions
+## Functions
 
 Functions are [scoped](#scopes) constructs.
 
-See [Globals](docs/Libraries.md) for a list of global functions that are available to you.
+See [Globals](Libraries.md) for a list of global functions that are available to you.
 
-## Definition
+### Definition
 
 Functions are defined using the `kwenza` keyword, and return values using the `khutla` keyword.
 
@@ -631,7 +642,7 @@ kwenza addition(param1, param2) ->
 <~
 ```
 
-## Calling
+### Calling
 
 Just like any other language, you can call a function by just using the name of the function and passing in the parameters.
 
@@ -645,7 +656,7 @@ maak c <- addition(10, 20)! @ 30
 
 Function parameters can take any type of variable, including arrays and other functions.
 
-### Spread Operator
+#### Spread Operator
 
 See [Arrays](#arrays) for more information on arrays.
 
@@ -735,7 +746,7 @@ kwenza combine(<-params) ->
 maak result <- combine(-1, 0, arr1:::, arr2:::, 7, 8)! @ result is now [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8]
 ```
 
-## Referencing
+### Referencing
 
 You can reference a function by excluding the parameter braces.
 
@@ -769,9 +780,9 @@ khuluma(anotherFunc)    @ Prints "khuluma(msg, removeNewLn?)"
 anotherFunc("hello")!   @ Prints "hello" (Since this is just khuluma.)
 ```
 
-## Parameters
+### Parameters
 
-### Higher-Order Functions
+#### Higher-Order Functions
 
 You can pass functions into other functions, although there is the `F~` sigil, which forces the interpreter to hard fail
 if it was not given a callable input (function)
@@ -790,7 +801,7 @@ kwenza returnNum() ->
 khuluma(function(returnNum))! @ prints 10
 ```
 
-### Optional Arguments
+#### Optional Arguments
 
 In the case where you need certain arguments to be optional, stolen straight from typescript, all you gotta do is suffix the parameter name with `?` then it will not be required when calling the function.
 
@@ -807,7 +818,7 @@ function(10)! @ prints false
 > [!WARNING]
 > When a parameter is required, it CANNOT be set to [idk](#idk) or be empty in the parameters list of the function call. That's the whole point of a required parameter, that it is a value.
 
-### Variadic Arguments
+#### Variadic Arguments
 
 Otherwise, known as rest parameters or varargs in other places, allows you to pass in any amount of arguments to a function, and have them all be stored in an array.
 
@@ -828,7 +839,8 @@ function()! @ prints an empty array
 maak a <- 10!
 function(10, 20, "string", aowa, a)! @ prints [10, 20, "string", false, 10]
 ```
-## Lambdas
+
+### Lambdas
 
 Using
 
@@ -868,7 +880,7 @@ extends the token [TFunction](../src/main/java/com/jaiva/tokenizer/tokens/specif
 the class [Lambda](../src/main/java/com/jaiva/interpreter/symbol/Lambda.java) extends the class
 [BaseFunction](../src/main/java/com/jaiva/interpreter/symbol/BaseFunction.java)
 
-## Argument Extensions
+### Argument Extensions
 
 Since `()` and `[]` in jaiva have to be on the same line, problems arise when you are passing multiple arguments into a function.
 
@@ -938,7 +950,7 @@ f_new()!
 
 id document more but come on man go test urself
 
-### Where?
+#### Where?
 
 The main rule is that an argument extension can be applied to a function call
 or any construct which has a function call as it's _*right most value*_
@@ -971,7 +983,7 @@ maak z <- sin(90) + func(9)!
 |> true!
 ```
 
-### Repeated Groups
+#### Repeated Groups
 
 One thing argument extensions have over normal function calls is you can reduce
 multiple of the same parameter into a simple repeated addition.
@@ -1005,7 +1017,7 @@ maak a <- hello()!
 where the number in brackets (a non negative, integer number that doesnt have to be parsed to be recognized)
 represents the amoutn of times the group will repeat in the function call.
 
-## Continuous Functions
+### Continuous Functions
 
 These are special types of functions which provide a closure over resources.
 
@@ -1144,6 +1156,237 @@ zama zama ->
 <~
 ```
 
+### Function Links
+
+Function links are pretty odd. But essentially think of it as a poor man's overload.
+
+Say we have these 2 functions
+
+```jaiva
+kwenza handleJson(jsonInput) ->
+    
+    @ if the input is weird throw
+    cima <== "Not JSON"!
+    @ ...
+<~
+kwenza handleYaml(yamlInput) ->
+    @ if the input is weird throw
+    cima <== "Not YAML"!
+    @ ...
+<~
+```
+
+And you want to unify them you can use function links, which uses either the `||` or `&&` operator
+to create a function which will:
+- Attempt either one of the functions (Will attempt the one that matches the given input args)
+- (Depdending on the operator) May fallback to the other if one fails
+
+```jiv
+maak link <- handleJson || handleYaml!
+maak link2 <- handleJson && handleYaml!
+
+link("uses: actions/setup-java@v6")!
+link2("uses: actions/setup-java@v6")!
+```
+
+The difference being
+- `link` will try to run the first pick, and if **any** error occurs, it will try the other one.
+- `link2` will try to run the first pick, and only if too little or too many parameters were given will try the other.
+
+hence in this case, `link` works by consuming the error produced by `handleJson` and `link2` will fail
+and show the error that `handleJson` would've shown.
+
+In the case of multiple links, The operators are **_left-associate_** and a function link
+itself is defined as var args so it doesn't have as much precedence as another function
+with more arguments.
+
+e.g.
+
+```jiv
+kwenza ref1(a, b) ->
+    khutla a + b!
+<~
+
+kwenza ref2(a, b, c) ->
+    khutla a * b * c!
+<~
+
+kwenza ref3(a, b, c, d?) ->
+    sif (typeOf(d) = "function") ?> cima <== "I dont want a function!"!
+    khutla a + b / c + d? => 0 however d!
+<~
+
+kwenza ref4(a, b, c, F~d) ->
+    khutla d(a, b) + c^2!
+<~
+
+maak ref <- ref1 || ref2 || ref3 || ref4!
+@ This is identical to the commented out definition
+@ maak ref <- ((ref1 || ref2) || ref3 ) || ref4!
+
+khuluma(ref(1, 2))!                         @ Call 1 - 3
+khuluma(ref(1, 2, 3))!                      @ Call 2 - 6
+khuluma(ref(1, 2, 3, 4))!                   @ Call 3 - 4
+khuluma(ref(1, 2, 3, f~(a, b) : a * b))!    @ Call 4 - 11
+
+khuluma(ref)!
+
+@ outputs the linked function which shows as either an intersection or union between 2 other functions.
+@ F~f-linked(<-args?) -> (F~f-linked(<-args?) -> (F~f-linked(<-args?) -> (F~ref1(a, b) ∪ F~ref2(a, b, c)) ∪ F~ref3(a, b, c, d?)) ∪ F~ref4(a, b, c, F~d))
+```
+
+If we single out `Call 4`
+- The function link sees `a function with var args (the inner function link)` `||` `ref4`
+- `ref4` matches the exact input amount given, and hence will be preferred
+- `ref4` runs to succession and hence returns.
+
+You can change the ordering via grouping yourself. But man thats up to you
+at that point.
+
+## Reassignment
+
+```jiv
+maak a <- 20!
+
+a <- 10!
+a <- "string"!
+
+@ you can assign any value. doesnt matter.
+
+@ Same for functions.
+
+kwenza func() ->
+    idk!
+<~
+
+func <- 10!
+
+func()! @ Fails as func is now the value 10 and not a function anymore.
+```
+
+However, most symbols are what's called **frozen** (or constant)
+where they cannot be edited after being defined. You usually encounter this when you
+try reassign a library symbol (provided the library was competent to freeze the symbols)
+or by using [Modifiers](#modifiers)
+
+## Export Syntax
+
+All symbols follow the exact same export syntax
+
+## Modifiers
+
+Assuming you've read and understood Variable and Function definitions, modifiers are
+special definition-time "properties" of a symbol. They are usually in a `[]` list before
+the name of a variable or function.
+
+```jiv
+maak [frozen] x <- 10! @ Now x cannot be edited.
+
+kwenza [frozen] function() -> @ And now function cannot be edited.
+    khuluma("hello world.")! 
+<~
+```
+
+It can either be a comma separated list, or space separated (braces are compulsory)
+however if a comma is present it will use that. Allowing input with spaces
+
+
+```jiv
+maak [example mod, mod2] x <- 10! @ Now x cannot be edited.
+```
+
+Jaiva provides a small set of modifiers, currently some are a no-op but will have
+the necessary documentation in due time.
+
+Some modifiers cannot be paired with others (mutually exclusive)
+
+| Modifier          | Aliases                  | Modifier Semantics                                                   | Mutually Exclusive To               |
+|-------------------|--------------------------|----------------------------------------------------------------------|-------------------------------------|
+| `"frozen"`        | `"const" "constant" "f"` | Freezes the symbol at creation time meaning it cannot be reassigned. | `"copy-on-write"`, `"lock-onwrite"` |
+| `"copy-on-write"` | `"cow"`                  | Future threading capability                                          | `"lock-on-write"`                   |
+| `"lock-on-write"` | `"low"`                  | Future threading capability                                          | `"copy-on-write"`                   |
+
+
+> [!NOTE]
+> A host app might provide more modifier definitions unique to it's runs of Jaiva.
+
+You need only put the modifier name or alias, putting both will issue a warning from da
+interpreter.
+
+
+### Adding Modifiers To Existing Symbols
+
+it is allowed with the following syntax:
+
+```jiv
+maak a <- 10! @ Say we define a to be 10!
+[const] a <- a! @ This adds the const modifier to a, and sets it to itself.
+```
+
+_however_ it does change the semantics of reassignment a bit.
+
+It is encouraged to read through [Reassignment](#reassignment) first
+
+Because the thing is, adding modifiers does not add to the original reference
+but instead supplies you with a **_clone/copy_** of the original value with the new modifiers
+applied.
+
+An example is as follows:
+
+**Normal**
+> ```jiv
+> maak x <- 10!
+> if (true;) ->
+>   x <- 12!
+>   khuluma(x)! @ Prints 12.
+> <~
+> khuluma(x)! @ Prints 12.
+> ```
+
+
+**With Modifier Copying Semantics**
+> ```jiv
+> maak x <- 10!
+> if (true;) ->
+>   [const] x <- 12!
+>   khuluma(x)! @ Prints 12.
+> <~
+> khuluma(x)! @ Prints 10.
+> ```
+
+This is such that a child scope doesn't add a modifier that persists outside of it's own
+scope.
+
+> _But then how can we access the earlier symbol if it has the same name?_
+
+Fret not, there is special syntax to do just that! Because applying modifiers to symbols
+are the only thing that causes this, this syntax only applies to it.
+
+Append `\` at the start of the reference (can apply multiple) to get it's parent.
+
+> ```jiv
+> maak x <- 10!
+> if (true;) ->
+>   [const] x <- 12!
+>   khuluma(x)! @ Prints 12.
+>   khuluma(\x)! @ Prints 10.
+> <~
+> khuluma(x)! @ Prints 10.
+> ```
+
+And a more complex example
+
+```jiv
+kwenza funcz(a) ->
+    a <- 10!
+    [cor] a <- f~() : 6!
+    [cow] a <- aowa!
+    khuluma(a)!      @ false
+    khuluma(\a())!   @ 6
+    khuluma(\\a)!    @ 10
+<~
+funcz(17)!
+```
 
 # If Statements
 

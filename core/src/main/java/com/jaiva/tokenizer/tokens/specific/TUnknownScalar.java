@@ -81,6 +81,11 @@ public sealed class TUnknownScalar<Type, K extends TokenDefault<K>> extends Toke
         return modifiers;
     }
 
+    @Override
+    public void setModifiers(ArrayList<String> modifiers) {
+        this.modifiers = modifiers;
+    }
+
     /**
      * Converts this token to the default {@link Token}
      *

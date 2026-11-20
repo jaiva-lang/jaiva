@@ -136,7 +136,6 @@ public class Chars {
      * This is used for defining lambdas
      */
     public static final String LAMBDA_DEFINITION = "f~";
-
     /**
      * Represents the spread operator used in function calls and array definitions.
      */
@@ -149,6 +148,10 @@ public class Chars {
      * Represents the shorthand if separator or "Statement/Action" Operation
      */
     public static final String SHORTHAND_IF_SEPARATOR = "?>";
+    /**
+     * Represents the symbol used to reference the original instance of a cloned symbol.
+     */
+    public static final char SYMBOL_LINEAGE = '\\';
 
 
     /**

@@ -43,3 +43,5 @@
 - Added array operators and array equals.
 - Added function links
 - switch to ytils 2.0.0 cuz yes.
+- Add symbol modifiers
+  - `const`, `copy-on-write`, `lock-on-write`

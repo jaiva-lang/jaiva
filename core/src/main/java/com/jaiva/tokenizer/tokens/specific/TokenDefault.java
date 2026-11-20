@@ -103,4 +103,9 @@ public sealed class TokenDefault<T extends TokenDefault<T>> implements Convertib
     }
 
     public void json() throws JaivaException {}
+
+    @Override
+    public TokenDefault<T> clone() throws CloneNotSupportedException {
+        return (TokenDefault<T>) super.clone();
+    }
 }

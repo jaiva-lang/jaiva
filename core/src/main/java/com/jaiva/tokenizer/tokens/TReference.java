@@ -16,4 +16,5 @@ public interface TReference extends TAtomicValue {
      * @return A boolean indicating if the reference is spread into an array.
      */
     boolean getSpreadArr();
+    int getLineageIndexAmount();
 }

@@ -1,9 +1,13 @@
 package com.jaiva.interpreter.symbol;
 
 import com.jaiva.errors.InterpreterException;
+import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.libBuilders.var.VariableBuilder;
 import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
+import com.jaiva.tokenizer.tokens.specific.TArrayVar;
+import com.jaiva.tokenizer.tokens.specific.TUnknownScalar;
+import com.jaiva.tokenizer.tokens.specific.TVarReassign;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import org.jetbrains.annotations.NotNull;
 
@@ -113,6 +117,13 @@ public class BaseVariable extends Symbol {
     public BaseVariable(String name) {
         super(name, SymbolType.VARIABLE);
         variableType = VariableType.UNKNOWN;
+    }
+
+    @Override
+    public BaseVariable clone() throws CloneNotSupportedException {
+        BaseVariable s = (BaseVariable) super.clone();
+        s.array = new ArrayList<>(this.array);
+        return s;
     }
 
     public void setPreferArray(boolean preferArray) {
@@ -249,8 +260,17 @@ public class BaseVariable extends Symbol {
      * @return A User Defined Variable.
      */
     @NotNull
-    public static DefinedVariable create(String name, TokenDefault<?> t, @NotNull ArrayList<Object> arr, boolean setArray) {
-        DefinedVariable var = arr.size() == 1 && !setArray ? new DefinedVariable(name, t, arr.getFirst()) : new DefinedVariable(name, t, arr);
+    public static DefinedVariable create(String name, TokenDefault<?> t, @NotNull ArrayList<Object> arr, boolean setArray) throws JaivaException {
+        DefinedVariable var;
+        if (arr.size() == 1 && !setArray) {
+            if (t instanceof TVarReassign)
+                t = new TUnknownScalar<>(t.name, arr.getFirst(), new ArrayList<>(), t.lineNumber);
+            var = new DefinedVariable(name, t, arr.getFirst());
+        } else {
+            if (t instanceof TVarReassign)
+                t = new TArrayVar(t.name, arr, new ArrayList<>(), t.lineNumber);
+            var = new DefinedVariable(name, t, arr);
+        }
         if (var.containsModifier(DefaultModifiers.CONSTANT)) var.freeze();
         return var;
     }

@@ -124,6 +124,11 @@ public sealed class TFunction extends TokenDefault<TFunction>
         return modifiers;
     }
 
+    @Override
+    public void setModifiers(ArrayList<String> modifiers) {
+        this.modifiers = modifiers;
+    }
+
     /**
      * Converts this token to the default {@link Token}
      *

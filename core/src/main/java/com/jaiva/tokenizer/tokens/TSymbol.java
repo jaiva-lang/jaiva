@@ -9,4 +9,5 @@ import java.util.ArrayList;
  */
 public interface TSymbol {
     ArrayList<String> getModifiers();
+    void setModifiers(ArrayList<String> mods);
 }

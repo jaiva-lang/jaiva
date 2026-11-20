@@ -6,8 +6,11 @@ import com.jaiva.interpreter.symbol.mod.SymbolModifier;
 import com.jaiva.tokenizer.tokens.TSymbol;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Base class for functions and variables
@@ -21,6 +24,7 @@ public class Symbol implements Cloneable {
      * The name of the symbol
      */
     public String name;
+    private UUID id = UUID.randomUUID();
     /**
      * The symbol type
      */
@@ -34,6 +38,8 @@ public class Symbol implements Cloneable {
      * The token associated with the symbol.
      */
     public TokenDefault<?> token;
+
+    private Symbol parentSymbol;
 
     /**
      * Default Constructor which sets this symbol to null.
@@ -76,16 +82,10 @@ public class Symbol implements Cloneable {
         this.isFrozen = true;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((symbolType == null) ? 0 : symbolType.hashCode());
-        result = prime * result + (isFrozen ? 1231 : 1237);
-        result = prime * result + ((token == null) ? 0 : token.hashCode());
-        return result;
+    public UUID getId() {
+        return id;
     }
+
 
     public ArrayList<String> getModifiers() {
         return ((TSymbol)token).getModifiers();
@@ -99,43 +99,16 @@ public class Symbol implements Cloneable {
         return containsModifier(symbolModifier.getInstance());
     }
 
-    /**
-     * Indicates whether some other object is "equal to" this one.
-     * <p>
-     * The equality is determined by comparing the {@code name}, {@code symbolType},
-     * {@code isFrozen}, and {@code token} fields of the {@code Symbol} objects.
-     * Two {@code Symbol} objects are considered equal if:
-     * <ul>
-     * <li>They are the same instance, or</li>
-     * <li>The other object is not {@code null}, is of the same class,
-     * and all compared fields are equal.</li>
-     * </ul>
-     *
-     * @param obj the reference object with which to compare
-     * @return {@code true} if this object is the same as the obj argument;
-     *         {@code false} otherwise
-     */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Symbol other = (Symbol) obj;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (symbolType != other.symbolType)
-            return false;
-        if (isFrozen != other.isFrozen)
-            return false;
-        if (token == null) {
-            return other.token == null;
-        } else return token.equals(other.token);
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Symbol symbol = (Symbol) o;
+        return Objects.equals(getId(), symbol.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 
     /**
@@ -153,13 +126,24 @@ public class Symbol implements Cloneable {
                 + "]";
     }
 
+    public void setParentSymbol(@NotNull Symbol parentSymbol) {
+        this.parentSymbol = parentSymbol;
+    }
+
+    @Nullable
+    public Symbol getParentSymbol() {
+        return parentSymbol;
+    }
+
     /**
      * Overrides {@link Object#clone()} to provide a clone interface
      * @return A clone of this symbol.
      * @throws CloneNotSupportedException When the instance cannot be cloned.
      */
     public Symbol clone() throws CloneNotSupportedException {
-        return (Symbol) super.clone();
+        Symbol s =  (Symbol) super.clone();
+        ((TSymbol)s.token).setModifiers(new ArrayList<>(this.getModifiers()));
+        return s;
     }
 
     public void unfreeze() {
