@@ -1,6 +1,10 @@
 <h1> <img src="images/jaiva-full-logo.png" width="50"> Jaiva!</h1>
 
-Version : **_7.0.0_**
+(Stable) Version : **_6.1.0_**
+
+(Latest) Version : **_7.0.0-beta.3_**
+
+(Coming Soon) Version : **_7.0.0_**
 
 [![](https://jitpack.io/v/yetnt/jaiva.svg)](https://jitpack.io/#yetnt/jaiva)
 
@@ -12,17 +16,17 @@ Version : **_7.0.0_**
 
 ---
 
-A (semi-)functional esoteric programming language made with Java on a random January in 2025. What is the goal? idk.
+A (semi-)functional esoteric programming language made (completely) in Java on a random January in 2025. What is the goal? idk.
 
 This is for the most part _supposed_ to be a functional programming language.
 
-Jaiva files end in the _`.jiv`_ or _`.jaiva`_ or _`.jva`_ extension.
+Jaiva files end in the _`.jiv`_ or _`.jaiva`_ or _`.jva`_ extension. There is no difference although `.jiv` is what i prefer.
 
 # Prerquisuiesdsfb
 
-1. **Get and Install (at least) Java 21**
+1. **Get and Install (at least) Java 25**
    yeah this isn't a good start 💀 but this shit is made in java so ye man.
-   [Download and install the latest JDK 21](https://jdk.java.net/21)
+   [Download and install the latest JDK 25](https://jdk.java.net/25)
 
 2. **Set Up Jaiva as a Global Command**  
    Follow the instructions in [Install.md](docs/Install.md) to configure Jaiva so you can run the `jaiva` command from anywhere on your system.
@@ -42,9 +46,9 @@ Jaiva files end in the _`.jiv`_ or _`.jaiva`_ or _`.jva`_ extension.
 
 ---
 
-- Jaiva Highlight.js Repo [highlightjs-jaiva](https://github.com/yetnt/highlightjs-jaiva)
-- Jaiva Highlight.js NPM [highlightjs-jaiva](https://www.npmjs.com/package/highlightjs-jaiva)
-- Jaiva VSCode Extension [vscode](https://github.com/yetnt/jaiva-vscode)
+- Jaiva Highlight.js Repo [highlightjs-jaiva](https://github.com/jaiva/highlightjs)
+- Jaiva Syntax definitions (tmLanguage & Vim) [syntax](https://github.com/jaiva/syntax)
+- Jaiva VSCode Extension [vscode](https://github.com/jaiva/vscode)
 
 # Stats
 

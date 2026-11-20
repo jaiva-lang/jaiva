@@ -1,4 +1,6 @@
 scope("strict")! @ This freezes all the functions, and elevates all warnings to fatal crashes.
+@ Technically i dont need to add [frozen] to all the functions since
+@ this scope covers it. But i want to.
 
 {
     Code here, as written in Jaiva itself unlike other Jaiva libraries being written in what jaiva itself is written in,
@@ -14,7 +16,9 @@ scope("strict")! @ This freezes all the functions, and elevates all warnings to 
         <| Separator for colonize loops
         "description" and "path" variables that the markdown output cares about
     v6.1.0: shorthand ifs
-    v7.0.0: tseaf global function for importing a single symbol
+    v7.0.0:
+        tseaf global function for importing a single symbol
+        symbol modifiers
 }
 
 @* arrays
@@ -36,7 +40,7 @@ maak description!
 @*          $> khuluma(a_remove(arr, 2))! @ Returns [1, 2, 3]
 @*          $> khuluma(a_remove(arr, 0))! @ Returns [1, 2, 3, 4, 5]
 @*          $> khuluma(a_remove(arr, 5))! @ Returns []
-kwenza *a_remove(arr, n) ->
+kwenza [frozen] *a_remove(arr, n) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_remove() only works on arrays"!
     sif (typeOf(n) != "number" || n < 0) ?> cima <== "a_remove()'s second argument must be a non-negative number"!
     maak returnValue <-|!
@@ -56,7 +60,7 @@ kwenza *a_remove(arr, n) ->
 @* since     $> 1.0.0-beta.3
 @* example  $> maak arr <-| 1, 2, 3, 4, 5!
 @*          $> khuluma(a_pop(arr))! @ Returns [1, 2, 3, 4]
-kwenza *a_pop(array) ->
+kwenza [frozen] *a_pop(array) ->
     sif (typeOf(array) != "array") ?> cima <== "a_pop() only works on arrays"!
     khutla a_remove(array, 1)!
 <~
@@ -71,7 +75,7 @@ kwenza *a_pop(array) ->
 @*          $> khuluma(a_push(arr, 4))! @ Returns [1, 2, 3, 4]
 @* depr     $> Whilst this function works, rather use arrLit + array spreading with :::
 @*          $> which is ultimately cleaner and more expressive syntax. `arrLit(arr:::, element)`
-kwenza *a_push(arr, element) ->
+kwenza [frozen] *a_push(arr, element) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_push() only works on arrays"!
     khutla arrLit(arr:::, element)!
 <~
@@ -86,7 +90,7 @@ kwenza *a_push(arr, element) ->
 @*          $> khuluma(a_pushAll(arr, 4, 5, 6))! @ Returns [1, 2, 3, 4, 5, 6]
 @* depr     $> Whilst this function works, rather use arrLit + array spreading with :::
 @*          $> which is ultimately cleaner and more expressive syntax. `arrLit(arr:::, element1, element2, ...)`
-kwenza *a_pushAll(<-params) ->
+kwenza [frozen] *a_pushAll(<-params) ->
     maak arr <- params[0]!
     sif (typeOf(arr) != "array") ?> cima <== "a_pushAll() only works on arrays"!
     maak returnArr <- arr!
@@ -106,7 +110,7 @@ kwenza *a_pushAll(<-params) ->
 @*          $> khuluma(a_unshift(arr, 1))! @ Returns [1, 2, 3, 4]
 @* depr     $> Whilst this function works, rather use arrLit + array spreading with :::
 @*          $> which is ultimately cleaner and more expressive syntax. `arrLit(element, arr:::)`
-kwenza *a_unshift(arr, element) ->
+kwenza [frozen] *a_unshift(arr, element) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_unshift() only works on arrays"!
     khutla arrLit(element, arr:::)!
 <~
@@ -124,7 +128,7 @@ kwenza *a_unshift(arr, element) ->
 @*          $> khuluma(a_shift(arr, 2))! @ Returns [3, 4, 5]
 @*          $> khuluma(a_shift(arr, 0))! @ Returns [1, 2, 3, 4, 5]
 @*          $> khuluma(a_shift(arr, 5))! @ Returns []
-kwenza *a_shift(arr, n) ->
+kwenza [frozen] *a_shift(arr, n) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_shift() only works on arrays"!
     sif (typeOf(n) != "number" || n < 0) ?> cima <== "a_shift()'s second argument must be a non-negative number"!
     maak returnValue <-|!
@@ -149,7 +153,7 @@ kwenza *a_shift(arr, n) ->
 @*          $> khuluma(a_filter(arr, isEven))! @ Returns [2, 4, 6]
 @*          $> @ Filter for elements who's index is even.
 @*          $> khuluma(a_filter(arr, f~(num, index) : index % 2 = 0)!
-kwenza *a_filter(arr, F~predicate) ->
+kwenza [frozen] *a_filter(arr, F~predicate) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_filter() only works on arrays"!
     sif (typeOf(predicate) != "function") ?> cima <== "a_filter()'s second argument must be a function"!
     maak empty <-|!
@@ -169,7 +173,7 @@ kwenza *a_filter(arr, F~predicate) ->
 @* since    $> 3.0.0
 @* example  $> maak arr <-| 1, 2, 3, 4, 5!
 @*          $> khuluma(a_replace(arr, 2, 99))! @ Returns [1, 2, 99, 4, 5]
-kwenza *a_replace(arr, i, el?) ->
+kwenza [frozen] *a_replace(arr, i, el?) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_replace() only works on arrays"!
     if (typeOf(i) != "number" || i < 0 || i >= arr~) ->
         maak str <- (typeOf(i) = "number" => ( i >= arr~ => "i >= arr~" however "i < 0" ) however "i != number")!
@@ -196,7 +200,7 @@ kwenza *a_replace(arr, i, el?) ->
 @* since    $> 3.0.0
 @* example  $> maak arr <-| 1, 2, 3, 4, 5!
 @*          $> khuluma(a_delete(arr, 2))! @ Returns [1, 2, 4, 5]
-kwenza *a_delete(arr, i) ->
+kwenza [frozen] *a_delete(arr, i) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_delete() only works on arrays"!
     if (typeOf(i) != "number" || i < 0 || i >= arr~) ->
         maak str <- (typeOf(i) = "number" => ( i >= arr~ => "i >= arr~" however "i < 0" ) however "i != number")!
@@ -224,12 +228,11 @@ kwenza *a_delete(arr, i) ->
 @*          $> khuluma(a_indexOf(arr, "banana"))! @ Returns 1
 @*          $> khuluma(a_indexOf(arr, "date"))! @ Returns 3
 @*          $> khuluma(a_indexOf(arr, "fig"))! @ Returns idk
-kwenza *a_indexOf(arr, el?) ->
+kwenza [frozen] *a_indexOf(arr, el?) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_indexOf() only works on arrays"!
     colonize (index <- 0 <| index < arr~ <| +) ->
         sif (arr[index] = el) ?> khutla index!
     <~
-    khutla idk!
 <~
 
 @* Reverses the order of elements in an array and returns a new array
@@ -241,7 +244,7 @@ kwenza *a_indexOf(arr, el?) ->
 @* since    $> 3.0.0
 @* example  $> maak arr <-| 1, 2, 3, 4, 5!
 @*          $> khuluma(a_reverse(arr))! @ Returns [5, 4, 3, 2, 1]
-kwenza *a_reverse(arr) ->
+kwenza [frozen] *a_reverse(arr) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_reverse() only works on arrays"!
     maak newArr <-|!
     colonize (i <- arr~ - 1 <| i >= 0 <| -) ->
@@ -267,7 +270,7 @@ kwenza *a_reverse(arr) ->
 @*          $> a_reduce(arr, sumReducer, 0)! @ Returns 10
 @*          $> a_reduce(arr)!
 @*          $> |> sumReducer! @ Returns 10
-kwenza *a_reduce(arr, F~reducer, initial?) ->
+kwenza [frozen] *a_reduce(arr, F~reducer, initial?) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_reduce() only works on arrays"!
     sif (typeOf(reducer) != "function") ?> cima <== "a_reduce()'s second argument must be a function"!
     maak accumulator <- initial!
@@ -295,7 +298,7 @@ kwenza *a_reduce(arr, F~reducer, initial?) ->
 @* example  $> maak arr <-| 1, 2, 3, 4!
 @*          $> maak square <- f~(num) : num * num! @ A lambda function to square a number
 @*          $> khuluma(a_map(arr, square))! @ Returns [1, 4, 9, 16]
-kwenza *a_map(arr, F~mapperFunction) ->
+kwenza [frozen] *a_map(arr, F~mapperFunction) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_map() only works on arrays"!
     sif (typeOf(mapperFunction) != "function") ?> cima <== "a_map()'s second argument must be a function"!
     maak new <-|!
@@ -316,7 +319,7 @@ kwenza *a_map(arr, F~mapperFunction) ->
 @* example  $> khuluma(a_from("hello"))! @ Returns ["h", "e", "l", "l", "o"]
 @*          $> khuluma(a_from("apple,banana,cherry", ","))! @ Returns ["apple", "banana", "cherry"]
 @*          $> khuluma(a_from("abcdef", 3))! @ Returns ["abc", "def"]
-kwenza *a_from(input, split?) ->
+kwenza [frozen] *a_from(input, split?) ->
     @ Should probably not do this, but we need type conversions, so import types
     sif (typeOf(input) != "string") ?> cima <== "a_from() only works on strings"!
 
@@ -364,7 +367,7 @@ kwenza *a_from(input, split?) ->
 @* example  $> maak arr <-| 1, 2, 3, 4!
 @*          $> maak square <- f~(num) : khuluma(num * num)! @ A lambda function to print the square a number
 @*          $> a_forEach(arr, square)! @ Will print the squares.
-kwenza *a_forEach(arr, F~function) ->
+kwenza [frozen] *a_forEach(arr, F~function) ->
     sif (typeOf(arr) != "array") ?>  cima <== "a_forEach() only works on arrays"!
     sif (typeOf(function) != "function") ?> cima <== "a_forEach()'s second argument must be a function"!
     colonize (i <- 0 <| i < arr~ <| +) ->
@@ -399,7 +402,7 @@ kwenza *a_forEach(arr, F~function) ->
 @*          $> @ Previous example but using newer parameter extension
 @* devn     $> Just like normal function, it can take a function reference or lambda, which is itself
 @*          $> technically a function reference
-kwenza *a_apply(<-params) ->
+kwenza [frozen] *a_apply(<-params) ->
     sif (params~ = 0) ?> cima <== "a_apply() needs an input array as it's first argument"!
     maak arr <- params[0]!
     sif (typeOf(arr) != "array") ?> cima <== "a_apply() only works on arrays"!
@@ -429,7 +432,7 @@ kwenza *a_apply(<-params) ->
 @*          $> { (At the time of writing this) the output should be
 @*          $> "yebo"
 @*          $> }
-kwenza *a_findFirst(arr, F~predicate) ->
+kwenza [frozen] *a_findFirst(arr, F~predicate) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_findFirst() only works on arrays"!
     sif (typeOf(predicate) != "function") ?>  cima <== "a_findFirst()'s second argument must be a function"!
     colonize (i <- 0 <| i < arr~ <| +) ->
@@ -452,7 +455,7 @@ kwenza *a_findFirst(arr, F~predicate) ->
 @*          $> { (At the time of writing this) the output should be
 @*          $> "false"
 @*          $> }
-kwenza *a_findLast(arr, F~predicate) ->
+kwenza [frozen] *a_findLast(arr, F~predicate) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_findLast() only works on arrays"!
     sif (typeOf(predicate) != "function") ?>  cima <== "a_findLast()'s second argument must be a function"!
     colonize (i <- arr~ - 1 <| i >= 0 <| -) ->
@@ -476,7 +479,7 @@ kwenza *a_findLast(arr, F~predicate) ->
 @*          $> { (At the time of writing this) the output should be
 @*          $> ["yebo", "kwenza", "colonize", "voetsek", "nevermind", "tsea", "tšea", "however", "true", "false"]
 @*          $> }
-kwenza *a_find(arr, F~predicate) ->
+kwenza [frozen] *a_find(arr, F~predicate) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_find() only works on arrays"!
     sif (typeOf(predicate) != "function") ?>  cima <== "a_find()'s second argument must be a function"!
     maak collect <-|!
@@ -496,7 +499,8 @@ kwenza *a_find(arr, F~predicate) ->
 @* example  $> maak nums <-| 5, 2, 9, 1!
 @*          $> maak asc <- f~(a, b) : a - b!
 @*          $> khuluma(a_sort(nums, asc))! @ Returns
-kwenza *a_sort(arr, F~compareFn) ->
+@* since    $> 7.0.0
+kwenza [frozen] *a_sort(arr, F~compareFn) ->
     sif (typeOf(arr) != "array") ?> cima <== "a_sort() only works on arrays"!
     sif (typeOf(compareFn) != "function") ?> cima <== "a_sort()'s second argument must be a function"!
 
