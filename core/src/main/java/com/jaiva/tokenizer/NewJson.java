@@ -1,13 +1,9 @@
 package com.jaiva.tokenizer;
 
 import com.jaiva.errors.JaivaException;
-import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
-import com.jaiva.tokenizer.tokens.specific.TCodeblock;
 import io.github.yetnt.utils.builders.SimpleJSON;
-import org.jetbrains.annotations.NotNull;
 
-import javax.crypto.Mac;
 import java.util.Map;
 
 public class NewJson extends SimpleJSON {

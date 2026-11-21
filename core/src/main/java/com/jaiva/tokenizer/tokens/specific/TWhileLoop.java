@@ -1,9 +1,8 @@
 package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.errors.JaivaException;
-import com.jaiva.tokenizer.tokens.TConditional;
-import com.jaiva.tokenizer.tokens.TConstruct;
-import com.jaiva.tokenizer.tokens.Token;
+import com.jaiva.tokenizer.tokens.*;
+import com.jaiva.tokenizer.tokens.metadata.CodeRegion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public final class TWhileLoop extends TokenDefault<TWhileLoop> implements TConst
     /**
      * The body of the while loop.
      */
-    public TCodeblock body;
+    public CodeRegion body;
 
     /**
      * Constructor for TWhileLoop
@@ -28,7 +27,7 @@ public final class TWhileLoop extends TokenDefault<TWhileLoop> implements TConst
      * @param body      The body of the while loop.
      * @param ln        The line number.
      */
-    public TWhileLoop(Object condition, TCodeblock body, int ln) throws JaivaException {
+    public TWhileLoop(Object condition, CodeRegion body, int ln) throws JaivaException {
         super("TWhileLoop", ln);
         this.condition = condition;
         this.body = body;
@@ -55,7 +54,7 @@ public final class TWhileLoop extends TokenDefault<TWhileLoop> implements TConst
     }
 
     @Override
-    public ArrayList<TCodeblock> getCodeBlocks() {
+    public ArrayList<CodeRegion> getCodeBlocks() {
         return new ArrayList<>(List.of(body));
     }
 }

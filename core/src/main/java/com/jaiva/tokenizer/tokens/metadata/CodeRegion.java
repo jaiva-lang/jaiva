@@ -1,7 +1,8 @@
-package com.jaiva.tokenizer.tokens.specific;
+package com.jaiva.tokenizer.tokens.metadata;
 
-import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.tokens.Token;
+import io.github.yetnt.utils.builders.SimpleJSON;
+import io.github.yetnt.utils.builders.ToJSON;
 
 import java.util.ArrayList;
 
@@ -10,7 +11,7 @@ import java.util.ArrayList;
  * This class usually isn't used directly, but rather as a part of another
  * instance
  */
-public final class TCodeblock extends TokenDefault<TCodeblock> {
+public final class CodeRegion implements ToJSON<SimpleJSON, Exception> {
     /**
      * The lines of code in the code block.
      */
@@ -20,31 +21,28 @@ public final class TCodeblock extends TokenDefault<TCodeblock> {
      */
     public int lineNumberEnd;
 
+    public int lineNumber;
+
     /**
-     * Constructor for TCodeblock
+     * Constructor for CodeRegion
      *
      * @param lines The lines of code in the code block.
      * @param ln    The line number where the code block starts.
      * @param endLn The line number where the code block ends.
      */
-    public TCodeblock(ArrayList<Token<?>> lines, int ln, int endLn) throws JaivaException {
-        super("TCodeblock", ln);
+    public CodeRegion(ArrayList<Token<?>> lines, int ln, int endLn) {
+        this.lineNumber = ln;
         this.lines = lines;
         this.lineNumberEnd = endLn;
-        json();
     }
 
-    public void json() throws JaivaException {
+    @Override
+    public SimpleJSON toJson() throws Exception {
+        SimpleJSON json = new SimpleJSON();
+        json.set("lineNumber", lineNumber);
         json.set("lineEnd", lineNumberEnd);
         json.set("lines", lines);
+        return json;
     }
 
-    /**
-     * Converts this token to the default {@link Token}
-     *
-     * @return {@link Token} with a T value of {@link TCodeblock}
-     */
-    public Token<TCodeblock> toToken() {
-        return new Token<>(this);
-    }
 }

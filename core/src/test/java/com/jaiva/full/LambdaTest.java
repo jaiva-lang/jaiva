@@ -43,8 +43,8 @@ public class LambdaTest {
         Assertions.assertInstanceOf(TLambda.class, lambdaCall.functionName, "Function name is not a lambda");
         TLambda lambda = (TLambda) lambdaCall.functionName;
         // Lambda
-        Assertions.assertEquals(1, lambda.args.length, "Lambda does not take in a single parameter");
-        Assertions.assertEquals("msg", lambda.args[0], "Lambda does not take in a parameter named 'msg'");
+        Assertions.assertEquals(1, lambda.args.size(), "Lambda does not take in a single parameter");
+        Assertions.assertEquals("msg", lambda.args.getFirst().getName(), "Lambda does not take in a parameter named 'msg'");
         Assertions.assertEquals(1, lambda.body.lines.size(), "Lambda has more than one line of code");
         Assertions.assertInstanceOf(TFuncReturn.class, lambda.body.lines.getFirst().value(), "First line of lambda is not a function return");
         Assertions.assertInstanceOf(TExpression.class, ((Token<?>)((TFuncReturn)lambda.body.lines.getFirst().value()).value).value(), "Lambda's return value is not an expression");

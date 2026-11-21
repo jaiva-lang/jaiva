@@ -1,13 +1,13 @@
 package com.jaiva.tokenizer.tokens;
 
-import com.jaiva.tokenizer.tokens.specific.TCodeblock;
+import com.jaiva.tokenizer.tokens.metadata.CodeRegion;
 
 import java.util.ArrayList;
 
 /**
  * TConstruct is an empty interface which holds all the tokens
- * that have a TCodeblock with more tokens/executable code with in.
+ * that have a CodeRegion with more tokens/executable code with in.
  */
 public interface TConstruct {
-    ArrayList<TCodeblock> getCodeBlocks();
+    ArrayList<CodeRegion> getCodeBlocks();
 }

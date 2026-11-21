@@ -16,6 +16,7 @@ import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
 import com.jaiva.interpreter.symbol.mod.ModifierValidator;
 import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.tokens.TAtomicValue;
+import com.jaiva.tokenizer.tokens.THasModifiers;
 import com.jaiva.tokenizer.tokens.TSymbol;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
@@ -283,8 +284,8 @@ public final class Interpreter {
         return null; // return null because we are not returning anything.
     }
 
-    private static Symbol cloneAndLink(@NotNull TVarReassign tVarReassign, Symbol var, Symbol oldSym) throws CloneNotSupportedException {
-        if (!tVarReassign.getNewModifiers().isEmpty()) {
+    public static Symbol cloneAndLink(@NotNull THasModifiers modifierHolder, Symbol var, Symbol oldSym) throws CloneNotSupportedException {
+        if (!modifierHolder.getModifiers().isEmpty()) {
             var.setParentSymbol(oldSym.equals(var) ? var.clone() : oldSym);
         }
         return var;

@@ -1,6 +1,7 @@
 package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.errors.JaivaException;
+import com.jaiva.tokenizer.tokens.metadata.CodeRegion;
 import com.jaiva.tokenizer.tokens.TConstruct;
 import com.jaiva.tokenizer.tokens.Token;
 
@@ -15,11 +16,11 @@ public final class TTryCatch extends TokenDefault<TTryCatch> implements TConstru
     /**
      * The try block of the try-catch statement.
      */
-    public TCodeblock tryBlock;
+    public CodeRegion tryBlock;
     /**
      * The catch block of the try-catch statement.
      */
-    public TCodeblock catchBlock;
+    public CodeRegion catchBlock;
 
     /**
      * Constructor for TTryCatchStatement
@@ -27,7 +28,7 @@ public final class TTryCatch extends TokenDefault<TTryCatch> implements TConstru
      * @param tryBlock The try block of the try-catch statement.
      * @param ln       The line number.
      */
-    public TTryCatch(TCodeblock tryBlock, int ln) throws JaivaException {
+    public TTryCatch(CodeRegion tryBlock, int ln) throws JaivaException {
         super("TTryCatchStatement", ln);
         this.tryBlock = tryBlock;
         json();
@@ -36,9 +37,9 @@ public final class TTryCatch extends TokenDefault<TTryCatch> implements TConstru
     /**
      * Appends the provided catch block to the current token.
      *
-     * @param catchBlock the TCodeblock representing the catch block to be appended
+     * @param catchBlock the CodeRegion representing the catch block to be appended
      */
-    public void appendCatchBlock(TCodeblock catchBlock) throws JaivaException {
+    public void appendCatchBlock(CodeRegion catchBlock) throws JaivaException {
         this.catchBlock = catchBlock;
         json();
     }
@@ -58,7 +59,7 @@ public final class TTryCatch extends TokenDefault<TTryCatch> implements TConstru
     }
 
     @Override
-    public ArrayList<TCodeblock> getCodeBlocks() {
+    public ArrayList<CodeRegion> getCodeBlocks() {
         return new ArrayList<>(List.of(tryBlock, catchBlock));
     }
 }

@@ -1,3 +1,7 @@
-maak System.out.println <- khuluma!
+scope("strict")!
+kwenza [meta] func(p, [const] f?, [permissible fake-ass-modifier lmao] F~t) ->
+    maak params <-| p, f, t!
+    khuluma(params)!
+<~
 
-System.out.println("hello world")!
+func(2, idk, f~([$const] <-param) : param)!

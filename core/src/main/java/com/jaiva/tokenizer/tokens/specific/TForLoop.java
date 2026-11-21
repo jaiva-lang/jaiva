@@ -1,9 +1,8 @@
 package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.errors.JaivaException;
-import com.jaiva.tokenizer.tokens.TConditional;
-import com.jaiva.tokenizer.tokens.TConstruct;
-import com.jaiva.tokenizer.tokens.Token;
+import com.jaiva.tokenizer.tokens.*;
+import com.jaiva.tokenizer.tokens.metadata.CodeRegion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +32,7 @@ public final class TForLoop extends TokenDefault<TForLoop> implements TConstruct
     /**
      * The body of the for loop.
      */
-    public TCodeblock body;
+    public CodeRegion body;
 
     /**
      * Constructor for TForLoop (for iterators)
@@ -44,7 +43,7 @@ public final class TForLoop extends TokenDefault<TForLoop> implements TConstruct
      * @param body      The body of the for loop.
      * @param ln        The line number.
      */
-    public TForLoop(TokenDefault variable, Object condition, Object increment, TCodeblock body, int ln) throws JaivaException {
+    public TForLoop(TokenDefault variable, Object condition, Object increment, CodeRegion body, int ln) throws JaivaException {
         super("TForLoop", ln);
         this.variable = variable;
         this.condition = condition;
@@ -61,7 +60,7 @@ public final class TForLoop extends TokenDefault<TForLoop> implements TConstruct
      * @param body     The body of the for loop.
      * @param ln       The line number.
      */
-    public TForLoop(TokenDefault variable, TVarRef array, TCodeblock body, int ln) throws JaivaException {
+    public TForLoop(TokenDefault variable, TVarRef array, CodeRegion body, int ln) throws JaivaException {
         super("TForLoop", ln);
         this.variable = variable;
         this.array = array;
@@ -92,7 +91,7 @@ public final class TForLoop extends TokenDefault<TForLoop> implements TConstruct
     }
 
     @Override
-    public ArrayList<TCodeblock> getCodeBlocks() {
+    public ArrayList<CodeRegion> getCodeBlocks() {
         return new ArrayList<>(List.of(body));
     }
 }

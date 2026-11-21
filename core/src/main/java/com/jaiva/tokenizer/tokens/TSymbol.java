@@ -7,7 +7,6 @@ import java.util.ArrayList;
  * that can be exported and used within other Jaiva files, documented
  * and just either hold and use data.
  */
-public interface TSymbol {
-    ArrayList<String> getModifiers();
+public interface TSymbol extends THasModifiers {
     void setModifiers(ArrayList<String> mods);
 }

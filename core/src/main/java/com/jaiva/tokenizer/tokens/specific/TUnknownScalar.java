@@ -66,6 +66,7 @@ public sealed class TUnknownScalar<Type, K extends TokenDefault<K>> extends Toke
     public TUnknownScalar(String name, Type value, int ln, JDoc customToolTip) throws JaivaException {
         super(name, ln, customToolTip);
         this.value = value;
+        modifiers = new ArrayList<>();
         json();
     }
 

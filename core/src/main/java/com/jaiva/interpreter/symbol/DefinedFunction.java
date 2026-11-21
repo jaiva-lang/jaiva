@@ -4,7 +4,9 @@ import com.jaiva.errors.InterpreterException;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.*;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
+import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
 import com.jaiva.lang.EscapeSequence;
+import com.jaiva.tokenizer.tokens.metadata.FunctionArg;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.*;
 import org.jetbrains.annotations.Contract;
@@ -12,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * A Function that is defined by the user at runtime.
@@ -36,7 +37,8 @@ public sealed class DefinedFunction extends BaseFunction permits LinkedFunction,
         // this DefinedFunction, contains a TFunction where we need to check the params
         // so we can make name value pairs.
 //        checkParams(callProperties.toCheckParams());
-        String[] paramNames = ((TFunction) this.token).args;
+        ArrayList<FunctionArg> params = ((TFunction) this.token).args;
+//        ArrayList<String> paramNames = ((TFunction) this.token).args.stream().map(FunctionArg::getName).collect(Collectors.toCollection(ArrayList::new));
         Vfs newVfs = callProperties.scope().getVfs().clone();
         if (((TFunction) this.token).varArgs) {
             ArrayList<Object> varArgsArr = new ArrayList<>();
@@ -48,13 +50,14 @@ public sealed class DefinedFunction extends BaseFunction permits LinkedFunction,
                         o = EscapeSequence.fromEscape((String) o, callProperties.getLineNumber());
                     varArgsArr.add(Primitives.toPrimitive(o, false, callProperties.config(), callProperties.scope()));
                 }
-            newVfs.put(paramNames[0], new BaseVariable(paramNames[0],
-                    new TArrayVar(paramNames[0], varArgsArr, new ArrayList<>(), callProperties.getLineNumber()),
+            newVfs.put(params.getFirst().getName(), new BaseVariable(params.getFirst().getName(),
+                    new TArrayVar(params.getFirst().getName(), varArgsArr, params.getFirst().getModifiers(), callProperties.getLineNumber()),
                     varArgsArr));
         } else {
             checkParams(callProperties.toCheckParams());
-            for (int i = 0; i < paramNames.length; i++) {
-                String name = paramNames[i];
+            for (int i = 0; i < params.size(); i++) {
+                FunctionArg param = params.get(i);
+                String name = param.getName();
                 Object value;
                 try {
                     value = callProperties.params().get(i);
@@ -65,7 +68,6 @@ public sealed class DefinedFunction extends BaseFunction permits LinkedFunction,
                 if (value instanceof String)
                     value = EscapeSequence.fromEscape((String) value, callProperties.getLineNumber());
                 Object wrappedValue = Token.voidValue(callProperties.getLineNumber());
-
 
                 if (name.startsWith("F~")) {
                     // value is definitely a TVarRef, so look for the function in vfs, if not found
@@ -86,6 +88,7 @@ public sealed class DefinedFunction extends BaseFunction permits LinkedFunction,
                         throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), value, BaseFunction.class,
                                 callProperties.getLineNumber());
 
+                    wrappedValue = Interpreter.cloneAndLink(param, (Symbol) wrappedValue, (Symbol) wrappedValue);
 
                 }
                 else if (name.startsWith("V~") || (value instanceof Token<?> && ((Token<?>) value).value() instanceof TVarRef)) {
@@ -95,23 +98,26 @@ public sealed class DefinedFunction extends BaseFunction permits LinkedFunction,
                     // name and add to the vfs.
                     Object o = Primitives.toPrimitive(value, false, callProperties.config(), callProperties.scope());
                     // wrappedValue = new BaseVariable(name, tFuncCall, o);
-                    wrappedValue = createScalarOrArr(name, o, callProperties.tFuncCall());
+                    wrappedValue = createScalarOrArr(name, o, callProperties.tFuncCall(), param);
                 } else if (value instanceof BaseFunction f) {
                     wrappedValue = f;
                 } else if (Primitives.isPrimitive(value)) {
-                    // primitivers ong
-                    wrappedValue = createScalarOrArr(name, value, callProperties.tFuncCall());
+                    // primitives ong
+                    wrappedValue = createScalarOrArr(name, value, callProperties.tFuncCall(), param);
 
                 } else {
-                    // cacthes nested calls, operations and others
+                    // catches nested calls, operations and others
                     Object o = Primitives.toPrimitive(value, false, callProperties.config(), callProperties.scope());
                     if (o instanceof BaseFunction l)
-                        wrappedValue = l;
+                        wrappedValue = Interpreter.cloneAndLink(param, l, l);
                     else
                         wrappedValue = BaseVariable.create(name,
-                                new TUnknownScalar(name, o, new ArrayList<>(), callProperties.getLineNumber()),
+                                new TUnknownScalar(name, o, param.getModifiers(), callProperties.getLineNumber()),
                                 o instanceof ArrayList ? (ArrayList) o : new ArrayList<>(Collections.singletonList(o)), false);
                 }
+                if (((Symbol)wrappedValue).containsModifier(DefaultModifiers.CONSTANT))
+                    ((Symbol)wrappedValue).freeze();
+
                 newVfs.put(name.replace("F~", "").replace("V~", ""), (Symbol) wrappedValue);
             }
         }
@@ -138,10 +144,10 @@ public sealed class DefinedFunction extends BaseFunction permits LinkedFunction,
      */
     @NotNull
     @Contract("_, _, _ -> new")
-    private BaseVariable createScalarOrArr(String name, Object value, TFuncCall tFuncCall) throws JaivaException {
+    private BaseVariable createScalarOrArr(String name, Object value, TFuncCall tFuncCall, FunctionArg arg) throws JaivaException {
         return BaseVariable.create(name,
-                value instanceof ArrayList ? new TArrayVar(name, (ArrayList) value, new ArrayList<>(), tFuncCall.lineNumber)
-                        : new TUnknownScalar(name, value, new ArrayList<>(), tFuncCall.lineNumber),
+                value instanceof ArrayList ? new TArrayVar(name, (ArrayList) value, arg.getModifiers(), tFuncCall.lineNumber)
+                        : new TUnknownScalar(name, value, arg.getModifiers(), tFuncCall.lineNumber),
                 value instanceof ArrayList ? (ArrayList) value : new ArrayList<>(Collections.singletonList(value)),
                 value instanceof ArrayList);
     }

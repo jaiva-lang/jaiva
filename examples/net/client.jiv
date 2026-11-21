@@ -3,7 +3,7 @@
 tsea "jaiva/continuous"!
 tsea "jaiva/file"!
 tsea "jaiva/net"!
-tsea "./shared"!
+tsea "./shared"! @ Shared file
 
 @* Client function. Its the client itself.
 @* p        $> con <- F~any The connection function
@@ -47,7 +47,7 @@ kwenza client(F~con, conAddress, conPort, F~close) ->
         @ and ig do other stuff. Maybe listen to the console's systme in so we can
         @ send to server
 
-        nikhil ((con(C_EOF)()') && (con(C_CLOSED)()')) ->
+        nikhil ((conn_closed() || conn_eof())') ->
 
             khuluma("Send to server: ", true)!
             maak out <- mamela()! @ listen to da input blocking.

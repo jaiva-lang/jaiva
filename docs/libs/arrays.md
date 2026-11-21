@@ -24,6 +24,7 @@ _Jaiva's arrays standard library which is itself, made in Jaiva.  It really just
 | a_findFirst | [a_findFirst](#a_findFirst) |
 | a_findLast | [a_findLast](#a_findLast) |
 | a_find | [a_find](#a_find) |
+| a_sort | [a_sort](#a_sort) |
 ## Functions
 
 ### a_remove
@@ -152,7 +153,7 @@ _**Appends multiple elements to the end of an array and returns the new array.**
 #### Definition
 
 ```jaiva
-F~a_pushAll(<-params)
+F~a_pushAll(<-params?)
 ```
 - **_params_**  **`<-`** _**idk**_
 	 - _A variable number of arguments where the first argument is the original array and the rest are the elements to add_
@@ -599,7 +600,7 @@ _**Applies the supplied function(s) to a given input array. In this case, the fi
 #### Definition
 
 ```jaiva
-F~a_apply(<-params)
+F~a_apply(<-params?)
 ```
 - **_params_**  **`<-`** _**[]**_
 	 - _Var args parameter. Input any amount of parameters, however the first parameter must be an array and everything else a function._
@@ -668,6 +669,43 @@ F~a_findLast(arr, F~predicate)
 ```jaiva
 F~a_find(arr, F~predicate)
 ```
+
+---
+
+
+### a_sort
+
+_**Sorts an array using a comparator function without mutating the original array.**_
+
+
+#### Definition
+
+```jaiva
+F~a_sort(arr, F~compareFn)
+```
+
+- **_arr_**  **`<-`** _**[]**_
+	 - _The original array to sort._
+- **_compareFn_**  **`<-`** _**F~any**_
+	 - _A function taking two elements (a, b) and returning a number. Negative if a comes before b, positive if a comes after b, 0 if equal._
+
+_**Returns:**_ **A new sorted array.**
+
+> [!NOTE]
+> _Throws if the first argument is not an array or if the second argument is not a function._
+
+
+Since Version: _7.0.0_
+
+
+#### Example: 
+
+```jaiva
+maak nums <-| 5, 2, 9, 1!
+maak asc <- f~(a, b) : a - b!
+khuluma(a_sort(nums, asc))! @ Returns
+```
+
 
 ---
 

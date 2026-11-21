@@ -1,5 +1,6 @@
 package com.jaiva.tokenizer.tokens.specific;
 
+import com.jaiva.tokenizer.tokens.TTransitional;
 import com.jaiva.tokenizer.tokens.Token;
 
 /**
@@ -15,7 +16,7 @@ import com.jaiva.tokenizer.tokens.Token;
  * <p>
  * (This ensures if we collect multiple TDocsComment)
  */
-public final class TDocsComment extends TokenDefault<TDocsComment> {
+public final class TDocsComment extends TokenDefault<TDocsComment> implements TTransitional {
     /**
      * The documentation comment.
      */

@@ -1,7 +1,10 @@
 package com.jaiva.test;
 
 import com.jaiva.tokenizer.tokens.*;
+import com.jaiva.tokenizer.tokens.metadata.CodeRegion;
+import com.jaiva.tokenizer.tokens.metadata.FunctionArg;
 import com.jaiva.tokenizer.tokens.specific.*;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;
@@ -41,23 +44,23 @@ public class Jaiva {
         );
     }
 
-    public static void assertCodeblockLineNumber(TCodeblock token, int expectedLineNumber, int expectdEndNumber) {
+    public static void assertCodeblockLineNumber(CodeRegion token, int expectedLineNumber, int expectdEndNumber) {
         Assertions.assertNotNull(token);
         Assertions.assertEquals(
                 expectedLineNumber,
                 token.lineNumber,
-                "The " + token.name + " token (" + token.getClass().getSimpleName() + ") "
+                "The codeblock token (" + token.getClass().getSimpleName() + ") "
                         + "was expected to be on line number " + expectedLineNumber
         );
         Assertions.assertEquals(
                 expectdEndNumber,
                 token.lineNumberEnd,
-                "The " + token.name + " token (" + token.getClass().getSimpleName() + ") "
+                "The codeblock token (" + token.getClass().getSimpleName() + ") "
                 + "was expected to end on line number " + expectdEndNumber
         );
     }
 
-    public static ArrayList<TCodeblock> assertConstruct(TConstruct construct, int codeblockAmount) {
+    public static ArrayList<CodeRegion> assertConstruct(TConstruct construct, int codeblockAmount) {
         Assertions.assertNotNull(construct);
 
         Assertions.assertEquals(
@@ -69,18 +72,15 @@ public class Jaiva {
     }
 
     public static void assertFunctionDefinition(
-            TFunction function, String[] expectedArgs,
-            ArrayList<Boolean> expectedOptionalityArr,
+            @NotNull TFunction function, ArrayList<FunctionArg> expectedArgs,
             boolean expectedVarArgs,
-            Predicate<String> defintionStringPredicate
+            @NotNull Predicate<String> defintionStringPredicate
     ) {
         // Arguments
-        Assertions.assertArrayEquals(expectedArgs, function.args);
-        // Argumnts are all required
-        Assertions.assertEquals(expectedOptionalityArr, function.isArgOptional);
+        Assertions.assertIterableEquals(expectedArgs, function.args);
         // Not Var Args
         Assertions.assertEquals(expectedVarArgs, function.varArgs);
-        // Defintiion string matches
+        // Definition string matches
         Assertions.assertTrue(defintionStringPredicate.test(function.toDefinitionString()));
     }
 

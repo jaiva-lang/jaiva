@@ -184,7 +184,7 @@ public class InterpreterException extends JaivaException {
          */
 
         public FunctionParametersException(Scope ct, BaseFunction s, int amtGiven, int lineNumber) {
-            super(ct, lineNumber, s.name + "() only needs " + ((TFunction) s.token).args.length
+            super(ct, lineNumber, s.name + "() only needs " + ((TFunction) s.token).args.size()
                     + " parameter" + (amtGiven == 1 ? "" : "s") + ", and your goofy ahh gave " + amtGiven
                     + ". ☠️");
         }

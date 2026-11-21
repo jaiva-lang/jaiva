@@ -12,6 +12,7 @@ import com.jaiva.lang.Comments;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.jdoc.JDoc;
+import com.jaiva.tokenizer.tokens.metadata.CodeRegion;
 import com.jaiva.tokenizer.tokens.TParamsExtendable;
 import com.jaiva.tokenizer.tokens.TSymbol;
 import com.jaiva.tokenizer.tokens.Token;
@@ -21,7 +22,6 @@ import com.jaiva.utils.Find;
 import com.jaiva.utils.Validate;
 import com.jaiva.utils.Validate.IsValidSymbolName;
 import com.jaiva.utils.generic.BlockChain;
-import com.jaiva.utils.generic.BracePairs;
 import com.jaiva.utils.generic.MultipleLinesOutput;
 import io.github.yetnt.utils.tuple.Pair;
 import io.github.yetnt.utils.tuple.SamePair;
@@ -258,7 +258,7 @@ public final class Tokenizer {
         } catch (Exception e) {
             throw new TokenizerException.CatchAllException(e.getMessage(), lineNumber);
         }
-        TCodeblock codeblock = new TCodeblock(nestedTokens, finalMOutput.lineNumber, lineNumber);
+        CodeRegion codeblock = new CodeRegion(nestedTokens, finalMOutput.lineNumber, lineNumber);
         // Okay cool, we've parsed everything, but what if its different types?
         Token<?> specific;
         assert multipleLinesOutput != null;
@@ -552,7 +552,7 @@ public final class Tokenizer {
 
     @NotNull
     @Contract("_, _ -> new")
-    private static Pair<String, ArrayList<String>> symbolModifiers(String part, int lineNumber) throws JaivaException {
+    public static Pair<String, ArrayList<String>> symbolModifiers(String part, int lineNumber) throws JaivaException {
         SamePair<Integer> bp = Find.lastOutermostBracePair(part);
         if (bp != null) {
             if (bp.getFirst() != 0)
@@ -1008,7 +1008,9 @@ public final class Tokenizer {
 
         // if it doesn't start with declaration nfor var, it might be a reassingment
         String[] parts = line.split(Chars.ASSIGNMENT, 2);
-        if (parts.length > 1 && !parts[0].endsWith("(")) {
+        if (parts.length > 1 && !parts[0].endsWith("(")
+                && (line.indexOf(Chars.LAMBDA_DEFINITION) < 0 || (line.indexOf(Chars.LAMBDA_DEFINITION) > line.indexOf(Chars.ASSIGNMENT)))
+        ) {
             String varName = parts[0].trim();
             Pair<String, ArrayList<String>> def = symbolModifiers(varName, lineNumber);
             String name = def.getFirst();

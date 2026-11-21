@@ -11,7 +11,7 @@ import com.jaiva.tokenizer.tokens.Token;
  * subclasses/tokens defined in {@link Token}
  */
 public sealed class TokenDefault<T extends TokenDefault<T>> implements Convertible
-        permits TArrayVar, TCodeblock, TDocsComment, TExpression, TExtendParams,
+        permits TArrayVar, TDocsComment, TExpression, TExtendParams,
         TForLoop, TFuncCall, TFuncReturn, TFunction, TIfStatement, TImport, TLoopControl,
         TTernary, TThrowError, TTryCatch, TUnknownScalar, TVarReassign, TVarRef, TVoidValue, TWhileLoop {
     public Token<T> toToken() {

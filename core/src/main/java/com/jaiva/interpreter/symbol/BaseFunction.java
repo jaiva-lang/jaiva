@@ -9,6 +9,7 @@ import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.NewJson;
+import com.jaiva.tokenizer.tokens.metadata.FunctionArg;
 import com.jaiva.tokenizer.tokens.TReference;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
@@ -21,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * BaseFunction class is, the function. It is what Jaiva classifies as a callable entity.
@@ -272,47 +272,48 @@ public class BaseFunction extends Symbol implements ToJSON<NewJson, Exception> {
      */
     protected void checkParams(@NotNull CheckParams checkParams) throws InterpreterException {
         TFuncCall tFuncCall = checkParams.tFuncCall;
-        ArrayList<Object> params =  checkParams.params;
+        ArrayList<Object> funcCallParams =  checkParams.params;
         Scope scope = checkParams.scope;
-        TFunction tFunc = (TFunction) this.token;
+        TFunction functionToken = (TFunction) this.token;
 
         // this if sanitizes tFuncCall, as if it has 1 singular entry and that entry is
         // null, we remove it so we have clear args.
         if (tFuncCall.args.size() == 1 && tFuncCall.args.getFirst() == null) {
             tFuncCall.args.clear();
-            // if it happened to params too, clear it.
-            if (params.size() == 1 && params.getFirst() == null)
-                params.clear();
+            // if it happened to funcCallParams too, clear it.
+            if (funcCallParams.size() == 1 && funcCallParams.getFirst() == null)
+                funcCallParams.clear();
         }
 
         // Check if this case
-        if (tFunc.args.length == 1 && (tFunc.args[0] == null || tFunc.args[0].isEmpty())) {
-            return;
-        }
+//        if (functionToken.args.length == 1 && (functionToken.args[0] == null || functionToken.args[0].isEmpty())) {
+//            return;
+//        }
 
         // first check if we jsut dont have args.
-        if (Collections.frequency(tFunc.isArgOptional, true) == tFunc.isArgOptional.size() && params.isEmpty())
+        if (functionToken.args.stream().allMatch(FunctionArg::isOptional) && funcCallParams.isEmpty())
             return;
-        if (params.isEmpty()) {
+        if (funcCallParams.isEmpty()) {
             throw new InterpreterException.FunctionParametersException(scope, this,
                     Integer.toString(1),
                     tFuncCall.lineNumber);
         }
-        for (int i = 0; i < tFunc.isArgOptional.size(); i++) {
-            boolean isOptional = tFunc.isArgOptional.get(i);
+        for (int i = 0; i < functionToken.args.size(); i++) {
+            FunctionArg arg = functionToken.args.get(i);
+            boolean isOptional = arg.isOptional();
             // check if the current param was given an input of TVoidValue
             // if so, error as we dont want them to pass in idk to a paramter thats not
             // optional
-            if (params.size() != i) {
-                if (params.get(i) instanceof TVoidValue && !isOptional)
+            if (funcCallParams.size() != i) {
+                if (funcCallParams.get(i) instanceof TVoidValue && !isOptional)
                     throw new InterpreterException.FunctionParametersException(scope, this, Integer.toString(i + 1),
                             tFuncCall.lineNumber);
             } else {
                 // the function call has less arguments than required by the function.
                 // check if all the remaining arguments are defined as optional.
 
-                    for (int j = i; j < tFunc.isArgOptional.size(); j++) {
-                        if (!(boolean) tFunc.isArgOptional.get(j)) {
+                    for (int j = i; j < functionToken.args.size(); j++) {
+                        if (!functionToken.args.get(j).isOptional()) {
                             throw new InterpreterException.FunctionParametersException(scope, this,
                                     Integer.toString(j + 1),
                                     tFuncCall.lineNumber);

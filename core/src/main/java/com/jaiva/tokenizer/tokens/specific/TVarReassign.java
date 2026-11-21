@@ -1,6 +1,7 @@
 package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.errors.JaivaException;
+import com.jaiva.tokenizer.tokens.THasModifiers;
 import com.jaiva.tokenizer.tokens.TParamsExtendable;
 import com.jaiva.tokenizer.tokens.TStatement;
 import com.jaiva.tokenizer.tokens.Token;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  * @implSpec you can actually also add new modifiers to the thing you're updating. such as
  * {@code [cow] param <- 100} or for the use case of adding a new modifier only {@code [const] param <- param}
  */
-public final class TVarReassign extends TokenDefault<TVarReassign> implements TStatement, TParamsExtendable {
+public final class TVarReassign extends TokenDefault<TVarReassign> implements TStatement, TParamsExtendable, THasModifiers {
     /**
      * The new value of the variable.
      */
@@ -68,5 +69,10 @@ public final class TVarReassign extends TokenDefault<TVarReassign> implements TS
 
     public ArrayList<String> getNewModifiers() {
         return newModifiers;
+    }
+
+    @Override
+    public ArrayList<String> getModifiers() {
+        return getNewModifiers();
     }
 }

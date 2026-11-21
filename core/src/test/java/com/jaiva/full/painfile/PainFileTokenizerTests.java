@@ -1,9 +1,12 @@
 package com.jaiva.full.painfile;
 
+import com.jaiva.errors.JaivaException;
 import com.jaiva.test.Jaiva;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.jdoc.tags.DParameter;
+import com.jaiva.tokenizer.tokens.metadata.CodeRegion;
 import com.jaiva.tokenizer.tokens.Token;
+import com.jaiva.tokenizer.tokens.metadata.FunctionArg;
 import com.jaiva.tokenizer.tokens.specific.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -58,7 +61,7 @@ public class PainFileTokenizerTests{
     }
 
     @Test
-    void replaceOddChar_functionDefintion() {
+    void replaceOddChar_functionDefintion() throws JaivaException {
         TFunction replaceOddChar =  Jaiva.assertAndCastToken(tokens.get(2), TFunction.class);
         Jaiva.assertLineNumber(replaceOddChar, 34);
         // name with F~ prepended to it
@@ -68,8 +71,7 @@ public class PainFileTokenizerTests{
         Assertions.assertTrue(replaceOddChar.exportSymbol);
 
         Jaiva.assertFunctionDefinition(
-                replaceOddChar, new String[]{"original", "c"},
-                new ArrayList<>(List.of(false, false)),
+                replaceOddChar, FunctionArg.from(1, new String[]{"original", "c"}),
                 false,
                 (actual) -> {
                     return actual.equals("F~replaceOddChar(original, c)");
@@ -77,7 +79,7 @@ public class PainFileTokenizerTests{
         );
 
         // Function has only a single body
-        TCodeblock body = Jaiva.assertConstruct(replaceOddChar, 1).getFirst();
+        CodeRegion body = Jaiva.assertConstruct(replaceOddChar, 1).getFirst();
 
         // the body goes to line number 45 and has 5 tokens
         Jaiva.assertCodeblockLineNumber(
@@ -125,7 +127,7 @@ public class PainFileTokenizerTests{
     @Test
     void replaceOddChar_Body() {
         TFunction replaceOddChar =  Jaiva.assertAndCastToken(tokens.get(2), TFunction.class);
-        TCodeblock body = replaceOddChar.getCodeBlocks().getFirst();
+        CodeRegion body = replaceOddChar.getCodeBlocks().getFirst();
         ArrayList<Token<?>> funcBody =  body.lines;
 
         // 5 tokens
@@ -195,9 +197,9 @@ public class PainFileTokenizerTests{
             Assertions.assertEquals("string", expr.rHandSide);
 
             // body
-            ArrayList<TCodeblock> ifBodies =
+            ArrayList<CodeRegion> ifBodies =
                     Jaiva.assertConstruct(ifStatement, 1);
-            TCodeblock ifBody = ifBodies.getFirst();
+            CodeRegion ifBody = ifBodies.getFirst();
             Jaiva.assertCodeblockLineNumber(
                     ifBody, 36, 38
             );
@@ -267,9 +269,9 @@ public class PainFileTokenizerTests{
 
             // increment, in this case just "+"
             Assertions.assertEquals("+", colonizeLoop.increment);
-            ArrayList<TCodeblock> list =
+            ArrayList<CodeRegion> list =
                     Jaiva.assertConstruct(colonizeLoop, 1);
-            TCodeblock colLoopBody =
+            CodeRegion colLoopBody =
                     list.getFirst();
             Jaiva.assertCodeblockLineNumber(
                     colLoopBody, 40, 43

@@ -85,7 +85,7 @@ public class TokTest {
 
                 // The name should be "F~infinity" with no args.
                 Assertions.assertEquals("F~infinity", f.name, "Function is not \"F~infinity\"");
-                Assertions.assertTrue(f.args.length == 0 || f.args[0].equals(""),
+                Assertions.assertTrue(f.args.size() == 0 || f.args.getFirst().equals(""),
                         "Function was defined with arguments??");
 
                 // function body starts a line 7 and ends at line 9

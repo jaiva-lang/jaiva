@@ -5,6 +5,7 @@ import com.jaiva.errors.Warnings;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.*;
 import com.jaiva.interpreter.symbol.BaseVariable.VariableType;
+import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.TConditional;
@@ -37,32 +38,43 @@ public final class Primitives {
      */
     private static void checkSymbolAnnotation(Symbol s, int lineNumber, Scope scope, IConfig<Object> config) throws NoWarningsException {
         if (s == null) return;
+        if (s.containsModifier(DefaultModifiers.META))
+            Warnings.println(
+                    lineNumber,
+                    s.name + " has the metadata modifier, implying it's usage is discouraged as it only exists " +
+                            "for tooling purposes.",
+                    scope, config
+            );
         Class<?> actual = s.getClass();
         SymbolConfig c = actual.getAnnotation(SymbolConfig.class);
         TokenDefault<?> token = s.token;
         JDoc doc = JDoc.from(token.tooltip);
         if (!Objects.isNull(c) || !Objects.isNull(doc)) {
             String depStr = Objects.isNull(doc) ? "" : doc.getDeprecatedString();
-            if (!depStr.isEmpty() || (!Objects.isNull(c) && c.deprecated())) {
+            boolean probablyHasAnnotation = !Objects.isNull(c);
+            if (!depStr.isEmpty() || (probablyHasAnnotation && c.deprecated())) {
                 Warnings.println(
                         lineNumber,
                         s.name + " is deprecated. " + AnsiColour.printInline(depStr, AnsiColour.FONT.BOLD, AnsiColour.FONT.UNDERLINE, AnsiColour.FONT.ITALIC),
                         scope, config
                 );
             }
-            if (!Objects.isNull(c) && c.experimental()) {
-                Warnings.println(
-                        lineNumber,
-                        s.name + " is marked as experimental. Be careful!!",
-                        scope, config
-                );
-            }
-            if (!Objects.isNull(c) && c.unsafe()) {
-                Warnings.println(
-                        lineNumber,
-                        s.name + " has been marked unsafe. I hope you know what you're doing.",
-                        scope, config
-                );
+
+            if (probablyHasAnnotation) {
+                if (c.experimental()) {
+                    Warnings.println(
+                            lineNumber,
+                            s.name + " is marked as experimental. Be careful!!",
+                            scope, config
+                    );
+                }
+                if (c.unsafe()) {
+                    Warnings.println(
+                            lineNumber,
+                            s.name + " has been marked unsafe. I hope you know what you're doing.",
+                            scope, config
+                    );
+                }
             }
         }
     }

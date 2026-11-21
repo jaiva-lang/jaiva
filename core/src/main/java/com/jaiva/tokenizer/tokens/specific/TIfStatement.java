@@ -2,6 +2,7 @@ package com.jaiva.tokenizer.tokens.specific;
 
 import com.jaiva.errors.JaivaException;
 import com.jaiva.tokenizer.tokens.*;
+import com.jaiva.tokenizer.tokens.metadata.CodeRegion;
 
 import java.util.ArrayList;
 
@@ -22,11 +23,11 @@ public final class TIfStatement extends TokenDefault<TIfStatement> implements TC
     /**
      * The body of the if statement.
      */
-    public TCodeblock body;
+    public CodeRegion body;
     /**
      * The else body of the if statement.
      */
-    public TCodeblock elseBody = null;
+    public CodeRegion elseBody = null;
     /**
      * The chain of else if statements.
      */
@@ -41,7 +42,7 @@ public final class TIfStatement extends TokenDefault<TIfStatement> implements TC
      * @param body      The body of the if statement.
      * @param ln        The line number.
      */
-    public TIfStatement(Object condition, TCodeblock body, int ln) throws JaivaException {
+    public TIfStatement(Object condition, CodeRegion body, int ln) throws JaivaException {
         super("TIfStatement", ln);
         this.condition = condition;
         this.body = body;
@@ -64,9 +65,9 @@ public final class TIfStatement extends TokenDefault<TIfStatement> implements TC
     /**
      * Appends the provided else body to the current token.
      *
-     * @param elseBody the TCodeblock representing the else body to be appended
+     * @param elseBody the CodeRegion representing the else body to be appended
      */
-    public void appendElse(TCodeblock elseBody) {
+    public void appendElse(CodeRegion elseBody) {
         this.elseBody = elseBody;
         json.set("elseBody", elseBody);
     }
@@ -94,8 +95,8 @@ public final class TIfStatement extends TokenDefault<TIfStatement> implements TC
     }
 
     @Override
-    public ArrayList<TCodeblock> getCodeBlocks() {
-        ArrayList<TCodeblock> blocks = new ArrayList<>();
+    public ArrayList<CodeRegion> getCodeBlocks() {
+        ArrayList<CodeRegion> blocks = new ArrayList<>();
         blocks.add(body);
         if (elseBody != null)
             blocks.add(elseBody);

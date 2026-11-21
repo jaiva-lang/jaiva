@@ -346,11 +346,11 @@ maak output <- 2 - "hello" - 2!
 provided `arr` is defined as:
 
 ```jaiva
-maak arr <-| 1, 2, 10, "fwe", aowa, arrLit()!
+maak arr <-| 1, 3, 10, "fwe", aowa, arrLit()!
 @ Or using arrLit only
-maak arr <- arrLit(1, 2, 10, "fwe", aowa, arrLit())!
+maak arr <- arrLit(1, 3, 10, "fwe", aowa, arrLit())!
 
-maak arr2 <-| 12, "fwe", 2, true!
+maak arr2 <-| 12, "fwe", 3, true!
 
 khuluma(a)! @ Prints [1, 3, 10, "fwe", aowa, []]
 ```
@@ -375,8 +375,8 @@ khuluma(a)! @ Prints [1, 3, 10, "fwe", aowa, []]
 
 5. Intersection
 
-    `arr && arr2` _returns_ **`["fwe", 2]`** (The intersection between the 2 arrays.
-    not sure about the order however it seems more dependant on RHS)
+   `arr && arr2` _returns_ **`["fwe", 3]`** (The intersection between the 2 arrays.
+   not sure about the order however it seems more dependant on RHS)
 
 Also you can go nuts and compound them together
 
@@ -1285,14 +1285,30 @@ maak [frozen] x <- 10! @ Now x cannot be edited.
 kwenza [frozen] function() -> @ And now function cannot be edited.
     khuluma("hello world.")! 
 <~
+
+kwenza func([const] param) -> @ Function parameter with modifier
+    idk!
+<~
 ```
+
+> For a table of function parameter typings and where to put the modifer,
+> it's always first.
+> 
+> | Function Parameter Example     | Example with modifier |
+> |--------------------------------|-----------------------|
+> | `param` (normal)               | `[mod] param`         |
+> | `<-param` (var args)           | `[mod] <-param`       |
+> | `param?` (optional)            | `[mod] param?`        |
+> | `F~param` (`F~` or `V~` sigil) | `[mod] F~param`       |
+> | `V~param?` (combination)       | `[mod] V~param?`      |
 
 It can either be a comma separated list, or space separated (braces are compulsory)
 however if a comma is present it will use that. Allowing input with spaces
 
 
 ```jiv
-maak [example mod, mod2] x <- 10! @ Now x cannot be edited.
+maak [example mod mod2] y <- 2! @ "example" "mod" and "mod2"
+maak [example mod, mod2] x <- 10! @ "example mod" and "mod2"
 ```
 
 Jaiva provides a small set of modifiers, currently some are a no-op but will have
@@ -1300,11 +1316,10 @@ the necessary documentation in due time.
 
 Some modifiers cannot be paired with others (mutually exclusive)
 
-| Modifier          | Aliases                  | Modifier Semantics                                                   | Mutually Exclusive To               |
-|-------------------|--------------------------|----------------------------------------------------------------------|-------------------------------------|
-| `"frozen"`        | `"const" "constant" "f"` | Freezes the symbol at creation time meaning it cannot be reassigned. | `"copy-on-write"`, `"lock-onwrite"` |
-| `"copy-on-write"` | `"cow"`                  | Future threading capability                                          | `"lock-on-write"`                   |
-| `"lock-on-write"` | `"low"`                  | Future threading capability                                          | `"copy-on-write"`                   |
+| Modifier   | Aliases                  | Modifier Semantics                                                                          | Mutually Exclusive To |
+|------------|--------------------------|---------------------------------------------------------------------------------------------|-----------------------|
+| `"frozen"` | `"const" "constant" "f"` | Freezes the symbol at creation time meaning it cannot be reassigned.                        |                       |
+| `"meta"`   | `"metadata"`             | Marks the symbol as metadata, implying it serves tooling purposes only and shouldnt be used |                       |
 
 
 > [!NOTE]
@@ -1377,7 +1392,7 @@ Append `\` at the start of the reference (can apply multiple) to get it's parent
 And a more complex example
 
 ```jiv
-kwenza funcz(a) ->
+kwenza funcz([p] a) ->
     a <- 10!
     [cor] a <- f~() : 6!
     [cow] a <- aowa!

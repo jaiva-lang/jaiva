@@ -5,9 +5,7 @@ import com.jaiva.interpreter.symbol.Symbol;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,14 +13,9 @@ import java.util.stream.Stream;
 public enum DefaultModifiers {
 
     CONSTANT("frozen",
-            List.of("copy-on-write", "lock-on-write"),
+            Collections.emptyList(),
             "const", "read-only", "constant", "f"),
-    COPY_ON_WRITE("copy-on-write",
-            List.of("lock-on-write"),
-            "cow"),
-    LOCK_ON_WRITE("lock-on-write",
-            List.of("copy-on-write"),
-            "low");
+    META("meta", Collections.emptyList(), "metadata");
 
     private final SymbolModifier instance;
 

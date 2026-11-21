@@ -255,7 +255,8 @@ _**Returns:**_ **idk**
     "sw" to suppress all warnings. 
     "ew" to elevate all warnings. 
     "constant" to make all symbols given constant. and 
-    "strict" which toggles "ew" and "constant"
+    "strict" which toggles "ew" and "constant" 
+    "nidc" disable perfect doubles converting to integers.
 _
 
 
@@ -442,7 +443,7 @@ _**Returns:**_ **idk**
 > _A usual (b <- a) syntax would suffice if you'd like to copy the value of a into b.
 However when a is changed, b will stay the value you set earlier. This function fixes that where it will
 link the exact MapValue from a into b, discarding b's old MapValue. such that editing any one of the symbols
-via the reassignment syntax will update the linked variable. In the case that the "b" parameter does not actually exist in the symbol table, d_link will try to make it, itself.
+via the reassignment syntax will update the linked variable. In the case that the "b" parameter does not actually exist in the symbol table, linker will try to make it, itself.
 _
 
 
@@ -460,8 +461,8 @@ b <- a!
 b <- 10!
 khuluma(a)! @ prints the lambda signature and not 10.
 
-@ With d_link, the exact MapValue held by that alias is copied.
-d_link(a, b)!
+@ With linker, the exact MapValue held by that alias is copied.
+linker(a, b)!
 b <- 10!
 khuluma(a)! @ prints 10
 a <- 100!

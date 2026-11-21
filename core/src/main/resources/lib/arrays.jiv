@@ -22,18 +22,18 @@ scope("strict")! @ This freezes all the functions, and elevates all warnings to 
 }
 
 @* arrays
-maak path!
+maak [meta] path!
 
 @* Jaiva's arrays standard library which is itself, made in Jaiva.
 @* It really just contains convenience methods such that you don't
 @* have to index into or look for things yourself.
-maak description!
+maak [meta] description!
 
 @* Remove n elements from the end of an array
 @* p        $> arr <- [] The original array
 @* p        $> n <- number Amount of elements to remove
 @* returns  $> An array which contains the original array with n amount of elements removed from the end.
-@* since     $> 1.0.0-beta.3
+@* since    $> 1.0.0-beta.3
 @* devn     $> Throws if the first argument is not an array or if the second argument is not a non-negative number.
 @*          $> Not to be confused with a_delete() which removes elements from a specific index in an array.
 @* example  $> maak arr <-| 1, 2, 3, 4, 5!

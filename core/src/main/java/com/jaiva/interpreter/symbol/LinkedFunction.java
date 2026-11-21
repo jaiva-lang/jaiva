@@ -37,9 +37,9 @@ public final class LinkedFunction extends DefinedFunction {
         deque.add(this.second);
 
         if (
-                ((TFunction)this.second.token).args.length == callProperties.params().size()
+                ((TFunction)this.second.token).args.size() == callProperties.params().size()
                 || (
-                        (((TFunction)this.first.token).args.length < callProperties.params().size())
+                        (((TFunction)this.first.token).args.size() < callProperties.params().size())
                         && !(((TFunction)this.first.token).varArgs)
                 )
         ) deque.addFirst(this.second);

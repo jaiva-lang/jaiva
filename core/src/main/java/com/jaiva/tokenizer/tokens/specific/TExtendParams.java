@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @implSpec This token isn't itself meant to be seen by the tokeniser as it gets
  * concatenated with the rest of the parameters of the previous function call
  */
-public final class TExtendParams extends TokenDefault<TExtendParams> implements TStatement {
+public final class TExtendParams extends TokenDefault<TExtendParams> implements TTransitional {
     /**
      * The arguments of the extension1
      * <p>
