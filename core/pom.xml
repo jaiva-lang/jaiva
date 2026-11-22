@@ -64,7 +64,6 @@
             <id>release-cli</id>
             <build>
                 <plugins>
-
                     <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <version>3.1.0</version>

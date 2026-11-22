@@ -156,7 +156,7 @@ public class ReflectiveLib extends BaseLibrary {
         // The method to override to enable functionality
 
         @Override
-        public Object call(CallProperties callProperties) throws Exception {
+        public Object call(@NotNull CallProperties callProperties) throws Exception {
             // CallProperties has: the TFuncCall token
             // This method checks that all required parameters and possible functional type hints were satisfied
             // Although if you defined it to be variadic, this isn't needed.
@@ -164,13 +164,13 @@ public class ReflectiveLib extends BaseLibrary {
 
             // Get the first value.
             
-            Object value = params.getFirst();
+            Object value = cp.params().getFirst();
 
             // Check whether its a function or not
 
             if (!(value instanceof BaseFunction baseFunction))
                 throw new InterpreterException.WtfAreYouDoingException(
-                        scope, "This function accepts only function references....", tFuncCall.lineNumber
+                        cp.scope(), "This function accepts only function references....", cp.tFuncCall().lineNumber
                 );
             
             return baseFunction.name;

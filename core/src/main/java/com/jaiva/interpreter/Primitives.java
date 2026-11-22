@@ -344,14 +344,19 @@ public final class Primitives {
                 boolean checkedLineage = false;
 
                 if (v != null && v.getValue() instanceof BaseVariable bn) {
-                    Symbol sym = symbolLineage(scope, config, v.getValue(), tFuncCall);
-                    if (sym instanceof BaseFunction f) {
-                        function = f;
-                        checkedLineage = true;
+                    if (bn.s_get() instanceof Symbol as) {
+                        Symbol sym = symbolLineage(scope, config, as, tFuncCall);
+                        if (sym instanceof BaseFunction f) {
+                            function = f;
+                            checkedLineage = true;
+                        } else
+                            throw new WtfAreYouDoingException(scope,
+                                    "You are trying to use the variable " + bn.name + " as a function.",
+                                    tFuncCall.lineNumber);
                     } else
-                        throw new WtfAreYouDoingException(scope,
-                                "You are trying to use the variable " + bn.name + " as a function.",
-                                tFuncCall.lineNumber);
+                    throw new WtfAreYouDoingException(scope,
+                            "You are trying to use the variable " + bn.name + " as a function.",
+                            tFuncCall.lineNumber);
                 }
 
                 function = function != null ? function : (BaseFunction) v.getValue();

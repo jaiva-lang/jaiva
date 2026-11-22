@@ -16,6 +16,7 @@ This library exports the following libraries:
 | arrLit | [arrLit](#arrLit) |
 | scope | [scope](#scope) |
 | getCallerValue | [getCallerValue](#getCallerValue) |
+| typeOfFunc | [typeOfFunc](#typeOfFunc) |
 | khuluma | [khuluma](#khuluma) |
 | mamela | [mamela](#mamela) |
 | clear | [clear](#clear) |
@@ -141,7 +142,7 @@ F~typeOf(input?)
 - **_input_** **`?`** **`<-`** _**idk**_
 	 - _The input to check the type against_
 
-_**Returns:**_ **Returns the string form of the typ, which could be "array", "string", "boolean", "number", "function", or the primitive idk.  If you require a more precise answer than number use typeOfNumber**
+_**Returns:**_ **Returns the string form of the typ, which could be "array", "string", "boolean", "number", "function", or the primitive idk.  If you require a more precise answer than number use typeOfNumber. or more precise answer than function use typeOfFunction**
 
 Since Version: _3.0.0_
 
@@ -189,11 +190,11 @@ Since Version: _5.0.4_
 ```jaiva
 maak b <- 100!
 
-khuluma(typeOf(b))!                   @ "integer"
-khuluma(typeOf(0.34))!                @ "double"
-khuluma(typeOf(0.34d))!               @ "double"
-khuluma(typeOf())!                    @ idk
-khuluma(typeOf(82936741648236817L))!  @ "long"
+khuluma(typeOfNumber(b))!                   @ "integer"
+khuluma(typeOfNumber(0.34))!                @ "double"
+khuluma(typeOfNumber(0.34d))!               @ "double"
+khuluma(typeOfNumber())!                    @ idk
+khuluma(typeOfNumber(82936741648236817L))!  @ "long"
 ```
 
 
@@ -310,6 +311,48 @@ Since Version: _5.0.2_
 @ Say we are in J3Engine command
 maak value <- getCallerValue()!
 @ use it
+```
+
+
+---
+
+
+### typeOfFunc
+
+This symbol can be reached by the following aliases: _`typeOfFunc`_
+
+_**Returns the type of a given function input.**_
+
+
+#### Definition
+
+```jaiva
+F~typeOfFunc(input?)
+```
+- **_input_** **`?`** **`<-`** _**F~any**_
+	 - _The input to check the type against_
+
+_**Returns:**_ **Returns the string form of the type of function, which could be "generic", "linked", "lambda", "defined", "continuous" or the primitive idk.**
+
+Since Version: _7.0.0_
+
+
+#### Example: 
+
+```jaiva
+kwenza a() ->
+    idk!
+<~
+
+khuluma(typeOfFunc(a))!                   @ "defined"
+khuluma(typeOfFunc(f~() : idk))!          @ "lambda"
+khuluma(typeOfFunc(typeOf))!              @ "generic"
+khuluma(typeOfFunc(a || typeOf))!         @ "linked"
+khuluma(typeOfFunc())!                    @ idk
+
+@ "continuous"
+@ FYI dont do this, purely example.
+khuluma(typeOfFunc(tseaf("jaiva/file/bytes", f_cwriter)("./out.txt", true)))!
 ```
 
 

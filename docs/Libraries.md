@@ -27,9 +27,6 @@ tsea "jaiva/(module name)"!
 > [!NOTE]
 > Even though all jaiva files have the extensions `.jiv`, `.jaiva` and `.jva`, All of them (The library files) have the `.jiv` extension. This is just the convention i decided to use.
 
-> [!NOTE]
-> Unlike built-in symbols where I can link you to implementation, I cannot do that for libraries because they are not part of the Jaiva source code, but rather part of the downloadable zip package. (The bin)
-
 The following are the libraries that are available: 
 
 - [types](libs/types.md)
@@ -46,6 +43,7 @@ The following are the libraries that are available:
   - [math/base](libs/math-base.md)
 - [threads](libs/threads.md)
 - [continuous](libs/continuous.md)
+- [reflect](libs/reflect.md)
 - [time](libs/time.md)
   - [time/api](libs/time-api.md)
   - [time/zone](libs/time-zone.md)

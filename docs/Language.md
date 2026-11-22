@@ -43,6 +43,7 @@ which the current stable versions supports.
         - _[Argument Extension](#argument-extensions)_
         - _[Function Linking](#function-links)_
     -   **[Reassignment](#reassignment)**
+        -   _[Reassignment Quirk](#variable-reassignment-quirk)_
     -   **[Export](#export-syntax)**
     -   **[Modifiers](#modifiers)**
 -   **[If Statements](#if-statements)**
@@ -213,7 +214,7 @@ khuluma(c != idk)! @ true
 
 kwenza func(t?) ->
     khutla t!
-<-
+<~
 
 khuluma(func())! @ Prints idk, as the parameter t did not get a value.
 ```
@@ -502,7 +503,8 @@ When a block is closed, the scope is destroyed, and any variables or functions d
 
 This scoping mechanism allows for encapsulation and prevents naming conflicts between variables and functions defined in different scopes.
 
-The only exception to the conventional scoping rules are [Lambas](#lambdas) which preserve the scope they were created in.
+The only exception to the conventional scoping rules are [Lambas](#lambdas) which preserve the scope they were created in,
+and also [Adding Modifiers to Symbols](#adding-modifiers-to-existing-symbols)
 
 What makes scoping a vital is that, all Jaiva Errors, throw scope traces, not call traces (because yes.)
 
@@ -1269,9 +1271,48 @@ where they cannot be edited after being defined. You usually encounter this when
 try reassign a library symbol (provided the library was competent to freeze the symbols)
 or by using [Modifiers](#modifiers)
 
+### Variable Reassignment Quirk
+
+See variables don't really work as you'd expect...
+
+In Jaiva, a variable actually holds both a scalar and array slot simultaneously, and by default
+it always prefers the scalar slot.
+
+Hence
+```jiv
+maak a <- 1!
+a <- arrLit(1, 3, 4)!
+khuluma(a)! @ Prints 1. What the fuck???
+```
+
+This can be solved by using the [`[alt]` modifier](#modifiers), don't ask my what it does internally
+just know it works.
+```jiv
+maak [alt] a <- 1!
+a <- arrLit(1, 3, 4)!
+khuluma(a)! @ Prints [1, 3, 4]
+```
+
 ## Export Syntax
 
-All symbols follow the exact same export syntax
+All symbols follow the exact same export syntax. By adding `*` before it's name and that it lol
+
+Imagine needing entire keywords for this
+
+```jiv
+maak *z <- 1!
+maak r <- 1!
+
+kwenza *func() ->
+    khutla 1!
+<~
+kwenza func2() ->
+    khutla 1!
+<~
+```
+
+In this case if you [Import this](#tsea-import-and-exporting-files), you only get
+`z` and `func`
 
 ## Modifiers
 
@@ -1305,6 +1346,11 @@ kwenza func([const] param) -> @ Function parameter with modifier
 It can either be a comma separated list, or space separated (braces are compulsory)
 however if a comma is present it will use that. Allowing input with spaces
 
+> [!NOTE]
+> The tokenizer and interpreter dont enforce that you have to put a real
+> legit modifier, so you cna put whatever the fuck you want. If you accidentlaly mispell
+> a real modifier? tough luck man.
+
 
 ```jiv
 maak [example mod mod2] y <- 2! @ "example" "mod" and "mod2"
@@ -1318,9 +1364,9 @@ Some modifiers cannot be paired with others (mutually exclusive)
 
 | Modifier   | Aliases                  | Modifier Semantics                                                                          | Mutually Exclusive To |
 |------------|--------------------------|---------------------------------------------------------------------------------------------|-----------------------|
-| `"frozen"` | `"const" "constant" "f"` | Freezes the symbol at creation time meaning it cannot be reassigned.                        |                       |
+| `"frozen"` | `"const" "constant" "f"` | Freezes the symbol at creation time meaning it cannot be reassigned.                        | `"alt"`               |
 | `"meta"`   | `"metadata"`             | Marks the symbol as metadata, implying it serves tooling purposes only and shouldnt be used |                       |
-
+| `"alt"`    | `"alternate""`           | Allows for a variable to alternate the preferred slot to store on demand                    | `"frozen"`            |
 
 > [!NOTE]
 > A host app might provide more modifier definitions unique to it's runs of Jaiva.
@@ -1687,6 +1733,8 @@ The `chaai` block is executed if an error is thrown in the `zama zama` block.
 
 > [!WARNING]
 > You cannot put the `chaai` keyword underneath the end of a `zama zama` block, it HAS to be on the same line as the closing `<~` symbol. This makes it easier for me lol.
+
+There is no finally equivalent. Goodluck Soldier.
 
 ```jiv
 zama zama ->

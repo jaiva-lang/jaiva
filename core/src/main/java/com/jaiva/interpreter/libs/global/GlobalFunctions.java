@@ -12,10 +12,8 @@ import com.jaiva.interpreter.libBuilders.var.VariableBuilder;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.BaseVariable;
-import com.jaiva.interpreter.symbol.CallProperties;
-import com.jaiva.interpreter.symbol.Symbol;
+import com.jaiva.interpreter.symbol.*;
+import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
 import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
@@ -29,13 +27,13 @@ import java.util.Arrays;
  * {@link Globals} with the purpose of being here so we dont make GLobals a god class since it also
  * has to handle loading the actual global scope and eveyr other external and jaiva internal library.
  */
-public class GlobalFunctions extends BaseLibrary {
+public final class GlobalFunctions extends BaseLibrary {
 
     public GlobalFunctions(IConfig<Object> config) {
         add(
                 new FGetVarClass(), new VReservedKeywords(), new VJaivaVersion(), new FFlat(),
                 new FSleep(), new FTypeOf(), new FTypeOfNumber(), new FArrayLiteral(),
-                new FScope(), new FGetCallerValue()
+                new FScope(), new FGetCallerValue(), new FTypeOfFunction()
         );
         add(new IOFunctions(config));
     }
@@ -361,6 +359,67 @@ public class GlobalFunctions extends BaseLibrary {
         }
     }
 
+    static class FTypeOfFunction extends BaseFunction {
+        FTypeOfFunction() {
+            super(FunctionBuilder.start()
+                    .name("typeOfFunc")
+                    .setLib("global")
+                    .arguments(
+                            Arguments.getInstance()
+                                    .add(new AArgument(
+                                            "input",
+                                            "The input to check the type against",
+                                            true,
+                                            Argument.Type.FUNCTION
+                                    ))
+                    )
+                    .docs(
+                            JDoc.builder()
+                                    .addDesc("Returns the type of a given function input. ")
+                                    .addReturns("Returns the string form of the type of function, which could be \"generic\", \"linked\", \"lambda\", \"defined\", \"continuous\" or the primitive idk.")
+                                    .sinceVersion("7.0.0")
+                                    .addExample("""
+                                    kwenza a() ->
+                                        idk!
+                                    <~
+                                    
+                                    khuluma(typeOfFunc(a))!                   @ "defined"
+                                    khuluma(typeOfFunc(f~() : idk))!          @ "lambda"
+                                    khuluma(typeOfFunc(typeOf))!              @ "generic"
+                                    khuluma(typeOfFunc(a || typeOf))!         @ "linked"
+                                    khuluma(typeOfFunc())!                    @ idk
+                                    
+                                    @ "continuous"
+                                    @ FYI dont do this, purely example.
+                                    khuluma(typeOfFunc(tseaf("jaiva/file/bytes", f_cwriter)("./out.txt", true)))!
+                                    """)
+                    )
+            );
+            freeze();
+        }
+
+        @Override
+        public Object call(CallProperties callProperties)
+                throws Exception {
+
+//            checkParams(callProperties.toCheckParams());
+
+            if (callProperties.params().isEmpty())
+                return Token.voidValue(callProperties.getLineNumber());
+
+            return switch (callProperties.params().getFirst()) {
+                case ContinuousFunction _ -> "continuous";
+                case Lambda _ -> "lambda";
+                case LinkedFunction _ -> "linked";
+                case DefinedFunction _ -> "defined";
+                case BaseFunction _ -> "generic";
+                case null, default ->
+// there is no other type to possibly check for.
+                        Token.voidValue(callProperties.getLineNumber());
+            };
+        }
+    }
+
     static class FTypeOfNumber extends BaseFunction {
         FTypeOfNumber() {
             super(FunctionBuilder.start()
@@ -383,11 +442,11 @@ public class GlobalFunctions extends BaseLibrary {
                                     .addExample("""
                                     maak b <- 100!
                                     
-                                    khuluma(typeOf(b))!                   @ "integer"
-                                    khuluma(typeOf(0.34))!                @ "double"
-                                    khuluma(typeOf(0.34d))!               @ "double"
-                                    khuluma(typeOf())!                    @ idk
-                                    khuluma(typeOf(82936741648236817L))!  @ "long"
+                                    khuluma(typeOfNumber(b))!                   @ "integer"
+                                    khuluma(typeOfNumber(0.34))!                @ "double"
+                                    khuluma(typeOfNumber(0.34d))!               @ "double"
+                                    khuluma(typeOfNumber())!                    @ idk
+                                    khuluma(typeOfNumber(82936741648236817L))!  @ "long"
                                     """)
                     )
             );
@@ -430,7 +489,7 @@ public class GlobalFunctions extends BaseLibrary {
                                     JDoc.builder()
                                             .addDesc("Returns the type of any given input.")
                                             .addReturns("Returns the string form of the typ, which could be \"array\", \"string\", \"boolean\", \"number\", \"function\", or the primitive idk. "
-                                                    + " If you require a more precise answer than number use typeOfNumber")
+                                                    + " If you require a more precise answer than number use typeOfNumber. or more precise answer than function use typeOfFunction")
                                             .sinceVersion("3.0.0")
                                             .addExample("""
                                             maak b <- 100!

@@ -1,7 +1,31 @@
-scope("strict")!
-kwenza [meta] func(p, [const] f?, [permissible fake-ass-modifier lmao] F~t) ->
-    maak params <-| p, f, t!
-    khuluma(params)!
+maak [alt] a <- 1!
+
+khuluma(a)!
+a <- arrLit(1, 2, 4)!
+khuluma(a)!
+a <- 34!
+khuluma(a)!
+
+tsea "jaiva/reflect" <- r_sGetModifiers!
+
+kwenza [vo] func(s) ->
+    khuluma(s)!
 <~
 
-func(2, idk, f~([$const] <-param) : param)!
+kwenza func2(s) ->
+    khuluma(s)!
+<~
+
+kwenza invoke([const] V~funcs, F~preProcessor, [const] input?) ->
+    maak out <-|!
+    colonize (f with funcs) ->
+        maak s <- input!
+        sif (r_sGetModifiers(f) ? "vo") ?> s <- preProcessor(s)!
+        maak o <- f(s)!
+        sif (o?') ?> out <- arrLit(out:::, o)!
+    <~
+    khutla out!
+<~
+
+khuluma()!
+|> invoke( arrLit(func, func2), f~(i) : i*12, 3)!

@@ -18,6 +18,7 @@ public final class ModifierValidator {
         HashMap<String, SymbolModifier> modifiersHashMap = new HashMap<>();
         for (String mod : mods) {
             SymbolModifier m = DefaultModifiers.fromModString(mod, config);
+            if (m == null) continue;
             if (modifiersHashMap.containsValue(m)) {
                 Warnings.println(
                         lineNumber,

@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * BaseVariable class is a base class for all variables in Jaiva.
@@ -145,6 +144,8 @@ public class BaseVariable extends Symbol {
         if (isFrozen)
             throw new InterpreterException.FrozenSymbolException(scope, this);
         array = t;
+        if (containsModifier(DefaultModifiers.ALTERNATE))
+            setPreferArray(true);
     }
 
     public void a_objSet(Object o, Scope scope) throws InterpreterException {
@@ -172,31 +173,6 @@ public class BaseVariable extends Symbol {
      */
     public void a_unsafeSet(ArrayList<Object> t) {
         array = t;
-    }
-
-    /**
-     * Adds an array to the array (addAll())
-     * 
-     * @param a The array to add onto.
-     * @param scope Context Trace
-     * @throws InterpreterException.FrozenSymbolException When trying to modify the variable while it's frozen.
-     */
-    public void a_addAll(List<String> a, Scope scope) throws InterpreterException.FrozenSymbolException {
-        if (isFrozen)
-            throw new InterpreterException.FrozenSymbolException(scope, this);
-        array.addAll(a);
-    }
-
-    /**
-     * Appends an element to the array.
-     * 
-     * @param a The object to add to the array.
-     * @throws InterpreterException.FrozenSymbolException When trying to modify the variable while it's frozen.
-     */
-    public void a_add(Object a, Scope scope) throws InterpreterException.FrozenSymbolException {
-        if (isFrozen)
-            throw new InterpreterException.FrozenSymbolException(scope, this);
-        array.add(a);
     }
 
     /**
@@ -237,6 +213,8 @@ public class BaseVariable extends Symbol {
         if (isFrozen)
             throw new InterpreterException.FrozenSymbolException(scope, this);
         this.scalar = value;
+        if (containsModifier(DefaultModifiers.ALTERNATE))
+            setPreferArray(false);
     }
 
     /**
@@ -279,7 +257,7 @@ public class BaseVariable extends Symbol {
     /**
      * A class that represents a user-defined variable.
      */
-    public static class DefinedVariable extends BaseVariable {
+    public static final class DefinedVariable extends BaseVariable {
         /**
          * Constructs a new DefinedVariable instance with the specified name, token,
          * and scalar value.

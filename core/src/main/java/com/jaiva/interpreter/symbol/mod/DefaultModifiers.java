@@ -14,8 +14,9 @@ public enum DefaultModifiers {
 
     CONSTANT("frozen",
             Collections.emptyList(),
-            "const", "read-only", "constant", "f"),
-    META("meta", Collections.emptyList(), "metadata");
+            "const", "read-only", "read only", "constant", "f"),
+    META("meta", Collections.emptyList(), "metadata"),
+    ALTERNATE("alternate", List.of("frozen"), "alt"),;
 
     private final SymbolModifier instance;
 
