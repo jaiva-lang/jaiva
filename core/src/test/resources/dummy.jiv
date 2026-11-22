@@ -16,7 +16,7 @@ kwenza func2(s) ->
     khuluma(s)!
 <~
 
-kwenza invoke([const] V~funcs, F~preProcessor, [const] input?) ->
+kwenza invoke([const] funcs, F~preProcessor, [const] input?) ->
     maak out <-|!
     colonize (f with funcs) ->
         maak s <- input!

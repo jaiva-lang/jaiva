@@ -41,7 +41,7 @@ public final class CodeRegion implements ToJSON<SimpleJSON, Exception> {
         SimpleJSON json = new SimpleJSON();
         json.set("lineNumber", lineNumber);
         json.set("lineEnd", lineNumberEnd);
-        json.set("lines", lines);
+        json.set("lines", lines.stream().map(Token::value).toList());
         return json;
     }
 
