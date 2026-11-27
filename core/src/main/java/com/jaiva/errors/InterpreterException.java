@@ -565,6 +565,20 @@ public class InterpreterException extends JaivaException {
         }
     }
 
+
+    /**
+     * Exception thrown when something occurs due to a Java implementation failing
+     */
+    public static class ImplementationException extends InterpreterException {
+
+        @Serial
+        private static final long serialVersionUID = 1L;
+
+        public ImplementationException(Scope ct, int linNumber, String err) {
+            super(ct, linNumber, err + " (This is not the fault of the user.)");
+        }
+    }
+
     /**
      * Exception thrown when an exception is thrown by either the tokenizer or interpreter while its trying
      * to parse an import. The inner exception is wrapped by this exception so the user still gets

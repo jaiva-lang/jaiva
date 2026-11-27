@@ -7,10 +7,14 @@ import com.jaiva.tokenizer.tokens.specific.TIfStatement;
 import com.jaiva.tokenizer.tokens.specific.TTernary;
 import com.jaiva.tokenizer.tokens.specific.TVarRef;
 import com.jaiva.utils.cd.ContextDispatcher;
+import com.jaiva.utils.generic.BracePairs;
 import io.github.yetnt.utils.tuple.Pair;
 import io.github.yetnt.utils.tuple.SamePair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 /**
  * Validate class is a utils class where methods which "validate" the
@@ -164,6 +168,25 @@ public final class Validate {
     public static int isOpInQuotePair(String line, int opIndex) {
         ArrayList<SamePair<Integer>> quoteSamePairs = Find.quotationPairs(line);
         return isOpInPair(opIndex, quoteSamePairs);
+    }
+
+    public static boolean contains(
+            @NotNull String input,
+            char c,
+            ArrayList<SamePair<Integer>> quotePairs,
+            BracePairs bracePairs
+    ) {
+        BiFunction<Stream<SamePair<Integer>>, Integer, Boolean> contains = (s, i)
+        -> s.anyMatch(p -> p.getFirst() <= i && p.getSecond() >= i);
+        for (int i = 0; i < input.length(); i++) {
+            char curr = input.charAt(i);
+            if (
+                    contains.apply(quotePairs.stream(), i)
+                    || contains.apply(bracePairs.closedPairs().stream(), i)
+            ) continue;
+            if (curr == c) return true;
+        }
+        return false;
     }
 
     /**

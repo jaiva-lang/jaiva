@@ -1,7 +1,6 @@
 package com.jaiva.interpreter.libs.types;
 
 import com.jaiva.errors.InterpreterException;
-import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -16,9 +15,6 @@ import com.jaiva.tokenizer.tokens.Token;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @JaivaLibrary(path="types/numbers", description = "More complicated converters")
 public class Numbers extends BaseLibrary {
@@ -61,15 +57,10 @@ public class Numbers extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams());
-
-            Object val = callProperties.params().getFirst();
-
-            if (!(val instanceof Double d))
-                throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "1", val, Double.class,
-                        callProperties.getLineNumber());
-
+            Double d = fetch(0, Double.class, callProperties);
             return Double.doubleToLongBits(d);
         }
+
     }
 
     public static class FLongToIEEE754Double extends BaseFunction {
@@ -102,13 +93,7 @@ public class Numbers extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams());
-
-            Object val = callProperties.params().getFirst();
-
-            if (!(val instanceof Long l))
-                throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "1", val, Long.class,
-                        callProperties.getLineNumber());
-
+            Long l = fetch(0, Long.class, callProperties);
             return Double.longBitsToDouble(l);
         }
     }
@@ -202,17 +187,7 @@ public class Numbers extends BaseLibrary {
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams());
 
-            Object val = callProperties.params().getFirst();
-
-            if (!(val instanceof String s))
-                throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(),
-                        this,
-                        "1",
-                        val,
-                        String.class,
-                        callProperties.getLineNumber()
-                );
+            String s = fetch(0, String.class, callProperties);
 
             byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
             int[] ints = TypeConverter.byteArrToIntArr(bytes);

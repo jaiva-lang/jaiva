@@ -46,9 +46,9 @@ Jaiva files end in the _`.jiv`_ or _`.jaiva`_ or _`.jva`_ extension. There is no
 
 ---
 
-- Jaiva Highlight.js Repo [highlightjs-jaiva](https://github.com/jaiva/highlightjs)
-- Jaiva Syntax definitions (tmLanguage & Vim) [syntax](https://github.com/jaiva/syntax)
-- Jaiva VSCode Extension [vscode](https://github.com/jaiva/vscode)
+- Jaiva Highlight.js Repo [highlightjs-jaiva](https://github.com/jaiva-lang/highlightjs)
+- Jaiva Syntax definitions (tmLanguage & Vim) [syntax](https://github.com/jaiva-lang/syntax)
+- Jaiva VSCode Extension [vscode](https://github.com/jaiva-lang/vscode)
 
 # Stats
 

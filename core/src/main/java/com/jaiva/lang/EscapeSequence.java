@@ -4,6 +4,7 @@ import com.jaiva.errors.TokenizerException;
 import com.jaiva.utils.Find;
 import io.github.yetnt.utils.tuple.Pair;
 import io.github.yetnt.utils.tuple.SamePair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -297,20 +298,32 @@ public class EscapeSequence {
      * @return Line with all jaiva special stuff escaped.
      */
     public static String escapeAll(String line) {
-        ArrayList<SamePair<Integer>> samePairs = Find.quotationPairs(line);
-        if (samePairs.isEmpty())
+        return escapeAll(line, Find.quotationPairs(line));
+    }
+
+    /**
+     * This method escapes all contents within string literals.
+     * <p>
+     * This uses the {@link Find#quotationPairs(String)} which if there is an
+     * unclosed string, does not consider as a pir.
+     *
+     * @param line Line to escape
+     * @return Line with all jaiva special stuff escaped.
+     */
+    public static String escapeAll(String line, @NotNull ArrayList<SamePair<Integer>> quotationPairs) {
+        if (quotationPairs.isEmpty())
             return line;
         StringBuilder b = new StringBuilder();
         // put the substring before the first pair
-        b.append(line.substring(0, samePairs.getFirst().getFirst() + 1)); // include the first "
-        for (int i = 0; i < samePairs.size(); i++) {
-            Pair<Integer, Integer> pair = samePairs.get(i);
+        b.append(line.substring(0, quotationPairs.getFirst().getFirst() + 1)); // include the first "
+        for (int i = 0; i < quotationPairs.size(); i++) {
+            Pair<Integer, Integer> pair = quotationPairs.get(i);
             String sub = line.substring(pair.getFirst() + 1, pair.getSecond());
             b.append(toEscape(sub));
             // append " then the rest of the string, and then another "
             b.append(line.substring(
                     pair.getSecond(),
-                    i != samePairs.size() - 1 ? samePairs.get(i + 1).getFirst() + 1 : line.length()));
+                    i != quotationPairs.size() - 1 ? quotationPairs.get(i + 1).getFirst() + 1 : line.length()));
 
         }
 

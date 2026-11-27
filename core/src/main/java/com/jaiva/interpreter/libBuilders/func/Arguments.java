@@ -2,6 +2,8 @@ package com.jaiva.interpreter.libBuilders.func;
 
 import com.jaiva.interpreter.libBuilders.func.arg.AVarArgument;
 import com.jaiva.interpreter.libBuilders.func.arg.NeighbouringArg;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -9,6 +11,8 @@ public class Arguments {
     ArrayList<Argument> arguments = new ArrayList<>();
     Arguments() {}
 
+    @NotNull
+    @Contract(" -> new")
     public static Arguments getInstance() {
         return new Arguments();
     }
@@ -40,5 +44,14 @@ public class Arguments {
 
     public ArrayList<Argument> getArguments() {
         return  arguments;
+    }
+
+    public int getIndexFromName(String name) {
+        for (int i = 0; i < arguments.size(); i++) {
+            if (arguments.get(i).toTokenString().equals(name)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

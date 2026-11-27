@@ -4,6 +4,7 @@ import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Interpreter;
 import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.Scope;
+import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
@@ -51,6 +52,8 @@ public class BaseFunction extends Symbol implements ToJSON<NewJson, Exception> {
      */
     private boolean evaluateParamsEarly = true;
 
+    private Arguments builtArguments;
+
     /**
      * Constructs a new BaseFunction instance with the specified name and token.
      * 
@@ -72,6 +75,7 @@ public class BaseFunction extends Symbol implements ToJSON<NewJson, Exception> {
      */
     public BaseFunction(@NotNull FunctionBuilder functionBuilder) {
         this(functionBuilder.getName(), functionBuilder.toToken(), functionBuilder.getLib());
+        builtArguments = functionBuilder.getArguments();
     }
 
     /**
@@ -255,6 +259,26 @@ public class BaseFunction extends Symbol implements ToJSON<NewJson, Exception> {
     @Override
     public NewJson toJson() throws Exception {
         return token.toJson();
+    }
+
+    @NotNull
+    protected <T> T fetch(int index, @NotNull Class<T> clazz, @NotNull CallProperties callProperties) throws InterpreterException.FunctionParametersException {
+        Object val = callProperties.params().get(index);
+        if (!(clazz.isInstance(val)))
+            throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, String.valueOf(index+1), val, clazz,
+                    callProperties.getLineNumber());
+        return clazz.cast(val);
+    }
+
+    @NotNull
+    protected <T> T fetch(String parameterName, @NotNull Class<T> clazz, @NotNull CallProperties callProperties) throws InterpreterException {
+        int i = builtArguments != null ? builtArguments.getIndexFromName(parameterName) : -1;
+        if (i == -1)
+            throw new InterpreterException.ImplementationException(
+                    callProperties.scope(), callProperties.getLineNumber(),
+                    "No parameter with the name \""+parameterName+"\" exists."
+            );
+        return fetch(i, clazz, callProperties);
     }
 
     public record CheckParams(

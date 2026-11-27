@@ -192,7 +192,7 @@ public final class Interpreter {
                     var = BaseVariable.create(((TokenDefault<?>) t).name, (TokenDefault<?>) t,
                             something instanceof ArrayList ? (ArrayList) something
                                     : new ArrayList<>(Collections.singletonList(something)),
-                            false);
+                            something instanceof ArrayList);
                 freezeIfScopeConfig(var, scope);
                 scope.getVfs().put(tUnknownScalar.name, var);
             }

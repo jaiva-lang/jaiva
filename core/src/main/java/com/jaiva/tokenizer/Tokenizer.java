@@ -22,6 +22,7 @@ import com.jaiva.utils.Find;
 import com.jaiva.utils.Validate;
 import com.jaiva.utils.Validate.IsValidSymbolName;
 import com.jaiva.utils.generic.BlockChain;
+import com.jaiva.utils.generic.BracePairs;
 import com.jaiva.utils.generic.MultipleLinesOutput;
 import io.github.yetnt.utils.tuple.Pair;
 import io.github.yetnt.utils.tuple.SamePair;
@@ -560,19 +561,22 @@ public final class Tokenizer {
             if (bp.getSecond() == part.length()-1)
                 throw new MalformedSyntaxException("Daaamn try add modifiers for a symbol with NO NAME???", lineNumber);
 
-            String mods = part.substring(1, bp.getSecond()).trim();
+            String mods = EscapeSequence.escapeAll(part.substring(1, bp.getSecond()).trim());
             String name = part.substring(bp.getSecond()+1).trim();
 
             ArrayList<String> modifiers;
 
+            ArrayList<SamePair<Integer>> stringIndices = Find.quotationPairs(mods);
+            BracePairs bracePairs = Find.bracePairs(mods);
+
             // if it contains , use it
-            if (mods.contains(","))
-                modifiers = Find.split(mods, ',')
+            if (Validate.contains(mods, ',', stringIndices, bracePairs))
+                modifiers = Find.split(mods, ',', stringIndices, bracePairs)
                         .stream()
                         .map(String::trim)
                         .collect(Collectors.toCollection(ArrayList::new));
             else
-                modifiers = Find.split(mods, ' ')
+                modifiers = Find.split(mods, ' ', stringIndices, bracePairs)
                         .stream()
                         .map(String::trim)
                         .collect(Collectors.toCollection(ArrayList::new));

@@ -1,31 +1,17 @@
-maak [alt] a <- 1!
 
-khuluma(a)!
-a <- arrLit(1, 2, 4)!
-khuluma(a)!
-a <- 34!
-khuluma(a)!
+
+@ using cuystom modifiers
 
 tsea "jaiva/reflect" <- r_sGetModifiers!
 
-kwenza [vo] func(s) ->
-    khuluma(s)!
+maak [proc="a b c" bomb=1] c <- 10!
+
+kwenza containsProc(<-mods) ->
+    khutla tseaf("jaiva/arrays", a_find)(mods, f~(mod) : mod ? "proc=$"")?'!
 <~
 
-kwenza func2(s) ->
-    khuluma(s)!
-<~
+maak m <- r_sGetModifiers(c)!
 
-kwenza invoke([const] funcs, F~preProcessor, [const] input?) ->
-    maak out <-|!
-    colonize (f with funcs) ->
-        maak s <- input!
-        sif (r_sGetModifiers(f) ? "vo") ?> s <- preProcessor(s)!
-        maak o <- f(s)!
-        sif (o?') ?> out <- arrLit(out:::, o)!
-    <~
-    khutla out!
-<~
+khuluma(m)!
 
-khuluma()!
-|> invoke( arrLit(func, func2), f~(i) : i*12, 3)!
+khuluma(containsProc(m:::))!

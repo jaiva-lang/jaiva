@@ -13,7 +13,7 @@ which the current stable versions supports.
     -   _[Assignment Operators](#assignment-operators)_
     -   _[Types](#types)_
         -   [Number](#number)
-        -   [Booleans](#booleans)
+        -   [Booleans](#bools)
         -   [Strings](#strings)
             -   [Escaping Characters](#escaping-characters)
         -   [idk](#idk)
@@ -106,7 +106,7 @@ If you're using something like vscode and would like to document your [variables
 maak a <- 10!
 ```
 
-For more information on JaivaDoc, see [JDoc.md](docs/JDoc.md)
+For more information on JaivaDoc, see [JDoc.md](/docs/JDoc.md)
 
 ## Assignment operators
 
@@ -169,7 +169,7 @@ maak b <- "String"!
 To get the length of a string use the `~` operator
 
 ```jiv
-maak b <- "let's gooo"!
+maak b <- "let's good"!
 khuluma(b~)! @ returns 10
 ```
 
@@ -276,7 +276,7 @@ This is just a list of operators which resolve to something specific
 
 > [!NOTE]
 > The idk check only works if there is no right hand side input. If there is, then it
-> works as the `?` operator defined in [String operations](#string-operations). A containment
+> works as the `?` operator defined in [String operations](#string-related). A containment
 > check.
 
 ### Order of Operations
@@ -368,13 +368,13 @@ khuluma(a)! @ Prints [1, 3, 10, "fwe", aowa, []]
 
    `2 * arr` _returns_ **`[1, 1, 3, 3, 10, 10, "fwe", "fwe", aowa, aowa, [], []]`**
 
-4. Contains
+3. Contains
 
    `arr ? "tri"` _returns_ **`false`** (checks if the left-hand array contaisn the right hand value inside it.)
 
    `arr ? false` _returns_ **`true`** (recall `false` and `aowa` are identical.)
 
-5. Intersection
+4. Intersection
 
    `arr && arr2` _returns_ **`["fwe", 3]`** (The intersection between the 2 arrays.
    not sure about the order however it seems more dependant on RHS)
@@ -555,7 +555,7 @@ is a symbol.
 
 Variables are [scoped](#scopes) constructs.
 
-See [Globals](docs/Libraries.md) for a list of global variables that are available to you.
+See [Globals](/docs/Libraries.md) for a list of global variables that are available to you.
 
 ### Definition
 
@@ -753,7 +753,7 @@ maak result <- combine(-1, 0, arr1:::, arr2:::, 7, 8)! @ result is now [-1, 0, 1
 You can reference a function by excluding the parameter braces.
 
 ```jiv
-khuluma(additon)! @ This will print to the console, the function's defintion. So "addition(param1, param2)"
+khuluma(additon)! @ This will print to the console, the function's definition. So "addition(param1, param2)"
 ```
 
 And you can pass this reference as a value anywhere you want really
@@ -856,7 +856,7 @@ and `(return value)` is an atomic value, so that's your number, string, variable
 
 Lambdas, are strictly single line and have to return something within that single line (Without the `khutla` keyword)
 
-Also. Yes. Creating a lambda, preserves the [Scope](#scope) it was created in, allowing for functional paradigms like currying and closures.
+Also. Yes. Creating a lambda, preserves the [Scope](#scopes) it was created in, allowing for functional paradigms like currying and closures.
 
 e.g.
 
@@ -877,10 +877,10 @@ a_reduce(arr, f~(a, b) : a << b)!
 ```
 
 A lambda, is no different to a function at all. Parameters are defined the same way, and it's called the same way too.
-Don't believe me? The token [TLambda](../src/main/java/com/jaiva/tokenizer/tokens/specific/TLambda.java)
-extends the token [TFunction](../src/main/java/com/jaiva/tokenizer/tokens/specific/TFunction.java) and within the interpreter,
-the class [Lambda](../src/main/java/com/jaiva/interpreter/symbol/Lambda.java) extends the class
-[BaseFunction](../src/main/java/com/jaiva/interpreter/symbol/BaseFunction.java)
+Don't believe me? The token [TLambda](/core/src/main/java/com/jaiva/tokenizer/tokens/specific/TLambda.java)
+extends the token [TFunction](/core/src/main/java/com/jaiva/tokenizer/tokens/specific/TFunction.java) and within the interpreter,
+the class [Lambda](/core/src/main/java/com/jaiva/interpreter/symbol/Lambda.java) extends the class
+[BaseFunction](/core/src/main/java/com/jaiva/interpreter/symbol/BaseFunction.java)
 
 ### Argument Extensions
 
@@ -1772,7 +1772,7 @@ zama zama ->
 > [!NOTE]
 > The way the code works, is it looks in it's current context for any variable which contains the exact word "error", so if you have like 4 variables named error, and you decide to open a chaai block, the name of the error variable will be "error4" (it counts the amount of current variables named error, and adds it to the variable name)
 > Just keep this in mind
-> This is defined in [Interpreter.java on line 499](/src/main/java/com/jaiva/interpreter/Interpreter.java)
+> This is defined in [Interpreter.java on line 499](/core/src/main/java/com/jaiva/interpreter/Interpreter.java)
 
 
 # Tsea (import) and exporting files
@@ -1813,14 +1813,14 @@ tsea "file.jiv" <- addition, subtraction!
 > tsea "jaiva/arrays"!
 > ```
 >
-> See [Globals](docs/Libraries.md) for a list of global variables and functions that are available to you, and others that you can import.
+> See [Globals](Libraries.md) for a list of global variables and functions that are available to you, and others that you can import.
 
 > [!NOTE]
 > Omitting the file extension is okay, however it will default to `.jiv`
 
 ## Functional Import
 
-If you only need say a single function or value and dont want to have the entire improt declaration
+If you only need say a single function or value and dont want to have the entire import declaration
 you can use [tseaf function](libs/globals.md#tseaf)
 
 An example below, although view the function's documentation for more information

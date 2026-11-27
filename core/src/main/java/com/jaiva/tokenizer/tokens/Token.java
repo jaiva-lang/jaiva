@@ -17,6 +17,7 @@ import com.jaiva.utils.generic.BracePairs;
 import io.github.yetnt.utils.tuple.SamePair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -138,6 +139,7 @@ public record Token<T extends TokenDefault<?>>(T value) {
      * @param line given line.
      * @return an atomic token
      */
+    @Nullable
     public static Object processContext(String line, int lineNumber, TConfig config) throws JaivaException {
         line = line.trim(); // gotta trim da line fr
         String originalLine = line;
@@ -168,10 +170,10 @@ public record Token<T extends TokenDefault<?>>(T value) {
                     "How did you add a colon before the lambda's parameter list ends???", lineNumber);
 
             // "f~  (woot, w) : woot - 1" becomes "(woot, w)"
-            String defintion = line.substring(0, indexOfCol).trim().substring(2).trim()
+            String definition = line.substring(0, indexOfCol).trim().substring(2).trim()
                     .substring(1); // now "woot, w)"
-            defintion = defintion.substring(0, defintion.length() - 1); // now "woot, w"
-            String[] args = defintion.split(Character.toString(Chars.ARGS_SEPARATOR));
+            definition = definition.substring(0, definition.length() - 1); // now "woot, w"
+            String[] args = definition.split(Character.toString(Chars.ARGS_SEPARATOR));
             for (int i = 0; i < args.length; i++) args[i] = args[i].trim();
 
 
@@ -223,12 +225,12 @@ public record Token<T extends TokenDefault<?>>(T value) {
                             amt + " is just not a number bro", lineNumber
                     );
 
-                if (!(number instanceof Long || number instanceof Integer)) {
+                if (!(number instanceof Long || number instanceof Integer))
                     throw new TokenizerException.MalformedSyntaxException(
                             "Input value for params extension repetition can only be an integer or long value",
                             lineNumber
                     );
-                }
+
 
                 long l = number.longValue();
 
@@ -252,14 +254,14 @@ public record Token<T extends TokenDefault<?>>(T value) {
                 args.add(line);
             }
 
-            if (line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD)) {
+            if (line.length() - Chars.SPREAD.length() == line.indexOf(Chars.SPREAD))
                 // user attempts to spread
                 throw new TokenizerException.MalformedSyntaxException(
                         "The spread operator cannot be applied to a function extension." +
                                 " (Wrap in braces if you intended to spread an input argument)",
                         lineNumber
                 );
-            }
+
 
             ArrayList<Object> parsedArgs = new ArrayList<>();
             for (String arg : args) {
@@ -311,7 +313,10 @@ public record Token<T extends TokenDefault<?>>(T value) {
                             line = line.replace(Keywords.TRUE, "true").replace(Keywords.FALSE, "false");
                             return Boolean.parseBoolean(line);
                         } else if (line.contains("\"")) {
-                            return line.substring(1, line.length() - 1).replace("\"", "");
+                            return line.substring(1, line.length() - 1); // .replace("\"", "");
+                            // Message to old me regarding the above line.
+                            // Why the fuck did you replace the " if it already comes quoted and you substring
+                            // the quotes out???
                         } else if (line.isBlank()) {
                             return null;
                         } else if (line.equals(Keywords.UNDEFINED)) {
