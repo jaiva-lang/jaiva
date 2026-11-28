@@ -7,7 +7,7 @@ import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.LibrarySymbol;
 import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
 import com.jaiva.interpreter.symbol.Symbol;
 import io.github.yetnt.utils.builders.MarkDownLiteral;
 import org.jetbrains.annotations.NotNull;

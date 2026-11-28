@@ -6,7 +6,7 @@ import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.runtime.DebugController;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.BaseVariable.DefinedVariable;
-import com.jaiva.interpreter.symbol.DefinedFunction;
+import com.jaiva.interpreter.symbol.fn.DefinedFunction;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.tokenizer.tokens.Token;
 import io.github.yetnt.utils.tuple.SamePair;

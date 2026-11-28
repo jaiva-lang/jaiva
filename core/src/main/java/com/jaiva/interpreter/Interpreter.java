@@ -8,7 +8,7 @@ import com.jaiva.errors.JaivaException.DebugException;
 import com.jaiva.errors.Warnings;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.runtime.ImportVfs;
-import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.BaseVariable.VariableType;
 import com.jaiva.interpreter.symbol.Symbol;

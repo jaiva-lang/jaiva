@@ -8,8 +8,8 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.libs.types.TypeConverter;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import io.github.yetnt.utils.functional.function.ThrowableBiFunction;
 import org.jetbrains.annotations.NotNull;
@@ -106,97 +106,7 @@ public class NetInterfsQuery extends BaseLibrary {
                             ));
             if (value.extra != null)
                 value.extra.accept(args);
-            add(
-                    new BaseFunction(
-                            FunctionBuilder.start()
-                                    .name(name)
-                                    .setLib("net/interf/query")
-                                    .arguments(args)
-                                    .docs(JDoc.builder()
-                                            .sinceVersion("7.0.0")
-                                            .addDesc(value.desc)
-                                            .addExample("""
-                                                    tsea "jaiva/net/interf"!
-                                                   \s
-                                                    maak interfaces <- net_interfs()!
-                                                    maak firstInterface <- interfaces[0]!
-                                                    maak value <-\s""" + name + "(firstInterface)!")
-                                    )
-                    ) {
-                        @Override
-                        public Object call(CallProperties callProperties) throws Exception {
-                            checkParams(callProperties.toCheckParams());
-
-                            Object f = callProperties.params().getFirst();
-                            if (!(f instanceof ArrayList<?> arr))
-                                throw new InterpreterException.FunctionParametersException(
-                                        callProperties.scope(),
-                                        this, "1", f,
-                                        ArrayList.class, callProperties.getLineNumber()
-                                );
-
-                            ArrayList<Object> array = (ArrayList<Object>)arr;
-
-                            boolean format = false;
-                            if (callProperties.params().size() > 1) {
-                                Object t = callProperties.params().get(1);
-                                if (!(t instanceof Boolean r))
-                                    throw new InterpreterException.FunctionParametersException(
-                                            callProperties.scope(),
-                                            this, "2", t,
-                                            Boolean.class, callProperties.getLineNumber()
-                                    );
-                                format = r;
-                            }
-
-                            Object returned;
-                            try {
-                                returned = array.get(value.i);
-                            } catch (IndexOutOfBoundsException e) {
-                                throw new InterpreterException.WtfAreYouDoingException(
-                                        callProperties.scope(), "The given index was expected to a value... Are you sure this is a network interface array?", callProperties.getLineNumber()
-                                );
-                            }
-
-                            if (value != Values.AddrIpv4List && value != Values.AddrIpv6List)
-                                return returned;
-
-                            if (!(returned instanceof ArrayList<?> byteArray))
-                                throw new InterpreterException.WtfAreYouDoingException(
-                                        callProperties.scope(), "The given index was expected to have an array of arrays... Are you sure this is a network interface array?", callProperties.getLineNumber()
-                                );
-
-                            if (value.checker != null && format) {
-                                return value.checker.apply((ArrayList<Object>) byteArray, (arr2, intAmt) -> {
-                                    ArrayList<ArrayList<Integer>> c = new ArrayList<>();
-                                    for (Object con : byteArray) {
-                                        if (!(con instanceof ArrayList<?> conv1))
-                                            throw new InterpreterException.WtfAreYouDoingException(
-                                                    callProperties.scope(), "The given input must be an array man", callProperties.getLineNumber()
-                                            );
-
-                                        ArrayList<Integer> conv2;
-                                        try {
-                                            conv2 = TypeConverter.validate((ArrayList<Object>) conv1);
-                                        } catch (IllegalArgumentException e) {
-                                            throw new InterpreterException.WtfAreYouDoingException(
-                                                    callProperties.scope(), e.getMessage(), callProperties.getLineNumber()
-                                            );
-                                        }
-                                        if (conv2.size() != intAmt)
-                                            throw new InterpreterException.WtfAreYouDoingException(
-                                                    callProperties.scope(), "idk how you got this far, but the length of the given arreay was suppsoed to be " + intAmt, callProperties.getLineNumber()
-                                            );
-                                        c.add(conv2);
-                                    }
-                                    return c;
-                                });
-                            } else {
-                                return byteArray;
-                            }
-                        }
-                    }
-            );
+            add(new FInterfQuery(value, name, args));
         }
     }
 
@@ -222,5 +132,84 @@ public class NetInterfsQuery extends BaseLibrary {
         }
 
         return sj.toString();
+    }
+
+    static class FInterfQuery extends ImplementedFunction {
+        private final Values value;
+
+        public FInterfQuery(Values value, String name, Arguments args) {
+            super(
+                    FunctionBuilder.start()
+                            .name(name)
+                            .setLib("net/interf/query")
+                            .arguments(args)
+                            .docs(JDoc.builder()
+                                    .sinceVersion("7.0.0")
+                                    .addDesc(value.desc)
+                                    .addExample("""
+                                            tsea "jaiva/net/interf"!
+                                           \s
+                                            maak interfaces <- net_interfs()!
+                                            maak firstInterface <- interfaces[0]!
+                                            maak value <-\s""" + name + "(firstInterface)!")
+                            )
+            );
+            this.value = value;
+        }
+
+        @Override
+        public Object call(CallProperties callProperties) throws Exception {
+            checkParams(callProperties.toCheckParams());
+
+            ArrayList<Object> array = fetch("array", ArrayList.class, callProperties);
+
+            boolean format = fetch("format", Boolean.class, callProperties, false);
+
+            Object returned;
+            try {
+                returned = array.get(value.i);
+            } catch (IndexOutOfBoundsException e) {
+                throw new InterpreterException.WtfAreYouDoingException(
+                        callProperties.scope(), "The given index was expected to a value... Are you sure this is a network interface array?", callProperties.getLineNumber()
+                );
+            }
+
+            if (value != Values.AddrIpv4List && value != Values.AddrIpv6List)
+                return returned;
+
+            if (!(returned instanceof ArrayList<?> byteArray))
+                throw new InterpreterException.WtfAreYouDoingException(
+                        callProperties.scope(), "The given index was expected to have an array of arrays... Are you sure this is a network interface array?", callProperties.getLineNumber()
+                );
+
+            if (value.checker != null && format) {
+                return value.checker.apply((ArrayList<Object>) byteArray, (arr2, intAmt) -> {
+                    ArrayList<ArrayList<Integer>> c = new ArrayList<>();
+                    for (Object con : byteArray) {
+                        if (!(con instanceof ArrayList<?> conv1))
+                            throw new InterpreterException.WtfAreYouDoingException(
+                                    callProperties.scope(), "The given input must be an array man", callProperties.getLineNumber()
+                            );
+
+                        ArrayList<Integer> conv2;
+                        try {
+                            conv2 = TypeConverter.validate((ArrayList<Object>) conv1);
+                        } catch (IllegalArgumentException e) {
+                            throw new InterpreterException.WtfAreYouDoingException(
+                                    callProperties.scope(), e.getMessage(), callProperties.getLineNumber()
+                            );
+                        }
+                        if (conv2.size() != intAmt)
+                            throw new InterpreterException.WtfAreYouDoingException(
+                                    callProperties.scope(), "idk how you got this far, but the length of the given arreay was suppsoed to be " + intAmt, callProperties.getLineNumber()
+                            );
+                        c.add(conv2);
+                    }
+                    return c;
+                });
+            } else {
+                return byteArray;
+            }
+        }
     }
 }

@@ -70,7 +70,7 @@ public class ByteConstants extends BaseLibrary {
                                     .name(prefix + "_" + value.name())
                                     .docs(JDoc.builder().sinceVersion("6.1.0")
                                             .addDesc(
-                                                    "Continuous Function Input constant over file streams. "
+                                                    "Continuous ImplementedFunction Input constant over file streams. "
                                                     + value.extraInfo
                                             ).addNote(
                                                     "This is for the " +

@@ -67,7 +67,7 @@ public class PainFileTokenizerTests{
         // name with F~ prepended to it
         Assertions.assertEquals("F~replaceOddChar", replaceOddChar.name);
 
-        // Function is exportedc with * syntax
+        // ImplementedFunction is exportedc with * syntax
         Assertions.assertTrue(replaceOddChar.exportSymbol);
 
         Jaiva.assertFunctionDefinition(
@@ -78,7 +78,7 @@ public class PainFileTokenizerTests{
                 }
         );
 
-        // Function has only a single body
+        // ImplementedFunction has only a single body
         CodeRegion body = Jaiva.assertConstruct(replaceOddChar, 1).getFirst();
 
         // the body goes to line number 45 and has 5 tokens

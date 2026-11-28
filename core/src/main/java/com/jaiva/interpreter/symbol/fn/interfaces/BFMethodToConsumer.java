@@ -1,6 +1,6 @@
-package com.jaiva.interpreter.symbol.inf;
+package com.jaiva.interpreter.symbol.fn.interfaces;
 
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
 import io.github.yetnt.utils.functional.consumer.ThrowableConsumer;
 import io.github.yetnt.utils.functional.function.ThrowableFunction;
 

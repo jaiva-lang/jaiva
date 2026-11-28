@@ -2,10 +2,10 @@ package com.jaiva.errors;
 
 import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.Scope;
-import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.BaseVariable.DefinedVariable;
-import com.jaiva.interpreter.symbol.DefinedFunction;
+import com.jaiva.interpreter.symbol.fn.DefinedFunction;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import com.jaiva.tokenizer.tokens.specific.*;
@@ -388,8 +388,8 @@ public class InterpreterException extends JaivaException {
          */
         public WtfAreYouDoingException(Scope ct, Object s, Class<?> correctClass, int lineNumber) {
             super(ct, lineNumber,
-                    "Alright bub. if you're going to start mixing and matching, you might as well write lua code. "
-                            + "(You tried using a " + friendlyName(s.getClass()) + " as if it were a "
+                    "iwl, that's just straight up the wrong type input. "
+                            + "(You entered a " + friendlyName(s.getClass()) + " but i needed a "
                             + friendlyName(correctClass.getSimpleName()) + ")");
         }
 

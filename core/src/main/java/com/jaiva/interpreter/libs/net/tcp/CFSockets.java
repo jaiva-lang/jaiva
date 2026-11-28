@@ -5,12 +5,13 @@ import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libs.net.NetConst;
 import com.jaiva.interpreter.libs.types.TypeConverter;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.interpreter.symbol.continuous.CFClosures;
 import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
-import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
-import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
+import com.jaiva.interpreter.symbol.fn.interfaces.BFMethodToConsumer;
+import com.jaiva.interpreter.symbol.fn.interfaces.BFMethodToSupplier;
 import com.jaiva.tokenizer.tokens.Token;
 import io.github.yetnt.utils.tuple.Pair;
 import org.jetbrains.annotations.Contract;
@@ -25,7 +26,7 @@ import java.util.List;
 
 final class CFSockets {
 
-    public static class WrappedCloseFunction extends BaseFunction {
+    public static class WrappedCloseFunction extends ImplementedFunction {
         private final Socket socket;
         private final CFClosures.Closed closed;
         public WrappedCloseFunction(Socket socket, CFClosures.Closed closed) {
@@ -45,7 +46,7 @@ final class CFSockets {
                     ))
                     , callProperties);
             socket.close();
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
     @NotNull

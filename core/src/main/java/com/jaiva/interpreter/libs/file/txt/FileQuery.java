@@ -7,8 +7,8 @@ import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class FileQuery extends BaseLibrary {
         add(new FNameOf(), new FDirOf(), new FContentOf(), new FPermsOf());
     }
 
-    public static class FNameOf extends BaseFunction {
+    public static class FNameOf extends ImplementedFunction {
         public FNameOf() {
             super(
                     FunctionBuilder.start()
@@ -60,16 +60,13 @@ public class FileQuery extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams()); // Ensure correct number of parameters
-            Object fileObj = callProperties.params().getFirst();
-            if (!(fileObj instanceof ArrayList<?> arr))
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                        "The parameter 'file' needs to be an array like come on!", callProperties.getLineNumber());
+            ArrayList<?> arr = fetch("file", ArrayList.class, callProperties);
             FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.getLineNumber());
             return file.getFileName();
         }
     }
 
-    public static class FDirOf extends BaseFunction {
+    public static class FDirOf extends ImplementedFunction {
         public FDirOf() {
             super(
                     FunctionBuilder.start()
@@ -96,17 +93,14 @@ public class FileQuery extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.toCheckParams()); // Ensure correct number of parameters
-            Object fileObj = callProperties.params().getFirst();
-            if (!(fileObj instanceof ArrayList<?> arr))
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                        "The parameter 'file' needs to be an array like come on!", callProperties.getLineNumber());
+            checkParams(callProperties.toCheckParams());
+            ArrayList<?> arr = fetch("file", ArrayList.class, callProperties);
             FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.getLineNumber());
             return file.getFilePath();
         }
     }
 
-    public static class FContentOf extends BaseFunction {
+    public static class FContentOf extends ImplementedFunction {
         public FContentOf() {
             super(
                     FunctionBuilder.start()
@@ -133,17 +127,14 @@ public class FileQuery extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.toCheckParams()); // Ensure correct number of parameters
-            Object fileObj = callProperties.params().getFirst();
-            if (!(fileObj instanceof ArrayList<?> arr))
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                        "The parameter 'file' needs to be an array like come on!", callProperties.getLineNumber());
+            checkParams(callProperties.toCheckParams());
+            ArrayList<?> arr = fetch("file", ArrayList.class, callProperties);
             FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.getLineNumber());
             return file.getFileContent();
         }
     }
 
-    public static class FPermsOf extends BaseFunction {
+    public static class FPermsOf extends ImplementedFunction {
         public FPermsOf() {
             super(
                     FunctionBuilder.start()
@@ -181,10 +172,10 @@ public class FileQuery extends BaseLibrary {
         }
 
         /**
-         * Function returned by f_permsOf to get specific permissions.
+         * ImplementedFunction returned by f_permsOf to get specific permissions.
          * This function doesn't actually require to have a name as it's created and immediately returned by f_permsOf.
          */
-        public static class FPermissions extends BaseFunction {
+        public static class FPermissions extends ImplementedFunction {
             private final FileType file;
 
             public FPermissions(FileType file) {
@@ -269,11 +260,8 @@ public class FileQuery extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            checkParams(callProperties.toCheckParams()); // Ensure correct number of parameters
-            Object fileObj = callProperties.params().getFirst();
-            if (!(fileObj instanceof ArrayList<?> arr))
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(),
-                        "The parameter 'file' needs to be an array like come on!", callProperties.getLineNumber());
+            checkParams(callProperties.toCheckParams());
+            ArrayList<?> arr = fetch("file", ArrayList.class, callProperties);
             FileType file = FileType.of((ArrayList<Object>) arr, callProperties.scope(), callProperties.getLineNumber());
             return new FPermissions(file);
         }

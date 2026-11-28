@@ -5,13 +5,14 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.PublicLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.specific.TFunction;
 import com.jaiva.tokenizer.tokens.specific.TStringVar;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,14 +28,14 @@ class CustomLib extends BaseLibrary {
         add(new VVar());
     }
 
-    static class FEcho extends BaseFunction {
+    static class FEcho extends ImplementedFunction {
         public FEcho() throws JaivaException {
             super("echo", new TFunction("echo", new String[] {"arg1"}, null, -1, JDoc.from("d")));
             freeze();
         }
 
         @Override
-        public Object call(CallProperties callProperties) throws Exception {
+        public Object call(@NotNull CallProperties callProperties) throws Exception {
             this.checkParams(callProperties.toCheckParams());
             return callProperties.params().getFirst();
         }

@@ -2,8 +2,8 @@ package com.jaiva.interpreter;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.errors.JaivaException;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.LinkedFunction;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.LinkedFunction;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TExpression;
@@ -240,7 +240,7 @@ final class PrimitivesMath {
 
         ArrayList<String> IS = new ArrayList<>(Arrays.asList("+", "-", "*", "/", "=", "!="));
         ArrayList<String> ArrI = new ArrayList<>(Arrays.asList("*", "+", "=", "-", "!="));
-        ArrayList<String> AA = new ArrayList<>(List.of("&&"));
+        ArrayList<String> AA = new ArrayList<>(List.of("&&", "=", "!="));
         ArrayList<String> SS = new ArrayList<>(Arrays.asList("+", "-", "=", "!=", "/", "?"));
         ArrayList<String> idk = new ArrayList<>(Arrays.asList("+", "=", "!="));
         ArrayList<String> FF = new ArrayList<>(List.of("||", "&&"));
@@ -289,7 +289,10 @@ final class PrimitivesMath {
                 case "AA" -> {
                     if (!AA.contains(op))
                         throw new InterpreterException.OverloadedCalcException(scope, ts);
-                    return op.equals("&&") ? retainAll((ArrayList)lhs, (ArrayList)rhs) : null;
+                    return op.equals("&&") ?
+                            retainAll((ArrayList)lhs, (ArrayList)rhs) :
+                            op.equals("=") ? lhs.equals(rhs) :
+                                    op.equals("!=") ? !lhs.equals(rhs) : null;
                 }
                 case "idkS" -> {
                     if (!idk.contains(op))

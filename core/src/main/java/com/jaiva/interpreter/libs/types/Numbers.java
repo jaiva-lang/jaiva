@@ -8,10 +8,9 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libBuilders.func.arg.AVarArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.Token;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class Numbers extends BaseLibrary {
         );
     }
 
-    public static class FDoubleToIEE754Long extends BaseFunction {
+    public static class FDoubleToIEE754Long extends ImplementedFunction {
         public FDoubleToIEE754Long() {
             super(
                     FunctionBuilder.start()
@@ -63,7 +62,7 @@ public class Numbers extends BaseLibrary {
 
     }
 
-    public static class FLongToIEEE754Double extends BaseFunction {
+    public static class FLongToIEEE754Double extends ImplementedFunction {
         public FLongToIEEE754Double() {
             super(
                     FunctionBuilder.start()
@@ -98,7 +97,7 @@ public class Numbers extends BaseLibrary {
         }
     }
 
-    static class FStringFromByteArray extends BaseFunction {
+    static class FStringFromByteArray extends ImplementedFunction {
         public FStringFromByteArray() {
             super(
                     FunctionBuilder.start()
@@ -130,7 +129,7 @@ public class Numbers extends BaseLibrary {
 
         @Override
         public Object call(CallProperties callProperties) throws Exception {
-            if (callProperties.params().isEmpty() || (callProperties.params().size() == 1 && callProperties.params().getFirst() == null)) return Token.voidValue(callProperties.getLineNumber());
+            if (callProperties.params().isEmpty() || (callProperties.params().size() == 1 && callProperties.params().getFirst() == null)) return callProperties.idk();
             byte[] collectedBytss = new byte[callProperties.params().size()];
             for (int i = 0; i < callProperties.params().size(); i++) {
                 Object val = callProperties.params().get(i);
@@ -155,7 +154,7 @@ public class Numbers extends BaseLibrary {
     }
 
 
-    static class FStringToByteArray extends BaseFunction {
+    static class FStringToByteArray extends ImplementedFunction {
         public FStringToByteArray() {
             super(
                     FunctionBuilder.start()

@@ -6,14 +6,21 @@ import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
+import com.jaiva.interpreter.symbol.fn.interfaces.ArgumentChecker;
 import com.jaiva.tokenizer.jdoc.JDoc;
+import com.jaiva.utils.Find;
+import org.jetbrains.annotations.NotNull;
 
 @JaivaLibrary(path = "strings", description = "Working with strings man")
 public class StringLib extends BaseLibrary {
 
-    static class FSplit extends BaseFunction {
+    public StringLib() {
+        add(new FSplit());
+    }
+
+    static class FSplit extends ImplementedFunction {
         public FSplit() {
             super(
                     FunctionBuilder.start()
@@ -35,11 +42,15 @@ public class StringLib extends BaseLibrary {
         }
 
         @Override
-        public Object call(CallProperties callProperties) throws Exception {
+        public Object call(@NotNull CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams());
 
             String string = fetch("string", String.class, callProperties);
-//            String char = fe
+            String charI = fetch("char", String.class, callProperties,
+                    ArgumentChecker.simpleError((s) -> s.length() != 1, "The char input has to be... a single character gng")
+            );
+
+            return Find.split(string, charI.charAt(0));
         }
     }
 }

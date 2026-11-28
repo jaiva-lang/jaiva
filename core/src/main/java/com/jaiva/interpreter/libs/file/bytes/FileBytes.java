@@ -1,7 +1,6 @@
 package com.jaiva.interpreter.libs.file.bytes;
 
 import com.jaiva.errors.InterpreterException;
-import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -9,8 +8,8 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.Exports;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.interpreter.symbol.continuous.CFClosures;
 import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
 import com.jaiva.interpreter.libs.types.TypeConverter;
@@ -35,7 +34,7 @@ public class FileBytes extends BaseLibrary {
         add(new FByteReader(), new FByteWriter());
     }
 
-    static class FByteWriter extends BaseFunction {
+    static class FByteWriter extends ImplementedFunction {
         public FByteWriter() {
             super(
                     FunctionBuilder.start()
@@ -60,7 +59,7 @@ public class FileBytes extends BaseLibrary {
                                     JDoc.builder().sinceVersion("6.1.0")
                                             .addDesc("Provides byte level writes into a file.")
                                             .addReturns("Returns a " +
-                                                    new MarkDownLiteral("Continuous Function")
+                                                    new MarkDownLiteral("Continuous ImplementedFunction")
                                                             .linkTo("../Continuous-Functions.md")
                                              + " over the file writing resource.")
                                             .addExample("""
@@ -84,23 +83,10 @@ public class FileBytes extends BaseLibrary {
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams());
 
-            Object p = callProperties.params().getFirst();
-            if (!(p instanceof String path))
-                throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "1", p, String.class, callProperties.getLineNumber()
-                );
-
-            boolean append = true;
-            if (callProperties.params().size() > 1
-                    && callProperties.params().get(1) instanceof Boolean b)
-                append = b;
+            String path = fetch("filePath", String.class, callProperties);
+            boolean append = fetch("append", boolean.class, callProperties, true);
 
             File f = new File(path);
-
-//            if (f.exists())
-//                throw new InterpreterException.WtfAreYouDoingException(
-//                        scope,  "File no existy", tFuncCall.lineNumber
-//                );
 
             DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(f,  append)));
 
@@ -158,7 +144,7 @@ public class FileBytes extends BaseLibrary {
     }
 
 
-    static class FByteReader extends BaseFunction {
+    static class FByteReader extends ImplementedFunction {
         public FByteReader() {
             super(
                     FunctionBuilder.start()
@@ -176,7 +162,7 @@ public class FileBytes extends BaseLibrary {
                                     JDoc.builder().sinceVersion("6.1.0")
                                             .addDesc("Provides byte level reads into a file.")
                                             .addReturns("Returns a " +
-                                                    new MarkDownLiteral("Continuous Function")
+                                                    new MarkDownLiteral("Continuous ImplementedFunction")
                                                             .linkTo("../Continuous-Functions.md")
                                                     + " over the file reading resource.")
                                             .addExample("""
@@ -212,11 +198,7 @@ public class FileBytes extends BaseLibrary {
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams());
 
-            Object p = callProperties.params().getFirst();
-            if (!(p instanceof String path))
-                throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "1", p, String.class, callProperties.getLineNumber()
-                );
+            String path = fetch("filePath", String.class, callProperties);
 
             File f = new File(path);
 

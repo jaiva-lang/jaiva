@@ -6,9 +6,11 @@ import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AVarArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -19,7 +21,8 @@ public class MathContainer extends BaseLibrary {
         );
     }
 
-    private ArrayList<Number> toIntegerList(ArrayList<Object> params, String funcName, BaseFunction func, Scope scope, int lineNumber) throws Exception {
+    @NotNull
+    private ArrayList<Number> toIntegerList(@NotNull ArrayList<Object> params, String funcName, BaseFunction func, Scope scope, int lineNumber) throws Exception {
         ArrayList<Number> nums = new ArrayList<>();
         for (int i = 0; i < params.size(); i++) {
             Object p = params.get(i);
@@ -55,7 +58,7 @@ public class MathContainer extends BaseLibrary {
         return computeGCD(b2, a2 % b2);
     }
 
-    public class FGcd extends BaseFunction {
+    public class FGcd extends ImplementedFunction {
         public FGcd() {
             super(
                     FunctionBuilder.start()
@@ -99,7 +102,7 @@ public class MathContainer extends BaseLibrary {
         }
     }
 
-    public class FLcm extends BaseFunction {
+    public class FLcm extends ImplementedFunction {
         public FLcm() {
             super(
                     FunctionBuilder.start()

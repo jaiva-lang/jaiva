@@ -1,12 +1,13 @@
-package com.jaiva.interpreter.symbol;
+package com.jaiva.interpreter.symbol.fn;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Interpreter;
 import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.Scope;
-import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.runtime.IConfig;
+import com.jaiva.interpreter.symbol.Symbol;
+import com.jaiva.interpreter.symbol.SymbolType;
 import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.NewJson;
@@ -33,26 +34,31 @@ import java.util.Arrays;
  * <p>
  *     A user defined function, is a {@link DefinedFunction}, where as a user defined
  *     lambda is a further specialisation, being a {@link Lambda}. But they are all functions
- *     nonetheless. (Except for the fact that {@link Lambda} stores it's creation scope).
+ *     nonetheless. (Except for the fact that {@link Lambda} stores it's creation scope). Along
+ *     with a {@link LinkedFunction} which stores any 2 {@link BaseFunction}s
+ * </p>
+ * <p>
+ *     A {@link ImplementedFunction} on the other hand, is a non-sealed, implementable version of
+ *     {@link BaseFunction} and it is what all libraries extend.
  * </p>
  * @see #call(CallProperties)
  * @see DefinedFunction
  * @see Lambda
  * @see Symbol
+ * @see ImplementedFunction
  * @see Interpreter
  * @see TFunction
  * @see TFuncCall
  * @see Primitives
  * @author Lehlogonolo Poole
  */
-public class BaseFunction extends Symbol implements ToJSON<NewJson, Exception> {
+public sealed class BaseFunction extends Symbol implements ToJSON<NewJson, Exception>
+permits ImplementedFunction, DefinedFunction {
 
     /**
      * Whether to evaluate parameters early or delegate to the function itself's job.
      */
     private boolean evaluateParamsEarly = true;
-
-    private Arguments builtArguments;
 
     /**
      * Constructs a new BaseFunction instance with the specified name and token.
@@ -60,7 +66,7 @@ public class BaseFunction extends Symbol implements ToJSON<NewJson, Exception> {
      * @param name  the name of the function
      * @param token the token associated with the function
      */
-    public BaseFunction(String name, TFunction token) {
+    BaseFunction(String name, TFunction token) {
         super(name, SymbolType.FUNCTION, token);
     }
 
@@ -73,9 +79,8 @@ public class BaseFunction extends Symbol implements ToJSON<NewJson, Exception> {
      * Constructs a new BaseFunction instance with da specified function builder
      * @param functionBuilder da builder.
      */
-    public BaseFunction(@NotNull FunctionBuilder functionBuilder) {
+    BaseFunction(@NotNull FunctionBuilder functionBuilder) {
         this(functionBuilder.getName(), functionBuilder.toToken(), functionBuilder.getLib());
-        builtArguments = functionBuilder.getArguments();
     }
 
     /**
@@ -123,7 +128,7 @@ public class BaseFunction extends Symbol implements ToJSON<NewJson, Exception> {
      * @throws Exception If an error occurs during the function call.
      */
     public Object call(CallProperties callProperties) throws Exception {
-        return Token.voidValue(callProperties.getLineNumber());
+        return callProperties.idk();
     }
 
     public final Object call(@NotNull ArrayList<Object> params,
@@ -261,43 +266,19 @@ public class BaseFunction extends Symbol implements ToJSON<NewJson, Exception> {
         return token.toJson();
     }
 
-    @NotNull
-    protected <T> T fetch(int index, @NotNull Class<T> clazz, @NotNull CallProperties callProperties) throws InterpreterException.FunctionParametersException {
-        Object val = callProperties.params().get(index);
-        if (!(clazz.isInstance(val)))
-            throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, String.valueOf(index+1), val, clazz,
-                    callProperties.getLineNumber());
-        return clazz.cast(val);
-    }
-
-    @NotNull
-    protected <T> T fetch(String parameterName, @NotNull Class<T> clazz, @NotNull CallProperties callProperties) throws InterpreterException {
-        int i = builtArguments != null ? builtArguments.getIndexFromName(parameterName) : -1;
-        if (i == -1)
-            throw new InterpreterException.ImplementationException(
-                    callProperties.scope(), callProperties.getLineNumber(),
-                    "No parameter with the name \""+parameterName+"\" exists."
-            );
-        return fetch(i, clazz, callProperties);
-    }
-
-    public record CheckParams(
-            TFuncCall tFuncCall,
-            Scope scope,
-            ArrayList<Object> params
-    ) {}
-
     /**
      * Checks if the parameters passed to a function call match the function's definition.
      * This method validates the number of arguments and their optionality.
      *
+     * @implSpec If you've defined all the parameters in your function to be optional or
+     * otherwise have defined it to be var args, calling this is redudant.
      * @param checkParams The parameters object.
      * @throws InterpreterException If there's a mismatch in parameters (e.g., missing required arguments).
      */
     protected void checkParams(@NotNull CheckParams checkParams) throws InterpreterException {
-        TFuncCall tFuncCall = checkParams.tFuncCall;
-        ArrayList<Object> funcCallParams =  checkParams.params;
-        Scope scope = checkParams.scope;
+        TFuncCall tFuncCall = checkParams.tFuncCall();
+        ArrayList<Object> funcCallParams = checkParams.params();
+        Scope scope = checkParams.scope();
         TFunction functionToken = (TFunction) this.token;
 
         // this if sanitizes tFuncCall, as if it has 1 singular entry and that entry is
@@ -368,9 +349,9 @@ public class BaseFunction extends Symbol implements ToJSON<NewJson, Exception> {
     /**
      * Creates a new user-defined function with the specified name and token.
      * 
-     * @param name  Function name
-     * @param token Function token
-     * @return A User Defined Function.
+     * @param name  ImplementedFunction name
+     * @param token ImplementedFunction token
+     * @return A User Defined ImplementedFunction.
      */
     @NotNull
     @Contract("_, _ -> new")

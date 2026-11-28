@@ -54,7 +54,7 @@ public class Symbol implements Cloneable {
      * @param name Symbol name
      * @param type Symbol type.
      */
-    Symbol(String name, SymbolType type) {
+    public Symbol(String name, SymbolType type) {
         this.symbolType = type;
         this.name = name;
     }
@@ -66,7 +66,7 @@ public class Symbol implements Cloneable {
      * @param type  Symbol type.
      * @param token Symbol's token.
      */
-    Symbol(String name, SymbolType type, TokenDefault<?> token) {
+    public Symbol(String name, SymbolType type, TokenDefault<?> token) {
         this.symbolType = type;
         this.token = token;
         this.name = name;

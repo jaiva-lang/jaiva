@@ -13,7 +13,7 @@ import io.github.yetnt.utils.builders.MarkDownLiteral;
         description = "Contains constants for providing input into continuous functions." +
                 " A continuous function, is one which closes over some form of system resources" +
                 " whether it be a file or some networking socket. See "
-        +"[Continuous Function](../Continuous-Functions.md)"
+        +"[Continuous ImplementedFunction](../Continuous-Functions.md)"
 )
 public class ContinuousConst extends BaseLibrary {
     public ContinuousConst() {
@@ -27,7 +27,7 @@ public class ContinuousConst extends BaseLibrary {
                                     .sinceVersion("6.1.0")
 
                                     .addDesc(value.getDoc())
-                                    .addNote("[Continuous Function](../Continuous-Functions.md)")
+                                    .addNote("[Continuous ImplementedFunction](../Continuous-Functions.md)")
                                     .addExample("""
                                             tsea "jaiva/continuous"!
                                             

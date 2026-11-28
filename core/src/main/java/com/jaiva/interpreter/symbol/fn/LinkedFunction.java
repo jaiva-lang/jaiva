@@ -1,10 +1,9 @@
-package com.jaiva.interpreter.symbol;
+package com.jaiva.interpreter.symbol.fn;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AVarArgument;
-import com.jaiva.tokenizer.tokens.TSymbol;
 import com.jaiva.tokenizer.tokens.specific.TFunction;
 import io.github.yetnt.utils.collection.SetDeque;
 

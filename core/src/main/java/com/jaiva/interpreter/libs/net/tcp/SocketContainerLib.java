@@ -1,16 +1,15 @@
 package com.jaiva.interpreter.libs.net.tcp;
 
-import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.Token;
 import io.github.yetnt.utils.tuple.Pair;
 
 import java.io.DataInputStream;
@@ -127,10 +126,9 @@ public class SocketContainerLib extends BaseLibrary {
         add(new FTcpHandshake());
     }
 
-    static class FTcpHandshake extends BaseFunction {
+    static class FTcpHandshake extends ImplementedFunction {
         public FTcpHandshake() {
             super(
-                    // TODO: document
                     FunctionBuilder.start()
                             .name("tcp_handshake").setLib("net/tcp")
                             .arguments(
@@ -158,24 +156,9 @@ public class SocketContainerLib extends BaseLibrary {
 
             checkParams(callProperties.toCheckParams());
 
-            Object p = callProperties.params().getFirst();
-            if (!(p instanceof String host))
-                throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "1", p, String.class,
-                        callProperties.getLineNumber()
-                );
-            Object p2 = callProperties.params().get(1);
-            if (!(p2 instanceof Integer port))
-                throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "2", p2, Integer.class,
-                        callProperties.getLineNumber()
-                );
-            Object func = callProperties.params().get(2);
-            if (!(func instanceof BaseFunction function))
-                throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "3", p, BaseFunction.class,
-                        callProperties.getLineNumber()
-                );
+            String host = fetch("host", String.class, callProperties);
+            int port = fetch("port", Integer.class, callProperties);
+            BaseFunction function = fetch("func", BaseFunction.class, callProperties);
 
             // the usr's responsible.
             Socket socket = new Socket(host, port);
@@ -206,8 +189,7 @@ public class SocketContainerLib extends BaseLibrary {
                 throw e;
             }
 
-            return Token.voidValue(callProperties.getLineNumber());
-
+            return callProperties.idk();
         }
     }
 }

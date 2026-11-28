@@ -4,6 +4,7 @@ import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
 import org.jetbrains.annotations.NotNull;
 
@@ -95,7 +96,7 @@ public final class Scope {
     /**
      * Constructor for Scope with parent scope and a given vfs object.
      * <p>
-     *     This is used by {@link com.jaiva.interpreter.symbol.BaseFunction} which needs to createFunction it's own copy to inject parameters.
+     *     This is used by {@link BaseFunction} which needs to createFunction it's own copy to inject parameters.
      * </p>
      * @param newC The current scope
      * @param token The token associated

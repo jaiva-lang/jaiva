@@ -32,4 +32,9 @@ public final class TVoidValue extends TokenDefault<TVoidValue> implements TAtomi
     public String toString() {
         return "idk";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof TVoidValue;
+    }
 }

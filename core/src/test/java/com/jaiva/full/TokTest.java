@@ -84,19 +84,19 @@ public class TokTest {
                 Assertions.assertEquals(7, f.lineNumber);
 
                 // The name should be "F~infinity" with no args.
-                Assertions.assertEquals("F~infinity", f.name, "Function is not \"F~infinity\"");
+                Assertions.assertEquals("F~infinity", f.name, "ImplementedFunction is not \"F~infinity\"");
                 Assertions.assertTrue(f.args.size() == 0 || f.args.getFirst().equals(""),
-                        "Function was defined with arguments??");
+                        "ImplementedFunction was defined with arguments??");
 
                 // function body starts a line 7 and ends at line 9
                 Assertions.assertEquals(7, f.body.lineNumber,
-                        "Function body starts on a different line number other than 7");
+                        "ImplementedFunction body starts on a different line number other than 7");
                 Assertions.assertEquals(9, f.body.lineNumberEnd,
-                        "Function body ends on a different line number other than 9");
+                        "ImplementedFunction body ends on a different line number other than 9");
 
                 // It's body should contain 1 token.
                 Assertions.assertEquals(1, f.body.lines.size(),
-                        "Function body contains more or less than 1 token.");
+                        "ImplementedFunction body contains more or less than 1 token.");
                 // That token should be a TFuncReturn
                 Assertions.assertInstanceOf(TFuncReturn.class,
                         ((Token) f.body.lines.getFirst()).value(),
@@ -338,7 +338,7 @@ public class TokTest {
             // on line 7
             TFuncCall tFuncCall = (TFuncCall) tokens.getLast().value();
             Assertions.assertEquals(4, tFuncCall.lineNumber, "TFuncCall is not on line 4");
-            Assertions.assertEquals("d_emit", tFuncCall.functionName, "Function call is not d_emit");
+            Assertions.assertEquals("d_emit", tFuncCall.functionName, "ImplementedFunction call is not d_emit");
 
             ArrayList<String> values = new ArrayList<>(
                     Arrays.asList("m_pi", "m_sqrt"));

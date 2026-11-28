@@ -144,8 +144,10 @@ public class BaseVariable extends Symbol {
         if (isFrozen)
             throw new InterpreterException.FrozenSymbolException(scope, this);
         array = t;
-        if (containsModifier(DefaultModifiers.ALTERNATE))
+        if (containsModifier(DefaultModifiers.ALTERNATE)) {
+            variableType = VariableType.ARRAY;
             setPreferArray(true);
+        }
     }
 
     public void a_objSet(Object o, Scope scope) throws InterpreterException {
@@ -213,8 +215,10 @@ public class BaseVariable extends Symbol {
         if (isFrozen)
             throw new InterpreterException.FrozenSymbolException(scope, this);
         this.scalar = value;
-        if (containsModifier(DefaultModifiers.ALTERNATE))
+        if (containsModifier(DefaultModifiers.ALTERNATE)) {
+            variableType = VariableType.SCALAR;
             setPreferArray(false);
+        }
     }
 
     /**

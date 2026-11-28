@@ -1,7 +1,7 @@
 package com.jaiva.md;
 
 import com.jaiva.interpreter.libs.LibrarySymbol;
-import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.tokenizer.jdoc.JDoc;

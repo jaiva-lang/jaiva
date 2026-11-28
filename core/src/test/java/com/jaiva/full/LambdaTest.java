@@ -38,9 +38,9 @@ public class LambdaTest {
         // Variable's value
         Assertions.assertInstanceOf(TFuncCall.class, ((Token<?>)var.value).value(), "Variable's value is not a function call");
         TFuncCall lambdaCall = (TFuncCall) ((Token<?>) var.value).value();
-        Assertions.assertEquals(1, lambdaCall.args.size(), "Function call does not contain a single argument.");
-        Assertions.assertEquals("yolo", lambdaCall.args.getFirst(), "Function call does not contain 'yolo' as the single argument.");
-        Assertions.assertInstanceOf(TLambda.class, lambdaCall.functionName, "Function name is not a lambda");
+        Assertions.assertEquals(1, lambdaCall.args.size(), "ImplementedFunction call does not contain a single argument.");
+        Assertions.assertEquals("yolo", lambdaCall.args.getFirst(), "ImplementedFunction call does not contain 'yolo' as the single argument.");
+        Assertions.assertInstanceOf(TLambda.class, lambdaCall.functionName, "ImplementedFunction name is not a lambda");
         TLambda lambda = (TLambda) lambdaCall.functionName;
         // Lambda
         Assertions.assertEquals(1, lambda.args.size(), "Lambda does not take in a single parameter");
@@ -54,7 +54,7 @@ public class LambdaTest {
         Assertions.assertEquals("const", expression.rHandSide, "Expression's right hand side is not 'const'");
         Assertions.assertEquals("+", expression.op, "Expression's operator is not '+'");
 
-        // d_emit Function call
+        // d_emit ImplementedFunction call
         Assertions.assertInstanceOf(TFuncCall.class, tokens.getLast().value(), "Last token is not a function call");
     }
 }

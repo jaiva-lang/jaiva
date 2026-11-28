@@ -1,15 +1,13 @@
 package com.jaiva.interpreter.libs.math;
 
-import com.jaiva.errors.InterpreterException.FunctionParametersException;
-import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 
 import static com.jaiva.interpreter.libs.math.MathBase.ifNan;
@@ -33,7 +31,7 @@ public class MathTrig extends BaseLibrary {
      * </ul>
      * </p>
      */
-    static class FSin extends BaseFunction {
+    static class FSin extends ImplementedFunction {
         FSin() {
             super(
                     FunctionBuilder.start()
@@ -56,13 +54,9 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object v = callProperties.params().getFirst();
-            // Ensure the first parameter is a number
-            if (!(v instanceof Number)) {
-                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.getLineNumber());
-            }
+            Number v = fetch("value", Number.class, callProperties);
             // Calculate the arctangent of the number
-            double value = ((Number) v).doubleValue();
+            double value = v.doubleValue();
             return java.lang.Math.sin(value);
         }
     }
@@ -77,7 +71,7 @@ public class MathTrig extends BaseLibrary {
      * </ul>
      * </p>
      */
-    static class FCos extends BaseFunction {
+    static class FCos extends ImplementedFunction {
         FCos() {
             super(
                     FunctionBuilder.start()
@@ -100,13 +94,9 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object v = callProperties.params().getFirst();
-            // Ensure the first parameter is a number
-            if (!(v instanceof Number)) {
-                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.getLineNumber());
-            }
+            Number v = fetch("value", Number.class, callProperties);
             // Calculate the arctangent of the number
-            double value = ((Number) v).doubleValue();
+            double value = v.doubleValue();
             return java.lang.Math.cos(value);
         }
     }
@@ -121,7 +111,7 @@ public class MathTrig extends BaseLibrary {
      * </ul>
      * </p>
      */
-    static class FTan extends BaseFunction {
+    static class FTan extends ImplementedFunction {
         FTan() {
             super(
                     FunctionBuilder.start()
@@ -144,13 +134,8 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object v = callProperties.params().getFirst();
-            // Ensure the first parameter is a number
-            if (!(v instanceof Number)) {
-                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.getLineNumber());
-            }
-            // Calculate the arctangent of the number
-            double value = ((Number) v).doubleValue();
+            Number v = fetch("value", Number.class, callProperties);
+            double value = v.doubleValue();
             return java.lang.Math.tan(value);
         }
     }
@@ -165,7 +150,7 @@ public class MathTrig extends BaseLibrary {
      * </ul>
      * </p>
      */
-    static class FAsin extends BaseFunction {
+    static class FAsin extends ImplementedFunction {
         FAsin() {
             super(
                     FunctionBuilder.start()
@@ -188,13 +173,8 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object v = callProperties.params().getFirst();
-            // Ensure the first parameter is a number
-            if (!(v instanceof Number)) {
-                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.getLineNumber());
-            }
-            // Calculate the arctangent of the number
-            double value = ((Number) v).doubleValue();
+            Number v = fetch("value", Number.class, callProperties);
+            double value = v.doubleValue();
             Number n = java.lang.Math.asin(value);
 
             return ifNan(callProperties.tFuncCall(), n);
@@ -211,7 +191,7 @@ public class MathTrig extends BaseLibrary {
      * </ul>
      * </p>
      */
-    static class FAcos extends BaseFunction {
+    static class FAcos extends ImplementedFunction {
         FAcos() {
             super(
                     FunctionBuilder.start()
@@ -234,13 +214,8 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object v = callProperties.params().getFirst();
-            // Ensure the first parameter is a number
-            if (!(v instanceof Number)) {
-                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.getLineNumber());
-            }
-            // Calculate the arctangent of the number
-            double value = ((Number) v).doubleValue();
+            Number v = fetch("value", Number.class, callProperties);
+            double value = v.doubleValue();
             Number n = java.lang.Math.acos(value);
             return ifNan(callProperties.tFuncCall(), n);
         }
@@ -256,7 +231,7 @@ public class MathTrig extends BaseLibrary {
      * </ul>
      * </p>
      */
-    static class FAtan extends BaseFunction {
+    static class FAtan extends ImplementedFunction {
         FAtan() {
             super(
                     FunctionBuilder.start()
@@ -279,13 +254,8 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object v = callProperties.params().getFirst();
-            // Ensure the first parameter is a number
-            if (!(v instanceof Number)) {
-                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.getLineNumber());
-            }
-            // Calculate the arctangent of the number
-            double value = ((Number) v).doubleValue();
+            Number v = fetch("value", Number.class, callProperties);
+            double value = v.doubleValue();
             return java.lang.Math.atan(value);
         }
     }
@@ -299,7 +269,7 @@ public class MathTrig extends BaseLibrary {
      * </ul>
      * </p>
      */
-    static class FToRad extends BaseFunction {
+    static class FToRad extends ImplementedFunction {
         FToRad() {
             super(
                     FunctionBuilder.start()
@@ -327,13 +297,8 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object value = callProperties.params().getFirst();
-            // Ensure the first parameter is a number
-            if (!(value instanceof Number)) {
-                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.getLineNumber());
-            }
-            // Convert degrees to radians
-            double degrees = ((Number) value).doubleValue();
+            Number value = fetch("degrees", Number.class, callProperties);
+            double degrees = value.doubleValue();
             return java.lang.Math.toRadians(degrees);
         }
     }
@@ -347,7 +312,7 @@ public class MathTrig extends BaseLibrary {
      * </ul>
      * </p>
      */
-    static class FToDeg extends BaseFunction {
+    static class FToDeg extends ImplementedFunction {
         FToDeg() {
             super(
                     FunctionBuilder.start()
@@ -375,18 +340,13 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object value = callProperties.params().getFirst();
-            // Ensure the first parameter is a number
-            if (!(value instanceof Number)) {
-                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.getLineNumber());
-            }
-            // Convert radians to degrees
-            double radians = ((Number) value).doubleValue();
+            Number value = fetch("radians", Number.class, callProperties);
+            double radians = value.doubleValue();
             return java.lang.Math.toDegrees(radians);
         }
     }
 
-    static class FAtan2 extends BaseFunction {
+    static class FAtan2 extends ImplementedFunction {
         FAtan2() {
             super(
                     FunctionBuilder.start()
@@ -413,18 +373,10 @@ public class MathTrig extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object v = callProperties.params().getFirst();
-            Object v2 = callProperties.params().get(1);
-            // Ensure the first parameter is a number
-            if (!(v instanceof Number)) {
-                throw new FunctionParametersException(callProperties.scope(), this, "1", v, Number.class, callProperties.getLineNumber());
-            }
-            if (!(v2 instanceof Number)) {
-                throw new FunctionParametersException(callProperties.scope(), this, "2", v, Number.class, callProperties.getLineNumber());
-            }
-            // Calculate the arctangent of the number
-            double value = ((Number) v).doubleValue();
-            double value2 = ((Number)v2).doubleValue();
+            Number v = fetch("y", Number.class, callProperties);
+            Number v2 = fetch("x", Number.class, callProperties);
+            double value = v.doubleValue();
+            double value2 = v2.doubleValue();
             return java.lang.Math.atan2(value, value2);
         }
     }

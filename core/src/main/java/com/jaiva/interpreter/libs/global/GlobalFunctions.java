@@ -14,10 +14,12 @@ import com.jaiva.interpreter.libs.Globals;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.*;
 import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
+import com.jaiva.interpreter.symbol.fn.*;
 import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +40,7 @@ public final class GlobalFunctions extends BaseLibrary {
         add(new IOFunctions(config));
     }
 
-    static class FScope extends BaseFunction {
+    static class FScope extends ImplementedFunction {
         FScope() {
             super(
                     FunctionBuilder.start()
@@ -88,20 +90,12 @@ public final class GlobalFunctions extends BaseLibrary {
             ArrayList<String> s = new ArrayList<>();
 
             checkParams(callProperties.toCheckParams());
-            callProperties.params().forEach(o -> {
-                try {
-                    if (o instanceof String s2) {
-                        s.add(s2);
-                    } else {
-                        throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "scope() only accepts input of string.", callProperties.getLineNumber());
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            for (Object o : callProperties.params()) {
+                s.add(validate(o, String.class, callProperties));
+            }
 
             callProperties.scope().getConfig().set(callProperties.getLineNumber(), callProperties.scope(), s.toArray(String[]::new));
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
@@ -109,7 +103,7 @@ public final class GlobalFunctions extends BaseLibrary {
      * getVarClass(variable)
      * Returns the .toString() class representation of a variable's token.
      */
-    static class FGetVarClass extends BaseFunction {
+    static class FGetVarClass extends ImplementedFunction {
         FGetVarClass() {
             super(
                     FunctionBuilder.start()
@@ -187,7 +181,7 @@ public final class GlobalFunctions extends BaseLibrary {
     /**
      * getCallerValue(variable)
      */
-    static class FGetCallerValue extends BaseFunction {
+    static class FGetCallerValue extends ImplementedFunction {
         FGetCallerValue() {
             super(
                     FunctionBuilder.start()
@@ -209,7 +203,7 @@ public final class GlobalFunctions extends BaseLibrary {
         }
 
         @Override
-        public Object call(CallProperties callProperties)
+        public Object call(@NotNull CallProperties callProperties)
                 throws Exception {
             Object value = callProperties.config().getCallerValue();
             return value == null ? Token.voidValue(callProperties.getLineNumber()) : value;
@@ -242,7 +236,7 @@ public final class GlobalFunctions extends BaseLibrary {
      * flat(<-arrays)
      * Takes in 2 or more arrays and flattens them into a singular array.
      */
-    static class FFlat extends BaseFunction {
+    static class FFlat extends ImplementedFunction {
         FFlat() {
             super(
                     FunctionBuilder.start()
@@ -319,7 +313,7 @@ public final class GlobalFunctions extends BaseLibrary {
      * </p>
      *
      */
-    static class FSleep extends BaseFunction {
+    static class FSleep extends ImplementedFunction {
         FSleep() {
             super(
                     FunctionBuilder.start()
@@ -348,18 +342,15 @@ public final class GlobalFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object val = callProperties.params().getFirst();
-            if (!(val instanceof Integer integer))
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "Bruv, you can't just like, pls put number",
-                        callProperties.getLineNumber());
+            int integer = fetch("milliseconds", Integer.class, callProperties);
 
             Thread.sleep(integer);
 
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
-    static class FTypeOfFunction extends BaseFunction {
+    static class FTypeOfFunction extends ImplementedFunction {
         FTypeOfFunction() {
             super(FunctionBuilder.start()
                     .name("typeOfFunc")
@@ -376,7 +367,7 @@ public final class GlobalFunctions extends BaseLibrary {
                     .docs(
                             JDoc.builder()
                                     .addDesc("Returns the type of a given function input. ")
-                                    .addReturns("Returns the string form of the type of function, which could be \"generic\", \"linked\", \"lambda\", \"defined\", \"continuous\" or the primitive idk.")
+                                    .addReturns("Returns the string form of the type of function, which could be \"generic\", \"library\", \"linked\", \"lambda\", \"defined\", \"continuous\" or the primitive idk.")
                                     .sinceVersion("7.0.0")
                                     .addExample("""
                                     kwenza a() ->
@@ -385,7 +376,7 @@ public final class GlobalFunctions extends BaseLibrary {
                                     
                                     khuluma(typeOfFunc(a))!                   @ "defined"
                                     khuluma(typeOfFunc(f~() : idk))!          @ "lambda"
-                                    khuluma(typeOfFunc(typeOf))!              @ "generic"
+                                    khuluma(typeOfFunc(typeOf))!              @ "library"
                                     khuluma(typeOfFunc(a || typeOf))!         @ "linked"
                                     khuluma(typeOfFunc())!                    @ idk
                                     
@@ -405,13 +396,14 @@ public final class GlobalFunctions extends BaseLibrary {
 //            checkParams(callProperties.toCheckParams());
 
             if (callProperties.params().isEmpty())
-                return Token.voidValue(callProperties.getLineNumber());
+                return callProperties.idk();
 
             return switch (callProperties.params().getFirst()) {
                 case ContinuousFunction _ -> "continuous";
                 case Lambda _ -> "lambda";
                 case LinkedFunction _ -> "linked";
                 case DefinedFunction _ -> "defined";
+                case ImplementedFunction _ -> "library";
                 case BaseFunction _ -> "generic";
                 case null, default ->
 // there is no other type to possibly check for.
@@ -420,7 +412,7 @@ public final class GlobalFunctions extends BaseLibrary {
         }
     }
 
-    static class FTypeOfNumber extends BaseFunction {
+    static class FTypeOfNumber extends ImplementedFunction {
         FTypeOfNumber() {
             super(FunctionBuilder.start()
                     .name("typeOfNumber")
@@ -460,7 +452,7 @@ public final class GlobalFunctions extends BaseLibrary {
 //            checkParams(callProperties.toCheckParams());
 
             if (callProperties.params().isEmpty())
-                return Token.voidValue(callProperties.getLineNumber());
+                return callProperties.idk();
 
             return switch (callProperties.params().getFirst()) {
                 case Integer ignored2 -> "integer";
@@ -473,7 +465,7 @@ public final class GlobalFunctions extends BaseLibrary {
         }
     }
 
-    static class FTypeOf extends BaseFunction {
+    static class FTypeOf extends ImplementedFunction {
         FTypeOf() {
             super(
                     FunctionBuilder.start()
@@ -513,7 +505,7 @@ public final class GlobalFunctions extends BaseLibrary {
 
 //            this.checkParams(callProperties.toCheckParams());
             if (callProperties.params().isEmpty())
-                return Token.voidValue(callProperties.getLineNumber());
+                return callProperties.idk();
 
             return switch (callProperties.params().getFirst()) {
                 case ArrayList ignored -> "array";
@@ -528,7 +520,7 @@ public final class GlobalFunctions extends BaseLibrary {
         }
     }
 
-    static class FArrayLiteral extends BaseFunction {
+    static class FArrayLiteral extends ImplementedFunction {
         FArrayLiteral() {
             super(
                     FunctionBuilder.start()
@@ -550,7 +542,7 @@ public final class GlobalFunctions extends BaseLibrary {
                                             maak array3 <- arrLit()! @ Creates an empty array.
                                             khuluma(array1)! @ Prints [1, 2, 3, "hello", aowa, idk]
                                             khuluma(array3)! @ Prints []
-                                            khuluma(array1 = array2)! @ Prints aowa (false) (I am not implementing array equality via `=` operator anytime soon. It is the exact same array though.)
+                                            khuluma(array1 = array2)! @ Prints true
                                             """)
                             )
             );
@@ -563,5 +555,4 @@ public final class GlobalFunctions extends BaseLibrary {
             return new ArrayList<>(callProperties.params());
         }
     }
-
 }

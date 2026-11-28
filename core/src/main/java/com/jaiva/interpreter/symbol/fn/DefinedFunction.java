@@ -1,9 +1,11 @@
-package com.jaiva.interpreter.symbol;
+package com.jaiva.interpreter.symbol.fn;
 
 import com.jaiva.errors.InterpreterException;
 import com.jaiva.errors.JaivaException;
 import com.jaiva.interpreter.*;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
+import com.jaiva.interpreter.symbol.BaseVariable;
+import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.tokens.metadata.FunctionArg;
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * A Function that is defined by the user at runtime.
+ * A ImplementedFunction that is defined by the user at runtime.
  */
 public sealed class DefinedFunction extends BaseFunction permits LinkedFunction, Lambda {
 
@@ -126,7 +128,7 @@ public sealed class DefinedFunction extends BaseFunction permits LinkedFunction,
         if (t instanceof ThrowIfGlobalContext) {
             return ((ThrowIfGlobalContext) t).c;
         } else {
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 

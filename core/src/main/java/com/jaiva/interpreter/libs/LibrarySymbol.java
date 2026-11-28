@@ -2,7 +2,7 @@ package com.jaiva.interpreter.libs;
 
 import com.jaiva.interpreter.Vfs;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.Symbol;
 import org.jetbrains.annotations.NotNull;

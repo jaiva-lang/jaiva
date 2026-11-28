@@ -1,16 +1,14 @@
 package com.jaiva.interpreter.libs.threads;
 
-import com.jaiva.errors.InterpreterException;
-import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AFuncArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.specific.TVoidValue;
 import io.github.yetnt.utils.builders.AnsiColour;
 import io.github.yetnt.utils.functional.consumer.ThrowableBiConsumer;
 import io.github.yetnt.utils.functional.generic.ThrowableRunnable;
@@ -29,7 +27,7 @@ public class ThreadsLib extends BaseLibrary {
         add(new FThread());
     }
 
-    private static class FThread extends BaseFunction {
+    private static class FThread extends ImplementedFunction {
         public FThread() {
             super(
                     FunctionBuilder.start()
@@ -39,7 +37,7 @@ public class ThreadsLib extends BaseLibrary {
                                     Arguments.getInstance()
                                             .add(
                                                     new AFuncArgument(
-                                                            "f",
+                                                            "threaded",
                                                             "The function to execute in it's own thread." +
                                                                     " A function that should take no args.",
                                                             false
@@ -47,7 +45,7 @@ public class ThreadsLib extends BaseLibrary {
                                             )
                                             .add(
                                                     new AFuncArgument(
-                                                            "f2",
+                                                            "cleanup",
                                                             "The function to execute as cleanup. This" +
                                                                     " function is expected to take 2 string arguments",
                                                             true
@@ -101,27 +99,9 @@ public class ThreadsLib extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object funcToCall =
-                    callProperties.params().getFirst();
-            if (!(funcToCall instanceof BaseFunction function))
-                throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "1", funcToCall, BaseFunction.class, callProperties.getLineNumber()
-                );
+            BaseFunction function = fetch("threaded", BaseFunction.class, callProperties);
 
-            BaseFunction cleanup;
-            if (callProperties.params().size() > 1) {
-                Object funcForCleanup =
-                        callProperties.params().get(1);
-                if (!(funcForCleanup instanceof BaseFunction) && !(funcForCleanup instanceof TVoidValue))
-                    throw new InterpreterException.FunctionParametersException(
-                            callProperties.scope(), this, "1", funcForCleanup, BaseFunction.class, callProperties.getLineNumber()
-                    );
-
-                // if they put idk the value, then its the same as not putting a value.
-                cleanup = funcForCleanup instanceof BaseFunction ? (BaseFunction) funcForCleanup : null;
-            } else {
-                cleanup = null;
-            }
+            BaseFunction cleanup = fetchNullable("cleanup", BaseFunction.class, callProperties, null);
 
             ThrowableRunnable<Exception> runnable = () -> {
                 function.call(

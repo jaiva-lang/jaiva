@@ -2,7 +2,7 @@ package com.jaiva.interpreter;
 
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.LibrarySymbol;
-import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
 import com.jaiva.interpreter.symbol.Symbol;
 import com.jaiva.tokenizer.tokens.TSymbol;
@@ -129,7 +129,7 @@ public final class Vfs extends LinkedHashMap<String, MapValue> {
                 if (t.exportSymbol) {
                     if (t instanceof TFunction func) {
                         String name = func.name.substring(2);
-                        vfs.put(name, new BaseFunction(name, func));
+                        vfs.put(name, BaseFunction.createFunction(name, func));
                     } else if (t instanceof TUnknownScalar<?, ?> scalar) {
                         vfs.put(scalar.name, new BaseVariable(scalar.name, scalar, scalar.value));
                     } else {

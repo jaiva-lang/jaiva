@@ -9,12 +9,11 @@ import com.jaiva.interpreter.libBuilders.var.VariableBuilder;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.runtime.Resources;
-import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +41,7 @@ public class IOFunctions extends BaseLibrary {
      * khuluma("hello world")!
      * This will print the given input to the console.
      */
-    static class FKhuluma extends BaseFunction {
+    static class FKhuluma extends ImplementedFunction {
 
         FKhuluma() {
             super(
@@ -87,9 +86,9 @@ public class IOFunctions extends BaseLibrary {
             Object newO = o;
             if (o == null || o instanceof TVoidValue) {
                 if (callProperties.config().isStreamer())
-                    return Token.voidValue(callProperties.getLineNumber());
+                    return callProperties.idk();
                 System.out.println();
-                return Token.voidValue(callProperties.getLineNumber());
+                return callProperties.idk();
             }
             Object v = callProperties.params().size() > 1
                     ? callProperties.params().get(1)
@@ -118,10 +117,8 @@ public class IOFunctions extends BaseLibrary {
                 output = o.toString();
 //            }
 
-            String isJustStr = newO instanceof String && callProperties.config().isPrintStacks() ? "\"" : "";
-
             if (callProperties.config().isStreamer())
-                return Token.voidValue(callProperties.getLineNumber());
+                return callProperties.idk();
             if (v instanceof Boolean && (Boolean) v) {
                 System.out.print(
                         /*isJustStr + */EscapeSequence.fromEscape(output, callProperties.getLineNumber())/* + isJustStr*/);
@@ -132,7 +129,7 @@ public class IOFunctions extends BaseLibrary {
                 System.out.println(
                         /*isJustStr +*/ EscapeSequence.fromEscape(output, callProperties.getLineNumber())/* + isJustStr*/);
             }
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
 
         @NotNull
@@ -153,7 +150,7 @@ public class IOFunctions extends BaseLibrary {
      * maak n <- mamela()!
      * Listens for input form the console and returns a string.
      */
-    static class FMamela extends BaseFunction {
+    static class FMamela extends ImplementedFunction {
         FMamela() {
             super(
                     FunctionBuilder.start()
@@ -179,7 +176,7 @@ public class IOFunctions extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             if (callProperties.config().isStreamer())
-                return Token.voidValue(callProperties.getLineNumber());
+                return callProperties.idk();
 
             return callProperties.config().getGlobalResources()
                     .ofCurrentThread()
@@ -205,7 +202,7 @@ public class IOFunctions extends BaseLibrary {
      * Note: The effectiveness of this function depends on the terminal's support
      * for ANSI escape codes.
      */
-    static class FClear extends BaseFunction {
+    static class FClear extends ImplementedFunction {
 
         FClear() {
             super(
@@ -231,10 +228,10 @@ public class IOFunctions extends BaseLibrary {
                 throws InterpreterException {
             // Clear the console using ANSI escape codes.
             if (callProperties.config().isStreamer())
-                return Token.voidValue(callProperties.getLineNumber());
+                return callProperties.idk();
             System.out.print("\033[H\033[2J");
             System.out.flush();
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
@@ -280,9 +277,9 @@ public class IOFunctions extends BaseLibrary {
                                             .addReturns("An array of strings, representing the sanitized command-line arguments.")
                                             .sinceVersion("1.0.2")
                                             .addExample("""
-                                            khuluma(uargs[0])! @ Prints any other argument given after the Jaiva specific ones.
-                                            khuluma(uargs[1])! @ Prints the second user argument if provided.
-                                            khuluma(uargs[2])! @ And so on...
+                                            khuluma(uArgs[0])! @ Prints any other argument given after the Jaiva specific ones.
+                                            khuluma(uArgs[1])! @ Prints the second user argument if provided.
+                                            khuluma(uArgs[2])! @ And so on...
                                             """))
             );
             freeze();

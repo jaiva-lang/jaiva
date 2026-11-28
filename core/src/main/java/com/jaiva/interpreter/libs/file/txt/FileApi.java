@@ -14,9 +14,9 @@ import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.Exports;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TArrayVar;
@@ -227,7 +227,7 @@ public class FileApi extends BaseLibrary {
      * <li>Returns an ArrayList of the file properties
      * </ul>
      */
-    static class FFile extends BaseFunction {
+    static class FFile extends ImplementedFunction {
         // function looks for the file and returns its properties in the structure.
         public FFile(IConfig<Object> config) {
             super(
@@ -262,20 +262,14 @@ public class FileApi extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object path = callProperties.params().getFirst();
-            if (!(path instanceof String))
-                throw new WtfAreYouDoingException(callProperties.scope(), "Da path must be a string.",
-                        callProperties.getLineNumber());
+            String path = fetch("path", String.class, callProperties);
 
             Path baseDir = (callProperties.config().getFilePath() != null) ? callProperties.config().getFilePath().getParent() : null;
-            Path filePath;
+            Path filePath = Paths.get(path);
             if (baseDir != null) {
-                filePath = Paths.get((String) path);
                 if (!filePath.isAbsolute()) {
-                    filePath = baseDir.resolve((String) path).normalize();
+                    filePath = baseDir.resolve(path).normalize();
                 }
-            } else {
-                filePath = Paths.get((String) path);
             }
 
             java.io.File file = filePath.toFile();
@@ -317,7 +311,7 @@ public class FileApi extends BaseLibrary {
      * <li>Returns true if the file was created successfully, false otherwise.</li>
      * </ul>
      */
-    public static class FNew extends BaseFunction {
+    public static class FNew extends ImplementedFunction {
         public FNew(IConfig<Object> config) {
             /*
              * [
@@ -379,10 +373,8 @@ public class FileApi extends BaseLibrary {
         public Object call(CallProperties callProperties)
                 throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object path = callProperties.params().getFirst();
-            if (!(path instanceof String))
-                throw new FunctionParametersException(callProperties.scope(), this, "1", callProperties.params().get(0), String.class,
-                        callProperties.getLineNumber());
+            String path = fetch("path", String.class, callProperties);
+
 
             Object content = callProperties.params().get(1);
             StringBuilder outBuilder = new StringBuilder();
@@ -405,28 +397,10 @@ public class FileApi extends BaseLibrary {
                 }
             }
 
-            boolean canRead = true, canWrite = true, canExecute = true;
-            if (callProperties.params().size() > 2) {
-                Object cr = callProperties.params().get(2);
-                if (!(cr instanceof Boolean))
-                    throw new FunctionParametersException(callProperties.scope(), this, "3", callProperties.params().get(2), boolean.class,
-                            callProperties.getLineNumber());
-                canRead = cr.equals(Boolean.TRUE);
-            }
-            if (callProperties.params().size() > 3) {
-                Object cw = callProperties.params().get(3);
-                if (!(cw instanceof Boolean))
-                    throw new FunctionParametersException(callProperties.scope(), this, "4", callProperties.params().get(3), boolean.class,
-                            callProperties.getLineNumber());
-                canWrite = cw.equals(Boolean.TRUE);
-            }
-            if (callProperties.params().size() > 4) {
-                Object ce = callProperties.params().get(4);
-                if (!(ce instanceof Boolean))
-                    throw new FunctionParametersException(callProperties.scope(), this, "5", callProperties.params().get(4), boolean.class,
-                            callProperties.getLineNumber());
-                canExecute = ce.equals(Boolean.TRUE);
-            }
+            boolean canRead = fetch("canRead", Boolean.class, callProperties, true);
+            boolean canWrite = fetch("canWrite", Boolean.class, callProperties, true);
+            boolean canExecute = fetch("canExecute", Boolean.class, callProperties, true);
+
             Path baseDir = (callProperties.config().getFilePath() != null) ? callProperties.config().getFilePath().getParent() : null;
             Path newFilePath = Paths.get((String) path);
 

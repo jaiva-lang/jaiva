@@ -11,6 +11,8 @@ import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.symbol.*;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
@@ -30,7 +32,7 @@ public class UnsafeGlobals extends BaseLibrary {
         add(new FLinker(), new FTseaFunction());
     }
 
-    static class FLinker extends BaseFunction {
+    static class FLinker extends ImplementedFunction {
         FLinker() {
             super(
                     FunctionBuilder.start()
@@ -101,11 +103,11 @@ public class UnsafeGlobals extends BaseLibrary {
                 throw new InterpreterException.UnknownVariableException(callProperties.scope(), refA.name, callProperties.getLineNumber());
 
             callProperties.scope().getVfs().put(((TVarRef) refB).varName.toString(), mv); // This does mean, if the second reference doesnt exist this function woll create it.
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
-    static class FTseaFunction extends BaseFunction {
+    static class FTseaFunction extends ImplementedFunction {
         public FTseaFunction() {
             super(
                     FunctionBuilder.start()
@@ -159,14 +161,10 @@ public class UnsafeGlobals extends BaseLibrary {
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams());
 
-            Object first = Primitives.toPrimitive(
+            String path = validate(Primitives.toPrimitive(
                     callProperties.params().getFirst(),
                     false, callProperties.config(), callProperties.scope()
-            );
-            if (!(first instanceof String path))
-                throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "1", first, String.class, callProperties.getLineNumber()
-                );
+            ), String.class, callProperties);
 
             String symbol = null;
             Object o = null;
@@ -231,14 +229,14 @@ public class UnsafeGlobals extends BaseLibrary {
 
             List<MapValue> list = vfs.values().stream().toList();
             if (list.isEmpty())
-                return Token.voidValue(callProperties.getLineNumber());
+                return callProperties.idk();
             MapValue first1 = list
                     .getFirst();
             // there should only ever be a single entry since we provided to the handleImprot
             // a single thing to fetch.
             if (first1 == null)
                 // No such thing exists.
-                return Token.voidValue(callProperties.getLineNumber());
+                return callProperties.idk();
             Symbol sym = first1
                     .getValue();
 

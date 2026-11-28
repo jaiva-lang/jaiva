@@ -1,4 +1,4 @@
-package com.jaiva.interpreter.symbol;
+package com.jaiva.interpreter.symbol.fn;
 
 import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.Scope;

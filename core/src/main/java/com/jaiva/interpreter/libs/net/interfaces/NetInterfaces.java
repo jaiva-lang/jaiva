@@ -6,8 +6,8 @@ import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.Exports;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.libs.types.TypeConverter;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import io.github.yetnt.utils.collection.buckets.Buckets;
@@ -37,22 +37,7 @@ public class NetInterfaces extends BaseLibrary {
         for (LocalIpConstValues v : LocalIpConstValues.values()) {
             String name = "IP" + v.name();
             String canonicalName = "net_localIp" + v.name();
-            add(new BaseFunction(
-                    FunctionBuilder.start()
-                            .name(canonicalName)
-                            .setLib("net/interf")
-                            .docs(JDoc.builder()
-                                    .addDesc("Returns your local " + name + " address")
-                                    .sinceVersion("7.0.0")
-                                    .addReturns("Your local IP Address formatted as a string.")
-
-                            )
-            ) {
-                @Override
-                public Object call(CallProperties callProperties) throws Exception {
-                    return getLocalAddress(v == LocalIpConstValues.v6);
-                }
-            });
+            add(new FLocalIp(v, canonicalName, name));
         }
     }
 
@@ -84,7 +69,7 @@ public class NetInterfaces extends BaseLibrary {
         }
     }
 
-    static class FInterfaces extends BaseFunction {
+    static class FInterfaces extends ImplementedFunction {
         public FInterfaces() {
             super(FunctionBuilder.start().name("net_interfs")
                     .setLib("net/interf"));
@@ -129,6 +114,29 @@ public class NetInterfaces extends BaseLibrary {
                 throw new InterpreterException.NetException(callProperties.scope(), callProperties.getLineNumber(), e);
             }
             return s;
+        }
+    }
+
+    static class FLocalIp extends ImplementedFunction {
+        private final LocalIpConstValues v;
+
+        public FLocalIp(LocalIpConstValues v, String canonicalName, String name) {
+            super(
+                    FunctionBuilder.start()
+                            .name(canonicalName)
+                            .setLib("net/interf")
+                            .docs(JDoc.builder()
+                                    .addDesc("Returns your local " + name + " address")
+                                    .sinceVersion("7.0.0")
+                                    .addReturns("Your local IP Address formatted as a string.")
+                            )
+            );
+            this.v = v;
+        }
+
+        @Override
+        public Object call(CallProperties callProperties) throws Exception {
+            return getLocalAddress(v == LocalIpConstValues.v6);
         }
     }
 }

@@ -110,14 +110,12 @@ import com.jaiva.interpreter.libBuilders.func.*;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.LibraryType;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.jdoc.JDocBuilder;
 import com.jaiva.tokenizer.tokens.specific.TFuncCall;
 
-import java.util.ArrayList;
-
-@PublicLibrary(path = "namespace/reflective", description="Lol.")
+@PublicLibrary(path = "namespace/reflective", description = "Lol.")
 public class ReflectiveLib extends BaseLibrary {
 
     public ReflectiveLib() {
@@ -125,7 +123,7 @@ public class ReflectiveLib extends BaseLibrary {
     }
 
     /**
-     * Function example
+     * ImplementedFunction example
      * This will be a function whose goal is to return the name of the
      * function object supplied to it.
      * <pre>{@code
@@ -163,7 +161,7 @@ public class ReflectiveLib extends BaseLibrary {
             checkParams(callProperties.toCheckParams());
 
             // Get the first value.
-            
+
             Object value = cp.params().getFirst();
 
             // Check whether its a function or not
@@ -172,7 +170,7 @@ public class ReflectiveLib extends BaseLibrary {
                 throw new InterpreterException.WtfAreYouDoingException(
                         cp.scope(), "This function accepts only function references....", cp.tFuncCall().lineNumber
                 );
-            
+
             return baseFunction.name;
         }
     }

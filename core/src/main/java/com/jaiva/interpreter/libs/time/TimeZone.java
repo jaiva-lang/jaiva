@@ -4,9 +4,10 @@ import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.var.VariableBuilder;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import io.github.yetnt.utils.tuple.SamePair;
 
@@ -21,7 +22,7 @@ public class TimeZone extends BaseLibrary {
 
     private static ArrayList<SamePair<String>> zoneIds = mapZoneIds();
 
-    static class FGetAll extends BaseFunction {
+    static class FGetAll extends ImplementedFunction {
         public FGetAll() {
             super(
                     FunctionBuilder.start()

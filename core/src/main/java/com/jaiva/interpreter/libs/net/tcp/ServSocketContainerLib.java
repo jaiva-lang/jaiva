@@ -1,16 +1,15 @@
 package com.jaiva.interpreter.libs.net.tcp;
 
-import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.interpreter.symbol.continuous.ContinuousFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.Token;
 import io.github.yetnt.utils.tuple.Pair;
 
 import java.io.DataInputStream;
@@ -141,7 +140,7 @@ public class ServSocketContainerLib extends BaseLibrary {
         add(new FTcpServe());
     }
 
-    static class WrappedAcceptFunction extends BaseFunction {
+    static class WrappedAcceptFunction extends ImplementedFunction {
         private final ServerSocket serverSocket;
         public WrappedAcceptFunction(ServerSocket serverSocket) {
             super(FunctionBuilder.start().setLib("net/tcp"));
@@ -172,7 +171,7 @@ public class ServSocketContainerLib extends BaseLibrary {
         }
     }
 
-    static class ServerWrappedCloseFunction extends BaseFunction {
+    static class ServerWrappedCloseFunction extends ImplementedFunction {
         private final ServerSocket serverSocket;
         public ServerWrappedCloseFunction(ServerSocket serverSocket) {
             super(FunctionBuilder.start().setLib("net/tcp"));
@@ -183,11 +182,11 @@ public class ServSocketContainerLib extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             serverSocket.close();
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
-    static class FTcpServe extends BaseFunction {
+    static class FTcpServe extends ImplementedFunction {
         public FTcpServe() {
             super(
                     FunctionBuilder.start()
@@ -214,18 +213,8 @@ public class ServSocketContainerLib extends BaseLibrary {
 
             checkParams(callProperties.toCheckParams());
 
-            Object p = callProperties.params().getFirst();
-            if (!(p instanceof Integer port))
-                throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "1", p, Integer.class,
-                        callProperties.getLineNumber()
-                );
-            Object func = callProperties.params().get(1);
-            if (!(func instanceof BaseFunction function))
-                throw new InterpreterException.FunctionParametersException(
-                        callProperties.scope(), this, "2", p, BaseFunction.class,
-                        callProperties.getLineNumber()
-                );
+            int port = fetch("port", Integer.class, callProperties);
+            BaseFunction function = fetch("func", BaseFunction.class, callProperties);
 
             //  By here just pray the user is doing the proper stuff.
 
@@ -247,8 +236,7 @@ public class ServSocketContainerLib extends BaseLibrary {
                 throw new RuntimeException(e);
             }
 
-            return Token.voidValue(callProperties.getLineNumber());
-
+            return callProperties.idk();
         }
     }
 }

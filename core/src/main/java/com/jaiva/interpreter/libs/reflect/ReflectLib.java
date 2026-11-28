@@ -9,6 +9,9 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
 import com.jaiva.interpreter.symbol.*;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
@@ -89,7 +92,7 @@ public class ReflectLib extends BaseLibrary {
         }
     }
 
-    static class FVarPreferArr extends BaseFunction {
+    static class FVarPreferArr extends ImplementedFunction {
         public FVarPreferArr() {
             super(FunctionBuilder.start()
                     .name("r_vPreferArr")
@@ -137,12 +140,12 @@ public class ReflectLib extends BaseLibrary {
             }
 
             variable.setPreferArray(bool);
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
     @SymbolConfig(unsafe = true)
-    static class FFuncEvalParamsLater extends BaseFunction {
+    static class FFuncEvalParamsLater extends ImplementedFunction {
         public FFuncEvalParamsLater() {
             super(FunctionBuilder.start()
                     .name("r_fEvalParamsLater")
@@ -190,19 +193,19 @@ public class ReflectLib extends BaseLibrary {
             }
 
             func.setEvaluateParamsEarly(bool);
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
 
     @SymbolConfig(unsafe = true)
-    static class FSymUnfreeze extends BaseFunction {
+    static class FSymUnfreeze extends ImplementedFunction {
         public FSymUnfreeze() {
             super(FunctionBuilder.start()
                     .name("r_sUnfreeze")
                     .setLib("reflect")
                     .arguments(Arguments.getInstance()
-                            .add(new AArgument("symbol", "The symbol reference. Function or variable.", false, Argument.Type.ANY))
+                            .add(new AArgument("symbol", "The symbol reference. ImplementedFunction or variable.", false, Argument.Type.ANY))
                     )
                     .docs(
                             JDoc.builder()
@@ -234,17 +237,17 @@ public class ReflectLib extends BaseLibrary {
             checkParams(callProperties.toCheckParams());
             Symbol symbol = getSymbol(callProperties, this, callProperties.params().getFirst());
             symbol.unfreeze();
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
-    static class FSymGetModifiers extends BaseFunction {
+    static class FSymGetModifiers extends ImplementedFunction {
         public FSymGetModifiers() {
             super(FunctionBuilder.start()
                     .name("r_sGetModifiers")
                     .setLib("reflect")
                     .arguments(Arguments.getInstance()
-                            .add(new AArgument("symbol", "The symbol reference. Function or variable.", false, Argument.Type.ANY))
+                            .add(new AArgument("symbol", "The symbol reference. ImplementedFunction or variable.", false, Argument.Type.ANY))
                     )
                     .docs(
                             JDoc.builder()

@@ -2,7 +2,6 @@ package com.jaiva.interpreter.libs.types;
 
 import com.jaiva.errors.InterpreterException.FunctionParametersException;
 import com.jaiva.errors.InterpreterException.WtfAreYouDoingException;
-import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
@@ -10,8 +9,9 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.Exports;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.lang.Keywords;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.specific.TVoidValue;
@@ -19,7 +19,7 @@ import io.github.yetnt.utils.functional.function.ThrowableTriFunction;
 
 import java.util.ArrayList;
 
-@Exports(Numbers.class)
+@Exports({Numbers.class, StringLib.class})
 @JaivaLibrary(path = "types", description = "Converting between types and stuff")
 public class Types extends BaseLibrary {
     public Types() {
@@ -33,7 +33,7 @@ public class Types extends BaseLibrary {
      * t_num(string, radix?) -> number
      *
      */
-    static class FNum extends BaseFunction {
+    static class FNum extends ImplementedFunction {
         FNum() {
             super(
                     FunctionBuilder.start()
@@ -78,12 +78,8 @@ public class Types extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties)
                 throws Exception {
-            this.checkParams(callProperties.toCheckParams());
-            Object val = callProperties.params().getFirst();
-
-            if (!(val instanceof String value))
-                throw new WtfAreYouDoingException(callProperties.scope(), callProperties.params().getFirst() + " cannot become a number kau",
-                        callProperties.getLineNumber());
+            checkParams(callProperties.toCheckParams());
+            String value = fetch("string", String.class, callProperties);
 
             int type = value.startsWith("0b") ? 2 : value.startsWith("0x") ? 16 : value.startsWith("0c") ? 8 : -1;
             value = type != -1 ? value.substring(2) : value;
@@ -147,7 +143,7 @@ public class Types extends BaseLibrary {
      * <p>
      * Input is marked as optional to allow passing of {@link TVoidValue} into it.
      */
-    static class FStr extends BaseFunction {
+    static class FStr extends ImplementedFunction {
         FStr() {
             super(
                     FunctionBuilder.start()
@@ -192,9 +188,7 @@ public class Types extends BaseLibrary {
             Object val = callProperties.params().getFirst();
 
             return switch (val) {
-                case Double aDouble -> val.toString();
-                case BaseFunction baseFunction ->
-                    val.toString();
+                case Double _, BaseFunction _ -> val.toString();
                 case Boolean b ->
                     // makes it such that, true and false even though they are valid keywords, we
                     // return Jaiva's true and false all the time.

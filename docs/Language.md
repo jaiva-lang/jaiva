@@ -2,9 +2,9 @@
 
 > [!WARNING]
 > The docs are always up-to-date with the current
-version whether it is stable or not.
+> version whether it is stable or not.
 > Refer to [the changelog](../changelog.md) to see the features
-which the current stable versions supports.
+> which the current stable versions supports.
 
 -   **[Index](#index)** <- you are here.
 -   **[Examples](#examples)**

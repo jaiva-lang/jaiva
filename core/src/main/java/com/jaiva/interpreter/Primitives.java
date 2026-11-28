@@ -5,6 +5,8 @@ import com.jaiva.errors.Warnings;
 import com.jaiva.interpreter.runtime.IConfig;
 import com.jaiva.interpreter.symbol.*;
 import com.jaiva.interpreter.symbol.BaseVariable.VariableType;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
 import com.jaiva.interpreter.symbol.mod.DefaultModifiers;
 import com.jaiva.lang.EscapeSequence;
 import com.jaiva.tokenizer.jdoc.JDoc;
@@ -406,14 +408,15 @@ public final class Primitives {
                     case String s -> EscapeSequence.fromEscape(s, -1);
                     case Integer i -> i;
                     case Long l -> l;
-                    case Double d -> {
-                        double val = d;
-                        if (val == Math.rint(val) && !scope.getConfig().noImplicitDoubleConverting()) {
-                            yield (int) val;
-                        } else {
-                            yield d;
-                        }
-                    }
+                    case Double d -> d;
+//                    {
+//                        double val = d;
+//                        if (val == Math.rint(val) && !scope.getConfig().noImplicitDoubleConverting()) {
+//                            yield (int) val;
+//                        } else {
+//                            yield d;
+//                        }
+//                    }
                     case TVoidValue v -> v;
                     case Boolean b -> b;
                     case BaseFunction f -> f;

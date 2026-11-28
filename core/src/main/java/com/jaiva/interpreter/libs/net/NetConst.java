@@ -109,7 +109,7 @@ public class NetConst extends BaseLibrary {
                                             : value.name()))
                                     .docs(JDoc.builder().sinceVersion("7.0.0")
                                             .addDesc(
-                                                    "Continuous Function Input constant over tcp client/server streams. "
+                                                    "Continuous ImplementedFunction Input constant over tcp client/server streams. "
                                                             + value.extraInfo
                                             ).addNote(
                                                     "This is for the " +

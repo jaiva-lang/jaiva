@@ -11,10 +11,10 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libBuilders.func.arg.AVarArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.BaseVariable;
-import com.jaiva.interpreter.symbol.CallProperties;
-import com.jaiva.interpreter.symbol.Symbol;
+import com.jaiva.interpreter.symbol.*;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TokenDefault;
@@ -30,7 +30,7 @@ public class Debug extends BaseLibrary {
         add(new FEmit(), new FVfs(), new FLink(), new FGetScope());
     }
 
-    static class FLink extends BaseFunction {
+    static class FLink extends ImplementedFunction {
         FLink() {
             super(
                     FunctionBuilder.start()
@@ -106,11 +106,11 @@ public class Debug extends BaseLibrary {
                 throw new InterpreterException.UnknownVariableException(callProperties.scope(), refA.name, callProperties.getLineNumber());
 
             callProperties.scope().getVfs().put(((TVarRef) refB).varName.toString(), mv); // This does mean, if the second reference doesnt exist this function woll create it.
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
-    static class FEmit extends BaseFunction {
+    static class FEmit extends ImplementedFunction {
         FEmit() {
             super(FunctionBuilder.start()
                     .name("d_emit")
@@ -161,7 +161,7 @@ public class Debug extends BaseLibrary {
         }
     }
 
-    static class FVfs extends BaseFunction {
+    static class FVfs extends ImplementedFunction {
         FVfs() {
             super(FunctionBuilder.start()
                     .name("d_vfs")
@@ -198,7 +198,7 @@ public class Debug extends BaseLibrary {
         }
     }
 
-    static class FGetScope extends BaseFunction {
+    static class FGetScope extends ImplementedFunction {
         public FGetScope() {
             super(FunctionBuilder.start()
                     .name("d_getScope")

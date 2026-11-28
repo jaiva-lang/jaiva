@@ -2,15 +2,14 @@ package com.jaiva.interpreter.libs.math;
 
 import com.jaiva.errors.InterpreterException.FunctionParametersException;
 import com.jaiva.errors.InterpreterException.WtfAreYouDoingException;
-import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.libBuilders.func.Argument;
 import com.jaiva.interpreter.libBuilders.func.Arguments;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
 import com.jaiva.tokenizer.tokens.Token;
 import com.jaiva.tokenizer.tokens.specific.TFuncCall;
@@ -43,7 +42,7 @@ public class MathBase extends BaseLibrary {
     /**
      * {@code m_abs(value)} -> returns the absolute value of the given number.
      */
-    static class FAbs extends BaseFunction {
+    static class FAbs extends ImplementedFunction {
         FAbs() {
             super(
                     FunctionBuilder.start()
@@ -89,7 +88,7 @@ public class MathBase extends BaseLibrary {
      * {@code m_random(lower, upper)} -> returns a random integer with [lower,
      * upper]
      */
-    static class FRandom extends BaseFunction {
+    static class FRandom extends ImplementedFunction {
         FRandom() {
             super(
                     FunctionBuilder.start()
@@ -133,13 +132,8 @@ public class MathBase extends BaseLibrary {
 
             checkParams(callProperties.toCheckParams());
 
-            Object lowerObject = callProperties.params().getFirst();
+            int lower = fetch("a", Integer.class,  callProperties);
             Object upperObject = callProperties.params().size() > 1 ?callProperties.params().get(1) : null;
-
-            if (!(lowerObject instanceof Integer lower))
-                throw new FunctionParametersException(callProperties.scope(), this, "1", lowerObject, Integer.class,
-                        callProperties.getLineNumber());
-
             if (upperObject == null) {
                 // only one param was given, so treat lower as upper and 0 as lower.
                 // check if a is negative
@@ -169,7 +163,7 @@ public class MathBase extends BaseLibrary {
     /**
      * {@code m_round(value)} -> rounds an approximate to the nearest integer.
      */
-    static class FRound extends BaseFunction {
+    static class FRound extends ImplementedFunction {
 
         FRound() {
             super(
@@ -213,7 +207,7 @@ public class MathBase extends BaseLibrary {
      * {@code m_sqrt(value)} -> Returns the (positive) square root of the number
      * provided
      */
-    static class FSqrt extends BaseFunction {
+    static class FSqrt extends ImplementedFunction {
         FSqrt() {
             super(
                     FunctionBuilder.start()
@@ -259,7 +253,7 @@ public class MathBase extends BaseLibrary {
      * {@code m_floor(value)} - Returns the largest integer less than or equal
      * to the number provided.
      */
-    static class FFloor extends BaseFunction {
+    static class FFloor extends ImplementedFunction {
         FFloor() {
             super(
                     FunctionBuilder.start()
@@ -304,7 +298,7 @@ public class MathBase extends BaseLibrary {
      * </ul>
      * </p>
      */
-    static class FCeil extends BaseFunction {
+    static class FCeil extends ImplementedFunction {
 
         FCeil() {
             super(
@@ -339,7 +333,7 @@ public class MathBase extends BaseLibrary {
         }
     }
 
-    static class FLog extends BaseFunction {
+    static class FLog extends ImplementedFunction {
         FLog() {
             super(
                     FunctionBuilder.start()
@@ -371,18 +365,11 @@ public class MathBase extends BaseLibrary {
                 throws Exception {
             checkParams(callProperties.toCheckParams());
 
-            Object value = callProperties.params().getFirst();
-            Object base =
-                    callProperties.params().size() > 1 ? callProperties.params().get(1) : 10;
+            Number value = fetch("value", Number.class, callProperties);
+            Number base = fetch("base", Number.class, callProperties, 10);
 
-            if (!(value instanceof Number v))
-                throw new FunctionParametersException(callProperties.scope(), this, "1", value, Number.class, callProperties.getLineNumber());
-            if (!(base instanceof Number b))
-                throw new FunctionParametersException(callProperties.scope(), this, "2", base, Number.class, callProperties.getLineNumber());
-
-            double val = v.doubleValue();
-            double bas = b.doubleValue();
-
+            double val = value.doubleValue();
+            double bas = base.doubleValue();
 
             Number n = switch ((int) bas) {
                 case 10 -> java.lang.Math.log10(val);

@@ -9,11 +9,11 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libs.cont.ContinuousConst;
 import com.jaiva.interpreter.libs.file.bytes.FileBytes;
 import com.jaiva.interpreter.runtime.IConfig;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
-import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
-import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
-import com.jaiva.tokenizer.tokens.Token;
+import com.jaiva.interpreter.symbol.fn.BaseFunction;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
+import com.jaiva.interpreter.symbol.fn.interfaces.BFMethodToConsumer;
+import com.jaiva.interpreter.symbol.fn.interfaces.BFMethodToSupplier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * of being a closure over resources. Either an {@link InputStream} or an {@link OutputStream} implementation.
  * <p>
  *     What it does is close over said {@link Closeable}, but doesn't itself do any IO. it instead acts as a dispatcher
- *     for smaller {@link CFClosures} (Continuous Function Closures) which have specific tasks. The user themselves uses the
+ *     for smaller {@link CFClosures} (Continuous ImplementedFunction Closures) which have specific tasks. The user themselves uses the
  *     {@link ContinuousFunction} via passing a {@link CFuncInput} type to return the {@link CFClosures} they want to use.
  * </p>
  * <p>
@@ -39,7 +39,7 @@ import java.util.ArrayList;
  *     The following {@link CFuncInput} maps to the corresponding closure
  *     <table>
  *         <tr>
- *             <td>Continuous Function Input</td> <td>{@link CFClosures} instance</td> <td> Description </td>
+ *             <td>Continuous ImplementedFunction Input</td> <td>{@link CFClosures} instance</td> <td> Description </td>
  *         </tr>
  *         <tr>
  *             <td>{@link CFuncInput#READ}</td> <td>{@link CFClosures.Input}</td>
@@ -111,7 +111,7 @@ import java.util.ArrayList;
  * @param <I> The type of the closeable.
  */
 public final class ContinuousFunction<I extends Closeable, O extends Closeable>
-        extends BaseFunction {
+        extends ImplementedFunction {
 
 
     public enum ContinuousFunctionType {INPUT, OUTPUT, BOTH}
@@ -249,7 +249,7 @@ public final class ContinuousFunction<I extends Closeable, O extends Closeable>
                 case DONE -> closedClosure;
             };
         }
-        return Token.voidValue(callProperties.getLineNumber());
+        return callProperties.idk();
     }
 
     public I getInputCloseable() {

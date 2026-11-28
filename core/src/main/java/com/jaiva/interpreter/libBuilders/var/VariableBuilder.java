@@ -9,6 +9,8 @@ import com.jaiva.tokenizer.tokens.specific.TArrayVar;
 import com.jaiva.tokenizer.tokens.specific.TBooleanVar;
 import com.jaiva.tokenizer.tokens.specific.TNumberVar;
 import com.jaiva.tokenizer.tokens.specific.TStringVar;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -22,6 +24,8 @@ public class VariableBuilder {
      * Starts a new variable builder instance.
      * @return A new variable buildr
      */
+    @NotNull
+    @Contract(" -> new")
     public static VariableBuilder start() {
         return new VariableBuilder();
     }

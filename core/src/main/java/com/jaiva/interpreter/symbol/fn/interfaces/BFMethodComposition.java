@@ -1,4 +1,4 @@
-package com.jaiva.interpreter.symbol.inf;
+package com.jaiva.interpreter.symbol.fn.interfaces;
 
 import com.jaiva.interpreter.Scope;
 import com.jaiva.interpreter.runtime.IConfig;

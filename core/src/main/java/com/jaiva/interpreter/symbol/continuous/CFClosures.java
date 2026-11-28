@@ -4,12 +4,10 @@ import com.jaiva.errors.InterpreterException;
 import com.jaiva.interpreter.Primitives;
 import com.jaiva.interpreter.libBuilders.func.FunctionBuilder;
 import com.jaiva.interpreter.libs.types.TypeConverter;
-import com.jaiva.interpreter.symbol.BaseFunction;
-import com.jaiva.interpreter.symbol.CallProperties;
-import com.jaiva.interpreter.symbol.inf.BFMethodComposition;
-import com.jaiva.interpreter.symbol.inf.BFMethodToConsumer;
-import com.jaiva.interpreter.symbol.inf.BFMethodToSupplier;
-import com.jaiva.tokenizer.tokens.Token;
+import com.jaiva.interpreter.symbol.fn.*;
+import com.jaiva.interpreter.symbol.fn.interfaces.BFMethodComposition;
+import com.jaiva.interpreter.symbol.fn.interfaces.BFMethodToConsumer;
+import com.jaiva.interpreter.symbol.fn.interfaces.BFMethodToSupplier;
 import io.github.yetnt.utils.functional.consumer.ThrowableConsumer;
 import io.github.yetnt.utils.functional.function.ThrowableTriFunction;
 import io.github.yetnt.utils.functional.generic.ThrowableSupplier;
@@ -19,19 +17,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public final class CFClosures {
 
     public interface BFMethodWithExtras<T extends BaseFunction> extends ThrowableTriFunction<
                     CallProperties,
-                    ThrowableConsumer<BaseFunction.CheckParams, InterpreterException>,
+                    ThrowableConsumer<CheckParams, InterpreterException>,
                     T,
                 BFMethodComposition,
                     Exception> {}
 
-    abstract static sealed class CFClosure<T extends CFClosure<T>> extends BaseFunction
+    abstract static sealed class CFClosure<T extends CFClosure<T>> extends ImplementedFunction
         permits EOF, Input, Output, Flush, Close, Closed
     {
         CFClosure(String lib) {
@@ -69,7 +66,7 @@ public final class CFClosures {
         public Object call(CallProperties callProperties) throws Exception {
             if (callbackInitializer != null && !callProperties.params().isEmpty()) {
                 callback = callbackInitializer.apply(callProperties, this::checkParams, this);
-                return Token.voidValue(callProperties.getLineNumber());
+                return callProperties.idk();
             } else {
                 return eof;
             }
@@ -100,7 +97,7 @@ public final class CFClosures {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             // parse every object in params
-            if (readStreamSupplier == null) return Token.voidValue(callProperties.getLineNumber());
+            if (readStreamSupplier == null) return callProperties.idk();
             ArrayList<Object> parsedParams = new ArrayList<>();
             if (!callProperties.params().isEmpty() && (callProperties.params().size() != 1 || callProperties.params().getFirst() != null)) {
                 for (Object p : callProperties.params()) {
@@ -139,7 +136,7 @@ public final class CFClosures {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             // parse every object in params
-            if (writeStreamConsumer == null) return Token.voidValue(callProperties.getLineNumber());
+            if (writeStreamConsumer == null) return callProperties.idk();
             ArrayList<Object> parsedParams = new ArrayList<>();
             for (Object p : callProperties.params()) {
                 parsedParams.add(Primitives.toPrimitive(p, false, callProperties.config(), callProperties.scope()));
@@ -149,7 +146,7 @@ public final class CFClosures {
                     = writeStreamConsumer.apply(callProperties);
 
             method.apply(parsedParams);
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
@@ -163,9 +160,9 @@ public final class CFClosures {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             // we dont care about args.
-            if (!(cls instanceof OutputStream os)) return Token.voidValue(callProperties.getLineNumber());
+            if (!(cls instanceof OutputStream os)) return callProperties.idk();
             os.flush();
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
@@ -230,7 +227,7 @@ public final class CFClosures {
             } else {
                 callProperties.config().getGlobalResources().ofCurrentThread().releaseResource(resourceId);
             }
-            return Token.voidValue(callProperties.getLineNumber());
+            return callProperties.idk();
         }
     }
 
@@ -260,7 +257,7 @@ public final class CFClosures {
         public Object call(CallProperties callProperties) throws Exception {
             if (callbackInitializer != null &&  !callProperties.params().isEmpty()) {
                 callback = callbackInitializer.apply(callProperties, this::checkParams, this);
-                return Token.voidValue(callProperties.getLineNumber());
+                return callProperties.idk();
             }
             return isClosed();
         }

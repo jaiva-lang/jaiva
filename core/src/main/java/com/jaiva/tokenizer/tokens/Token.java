@@ -82,27 +82,6 @@ public record Token<T extends TokenDefault<?>>(T value) {
      */
     @NotNull
     public static List<String> splitByTopLevelComma(@NotNull String argsString) {
-//        List<String> parts = new ArrayList<>();
-//        int level = 0;
-//        int lastSplit = 0;
-//        for (int i = 0; i < argsString.length(); i++) {
-//            char c = argsString.charAt(i);
-//            if (c == '(' /* || c == '[' */) {
-//                level++;
-//            } else if (c == ')' /* || c == ']' */) {
-//                level--;
-//            } else if ((c == ',' && level == 0)) {
-//                if (i == 0) {
-//                    parts.add(argsString.substring(lastSplit, i).trim());
-//                    lastSplit = i + 1;
-//                } else if ((argsString.charAt(i - 1) != '$')) {
-//                    parts.add(argsString.substring(lastSplit, i).trim());
-//                    lastSplit = i + 1;
-//                }
-//            }
-//        }
-//        parts.add(argsString.substring(lastSplit).trim());
-//        return parts;
         return Find.split(argsString, ',');
     }
 

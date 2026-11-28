@@ -8,12 +8,10 @@ import com.jaiva.interpreter.libBuilders.func.arg.AArgument;
 import com.jaiva.interpreter.libBuilders.var.VariableBuilder;
 import com.jaiva.interpreter.libs.BaseLibrary;
 import com.jaiva.interpreter.libs.annotation.JaivaLibrary;
-import com.jaiva.interpreter.runtime.IConfig;
-import com.jaiva.interpreter.symbol.BaseFunction;
 import com.jaiva.interpreter.symbol.BaseVariable;
-import com.jaiva.interpreter.symbol.CallProperties;
+import com.jaiva.interpreter.symbol.fn.CallProperties;
+import com.jaiva.interpreter.symbol.fn.ImplementedFunction;
 import com.jaiva.tokenizer.jdoc.JDoc;
-import com.jaiva.tokenizer.tokens.specific.TVoidValue;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
@@ -23,11 +21,11 @@ import java.time.format.DateTimeFormatter;
 
 @JaivaLibrary(path = "time/api", description = "The time api where the relevant things such as parsing dates are.")
 public class TimeApi extends BaseLibrary {
-    public TimeApi(IConfig<Object> config) {
+    public TimeApi() {
         add(new FNow(), new FMsToSec(), new FParseDate(), new VMaxTime());
     }
 
-    public static class FNow extends BaseFunction {
+    static class FNow extends ImplementedFunction {
         public FNow() {
             super(
                     FunctionBuilder.start()
@@ -50,7 +48,7 @@ public class TimeApi extends BaseLibrary {
         }
     }
 
-    public static class FMsToSec extends BaseFunction {
+    static class FMsToSec extends ImplementedFunction {
         public FMsToSec() {
             super(
                     FunctionBuilder.start()
@@ -72,16 +70,13 @@ public class TimeApi extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object val = callProperties.params().getFirst();
-            if (!(val instanceof Number num))
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_msToSec() only accepts a number.", callProperties.getLineNumber());
-
+            Number num = fetch("milliseconds", Number.class, callProperties);
             return num.doubleValue() / 1000.0;
         }
 
     }
 
-    public static class FParseDate extends BaseFunction {
+    public static class FParseDate extends ImplementedFunction {
         public FParseDate() {
             super(
                     FunctionBuilder.start()
@@ -128,39 +123,22 @@ public class TimeApi extends BaseLibrary {
         @Override
         public Object call(CallProperties callProperties) throws Exception {
             checkParams(callProperties.toCheckParams());
-            Object dateStringObj = callProperties.params().getFirst();
-            if (!(dateStringObj instanceof String dateString))
-                throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_parseDate() expects a date string as the first argument.", callProperties.getLineNumber());
+            String dateString = fetch("dateString", String.class, callProperties);
+            String format = fetchNullable("format", String.class, callProperties, null);
 
-            String format = null;
-            if (callProperties.params().size() > 1) {
-                Object formatObj = callProperties.params().get(1);
-                if (!(formatObj instanceof String) && !(formatObj instanceof TVoidValue))
-                    throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "t_parseDate() expects a format string as the second argument.", callProperties.getLineNumber());
-                format = formatObj instanceof TVoidValue ? null : (String) formatObj;
-            }
-
-            DateTimeFormatter formatter;
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
             if (format != null) {
                 try {
                     formatter = DateTimeFormatter.ofPattern(format);
                 } catch (IllegalArgumentException e) {
                     throw new InterpreterException.WtfAreYouDoingException(callProperties.scope(), "Pls put valid format for date gng. "+
-                            "(One day i'll make a format package, and that same day ill make the inverse to this function)", callProperties.getLineNumber());
+                            "(One day I'll make a format package, and that same day ill make the inverse to this function)", callProperties.getLineNumber());
                 }
-            } else
-                formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+            }
 
             LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
 
-            String timezone = "UTC";
-            if (callProperties.params().size() > 2) {
-                Object formatObj = callProperties.params().get(2);
-                if (!(formatObj instanceof String))
-                    throw new InterpreterException.FunctionParametersException(callProperties.scope(), this, "3", formatObj, String.class, callProperties.getLineNumber());
-//                    throw new InterpreterException.WtfAreYouDoingException(scope, "t_parseDate() needs the 3rd param to be a string zawg.", tFuncCall.lineNumber);
-                timezone = (String) formatObj;
-            }
+            String timezone = fetch("timezone", String.class, callProperties,"UTC");
 
             ZoneId timeZoneId;
             try {

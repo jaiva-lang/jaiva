@@ -1,0 +1,25 @@
+
+@ using cuystom modifiers
+
+tsea "jaiva/reflect" <- r_sGetModifiers!
+
+maak [proc="a b c" bomb=1] c <- 10!
+
+kwenza getProc(<-mods) ->
+    khutla tseaf("jaiva/arrays", a_find)(mods, f~(mod) : mod ? "proc=$"")!
+<~
+
+maak m <- r_sGetModifiers(c)!
+
+kwenza use(<-mods) ->
+    tsea "jaiva/strings" <- s_split!
+
+    maak [alt] proc <- getProc(mods:::)!
+    sif (proc?) ?> khutla idk!
+
+    proc <- proc[0]!
+    maak split <- s_split(proc, "=")!
+    khuluma(split)!
+<~
+
+use(m:::)!
